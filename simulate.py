@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import csv
 import math
 from pathlib import Path
@@ -10,9 +11,18 @@ from model import MODE_NAMES, RoutineMode, relationship_index
 from particles import CoffeeParticleFilter
 
 
-SEED = 20260908
-DAYS = 100
-OUT = Path("examples/100-cute-days")
+DEFAULT_SEED = 20260908
+DEFAULT_DAYS = 365
+DEFAULT_PARTICLES = 6000
+STATE_KEYS = ("P", "M", "V", "C", "E", "F")
+STATE_METRIC_NAMES = (
+    "P_predictability",
+    "M_mutuality",
+    "V_voluntariness",
+    "C_shared_context",
+    "E_state_sharing",
+    "F_friction",
+)
 
 
 def sigmoid(x):
@@ -91,68 +101,115 @@ def observe(x, mode, rng):
     }
 
 
-def main():
-    rng = np.random.default_rng(SEED)
-    truth, true_modes = generate_truth(DAYS, rng)
-    observations = [observe(truth[t], true_modes[t], rng) for t in range(DAYS)]
+def parse_args():
+    parser = argparse.ArgumentParser(description="Simulate a tiny coffee routine. ☕🐣")
+    parser.add_argument("--days", type=int, default=DEFAULT_DAYS, help="number of synthetic days (default: 365)")
+    parser.add_argument("--particles", type=int, default=DEFAULT_PARTICLES, help="particle count (default: 6000)")
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="random seed")
+    parser.add_argument("--out", type=Path, default=None, help="output directory")
+    return parser.parse_args()
 
-    pf = CoffeeParticleFilter(particle_count=6000, seed=SEED)
+
+def main():
+    args = parse_args()
+    if args.days < 2:
+        raise SystemExit("☕ --days must be at least 2")
+    if args.particles < 100:
+        raise SystemExit("🐣 --particles must be at least 100")
+
+    out = args.out or Path(f"examples/{args.days}-cute-days")
+    rng = np.random.default_rng(args.seed)
+    truth, true_modes = generate_truth(args.days, rng)
+    observations = [observe(truth[t], true_modes[t], rng) for t in range(args.days)]
+
+    pf = CoffeeParticleFilter(particle_count=args.particles, seed=args.seed)
     estimates = []
     estimated_modes = []
+    ci95_low = []
+    ci95_high = []
+    ess = []
 
     for obs in observations:
         posterior = pf.update(obs)
         estimates.append(posterior.mean)
         estimated_modes.append(posterior.mode)
+        ci95_low.append(posterior.ci95_low)
+        ci95_high.append(posterior.ci95_high)
+        ess.append(posterior.ess)
 
     estimates = np.asarray(estimates)
+    ci95_low = np.asarray(ci95_low)
+    ci95_high = np.asarray(ci95_high)
+    ess = np.asarray(ess)
+
     true_r = relationship_index(truth)
     est_r = relationship_index(estimates)
 
     rmse = np.sqrt(np.mean((estimates - truth)**2, axis=0))
     mae = np.mean(np.abs(estimates - truth), axis=0)
+    correlation = np.array([
+        np.corrcoef(estimates[:, i], truth[:, i])[0, 1]
+        for i in range(6)
+    ])
+    coverage = np.mean((truth >= ci95_low) & (truth <= ci95_high), axis=0)
+
     r_rmse = float(np.sqrt(np.mean((est_r - true_r)**2)))
     r_mae = float(np.mean(np.abs(est_r - true_r)))
+    r_corr = float(np.corrcoef(est_r, true_r)[0, 1])
+    mode_accuracy = float(np.mean([
+        estimated_modes[t] == MODE_NAMES[RoutineMode(int(true_modes[t]))]
+        for t in range(args.days)
+    ]))
 
-    OUT.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
 
-    with (OUT / "input.csv").open("w", newline="", encoding="utf-8") as f:
+    with (out / "input.csv").open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["sample_id", *observations[0].keys()])
         writer.writeheader()
         for i, obs in enumerate(observations, 1):
             writer.writerow({"sample_id": i, **obs})
 
-    with (OUT / "output.csv").open("w", newline="", encoding="utf-8") as f:
-        fieldnames = ["sample_id", "true_mode", "estimated_mode"]
-        fieldnames += [f"true_{name}" for name in ("P", "M", "V", "C", "E", "F")]
-        fieldnames += [f"est_{name}" for name in ("P", "M", "V", "C", "E", "F")]
+    with (out / "output.csv").open("w", newline="", encoding="utf-8") as f:
+        fieldnames = ["sample_id", "true_mode", "estimated_mode", "ESS"]
+        for name in STATE_KEYS:
+            fieldnames += [f"true_{name}", f"est_{name}", f"ci95_low_{name}", f"ci95_high_{name}"]
         fieldnames += ["true_R", "est_R"]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
 
-        for t in range(DAYS):
+        for t in range(args.days):
             row = {
                 "sample_id": t + 1,
                 "true_mode": MODE_NAMES[RoutineMode(int(true_modes[t]))],
                 "estimated_mode": estimated_modes[t],
+                "ESS": ess[t],
                 "true_R": true_r[t],
                 "est_R": est_r[t],
             }
-            for j, name in enumerate(("P", "M", "V", "C", "E", "F")):
+            for j, name in enumerate(STATE_KEYS):
                 row[f"true_{name}"] = truth[t, j]
                 row[f"est_{name}"] = estimates[t, j]
+                row[f"ci95_low_{name}"] = ci95_low[t, j]
+                row[f"ci95_high_{name}"] = ci95_high[t, j]
             writer.writerow(row)
 
-    with (OUT / "metrics.csv").open("w", newline="", encoding="utf-8") as f:
+    with (out / "metrics.csv").open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["state", "RMSE", "MAE"])
-        for name, state_rmse, state_mae in zip(("P", "M", "V", "C", "E", "F"), rmse, mae):
-            writer.writerow([name, state_rmse, state_mae])
-        writer.writerow(["R", r_rmse, r_mae])
+        writer.writerow(["metric_scope", "RMSE", "MAE", "Pearson_r", "CI95_coverage"])
+        for name, state_rmse, state_mae, state_r, state_coverage in zip(
+            STATE_METRIC_NAMES, rmse, mae, correlation, coverage
+        ):
+            writer.writerow([name, state_rmse, state_mae, state_r, state_coverage])
+        writer.writerow(["relationship_index_R", r_rmse, r_mae, r_corr, ""])
+        writer.writerow(["mode_classification_accuracy", "", "", mode_accuracy, ""])
 
-    print("☕ 100 cute synthetic days generated")
-    print(f"🐣 relationship-index RMSE: {r_rmse:.4f}")
-    print(f"🌱 relationship-index MAE : {r_mae:.4f}")
+    print(f"☕ {args.days} cute synthetic days generated")
+    print(f"🐣 particles               : {args.particles}")
+    print(f"🌱 relationship-index RMSE : {r_rmse:.4f}")
+    print(f"✨ relationship-index MAE  : {r_mae:.4f}")
+    print(f"🧭 relationship-index r    : {r_corr:.3f}")
+    print(f"🎯 mode accuracy           : {mode_accuracy:.2%}")
+    print(f"🧺 output                  : {out}")
 
 
 if __name__ == "__main__":
