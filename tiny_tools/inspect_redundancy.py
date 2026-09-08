@@ -54,6 +54,11 @@ def parse_args():
     return parser.parse_args()
 
 
+def _mean_metric(rows: list[dict[str, object]], variant: str, key: str) -> float:
+    values = [float(row[key]) for row in rows if row["variant"] == variant and np.isfinite(float(row[key]))]
+    return float(np.mean(values)) if values else float("nan")
+
+
 def main():
     args = parse_args()
     if args.days < 24:
@@ -120,6 +125,18 @@ def main():
     print(f"🪑 synthetic worlds checked : {len(names)}")
     for state in STATE_KEYS:
         print(f"🐣 {state} mean chair penalty   : {np.mean(aggregate[state]):+.4f}")
+
+    variants = tuple(dict.fromkeys(str(row["variant"]) for row in variant_rows))
+    print("☕ five-seat race averages:")
+    for variant in variants:
+        print(
+            f"  🏁 {variant:30s} "
+            f"stateRMSE={_mean_metric(variant_rows, variant, 'mean_state_RMSE'):.4f}  "
+            f"NLL={_mean_metric(variant_rows, variant, 'binary_observation_NLL'):.4f}  "
+            f"Brier={_mean_metric(variant_rows, variant, 'binary_observation_Brier'):.4f}  "
+            f"recoveryR={_mean_metric(variant_rows, variant, 'recovery_relationship_RMSE'):.4f}"
+        )
+
     print(f"🧺 chair-test basket        : {args.out}")
     print("☕ A removable-looking state is a model clue, not a declaration about humans. XD")
 
