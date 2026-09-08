@@ -7,6 +7,12 @@ from typing import Mapping
 import numpy as np
 
 from .actions import RoutineActions, action_effect
+from .memory import (
+    DEFAULT_SHARED_CONTEXT_MEMORY,
+    SharedContextMemoryConfig,
+    shared_context_input,
+    shared_context_step,
+)
 from .model import MODE_NAMES, RoutineMode, clip_state
 
 
@@ -73,6 +79,7 @@ class CoffeeParticleFilter:
         seed: int = 20260908,
         *,
         record_history: bool = False,
+        memory_config: SharedContextMemoryConfig = DEFAULT_SHARED_CONTEXT_MEMORY,
     ):
         self.rng = np.random.default_rng(seed)
         self.n = particle_count
@@ -89,6 +96,7 @@ class CoffeeParticleFilter:
         self.modes = np.zeros(self.n, dtype=int)
         self.weights = np.ones(self.n, dtype=float) / self.n
         self.started = False
+        self.memory_config = memory_config
 
         self.record_history = bool(record_history)
         self.history: list[ParticleHistoryStep] = []
@@ -109,27 +117,31 @@ class CoffeeParticleFilter:
                 new_modes[idx] = np.searchsorted(np.cumsum(self.transition[mode]), u[idx])
 
         self.modes = new_modes
+        previous_c = self.particles[:, 3].copy()
         mean_reversion = 0.035 * (self.target - self.particles)
+        mean_reversion[:, 3] = 0.0
         mode_effect = np.zeros_like(self.particles)
 
-        mode_effect[self.modes == RoutineMode.BUSY] = [-0.005, -0.008, 0.000, -0.002, -0.002, 0.008]
-        mode_effect[self.modes == RoutineMode.LEAVE] = [-0.008, -0.010, 0.000, -0.005, -0.005, 0.005]
-        mode_effect[self.modes == RoutineMode.SPECIAL] = [0.010, 0.012, 0.005, 0.015, 0.020, -0.004]
-        mode_effect[self.modes == RoutineMode.RECOVERY] = [0.006, 0.006, 0.003, 0.008, 0.005, -0.005]
+        mode_effect[self.modes == RoutineMode.BUSY] = [-0.005, -0.008, 0.000, 0.000, -0.002, 0.008]
+        mode_effect[self.modes == RoutineMode.LEAVE] = [-0.008, -0.010, 0.000, 0.000, -0.005, 0.005]
+        mode_effect[self.modes == RoutineMode.SPECIAL] = [0.010, 0.012, 0.005, 0.000, 0.020, -0.004]
+        mode_effect[self.modes == RoutineMode.RECOVERY] = [0.006, 0.006, 0.003, 0.000, 0.005, -0.005]
 
         controlled_effect = action_effect(actions)
-
-        self.particles = clip_state(
-            self.particles
-            + mean_reversion
-            + mode_effect
-            + controlled_effect
-            + self.rng.normal(
-                0.0,
-                [0.015, 0.017, 0.011, 0.015, 0.021, 0.011],
-                size=(self.n, 6),
-            )
+        process_noise = self.rng.normal(
+            0.0,
+            [0.015, 0.017, 0.011, 0.000, 0.021, 0.011],
+            size=(self.n, 6),
         )
+
+        proposal = self.particles + mean_reversion + mode_effect + controlled_effect + process_noise
+        proposal[:, 3] = shared_context_step(
+            previous_c,
+            shared_context_input(actions),
+            config=self.memory_config,
+            noise=self.rng.normal(0.0, self.memory_config.process_noise, size=self.n),
+        )
+        self.particles = clip_state(proposal)
 
     def _remember_filtered_cloud(self, w: np.ndarray) -> None:
         """Save only what the smoother needs, and only when invited. 🧺🔭"""
