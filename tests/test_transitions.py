@@ -48,16 +48,16 @@ def test_same_previous_mode_can_roll_different_dice_under_different_contexts():
     assert not np.allclose(exception, recovery)
 
 
-def test_callback_can_make_special_more_plausible_without_forcing_it():
+def test_explicit_special_event_can_make_special_more_plausible_without_forcing_it():
     ordinary = context_transition_probabilities(0, COZY_STATE)
-    callback = context_transition_probabilities(
+    special = context_transition_probabilities(
         0,
         COZY_STATE,
-        RoutineActions(a_callback=1.0),
+        context=TransitionContext(special_event=1.0),
     )
 
-    assert callback[3] > ordinary[3]
-    assert callback[3] < 1.0
+    assert special[3] > ordinary[3]
+    assert special[3] < 1.0
 
 
 def test_regime_logits_are_explicit_external_context_not_a_secret_story():
@@ -113,5 +113,5 @@ def test_particle_filter_keeps_fixed_mode_baseline_unless_context_model_is_invit
 
 
 def test_bad_transition_context_gets_a_cute_nope():
-    with pytest.raises(ValueError, match="Disturbance context"):
+    with pytest.raises(ValueError, match="Transition context 'disturbance'"):
         TransitionContext(disturbance=1.5)
