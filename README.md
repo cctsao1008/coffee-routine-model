@@ -128,6 +128,29 @@ Normal · Busy · Leave · Special · Recovery
 
 The soft-state machinery now lives together in `coffee_brain/`, while the runnable little toys live in `tiny_tools/`. Tiny things deserve tiny drawers. 🧺🐾
 
+## One tiny public door 🏛️☕
+
+Architecture **`0.3`** freezes one stable top-level boundary:
+
+```python
+from coffee_brain import CSRDM, CSRDMConfig
+
+brain = CSRDM(CSRDMConfig())
+result = brain.step(["+1?", "+", "☕", "👍"])
+
+print(result.posterior.mean)
+```
+
+`CSRDMConfig` gathers dynamics, memory, observation, transition, inference, smoothing, and learning policy into one immutable little tree. `ExperimentSpec` and `ExperimentResult` give future runs one reproducible passport with a deterministic recipe fingerprint. 🛂🐣
+
+The full architecture contract lives in [`docs/architecture.md`](docs/architecture.md).
+
+```text
+Public API != internal drawer layout.
+Model definition = code + config.
+Metric without recipe = mystery bean. XD
+```
+
 ## Tiny particle friends 🐣🐣🐣
 
 We do **not** know the true hidden state.
@@ -293,7 +316,7 @@ python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-The nest checks state math, Particle Filter invariants, protocol adaptation, ambiguous events, missing clues, reproducible seeds, every little weather card, the painter, and small end-to-end scenario picnics.
+The nest checks state math, Particle Filter invariants, protocol adaptation, ambiguous events, missing clues, reproducible seeds, every little weather card, the painter, the public architecture contract, and small end-to-end scenario picnics.
 
 When the command is green:
 
