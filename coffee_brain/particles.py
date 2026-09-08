@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import Mapping
 
 import numpy as np
 
+from .actions import RoutineActions, action_effect
 from .model import MODE_NAMES, RoutineMode, clip_state
 
 
@@ -72,7 +74,12 @@ class CoffeeParticleFilter:
         self.weights = np.ones(self.n, dtype=float) / self.n
         self.started = False
 
-    def _predict(self) -> None:
+    def _predict(
+        self,
+        actions: RoutineActions | Mapping[str, float] | None = None,
+    ) -> None:
+        """Move the tiny hidden world one step, optionally nudged by observable actions. 🎮🌱"""
+
         u = self.rng.random(self.n)
         new_modes = np.empty(self.n, dtype=int)
 
@@ -90,10 +97,13 @@ class CoffeeParticleFilter:
         mode_effect[self.modes == RoutineMode.SPECIAL] = [0.010, 0.012, 0.005, 0.015, 0.020, -0.004]
         mode_effect[self.modes == RoutineMode.RECOVERY] = [0.006, 0.006, 0.003, 0.008, 0.005, -0.005]
 
+        controlled_effect = action_effect(actions)
+
         self.particles = clip_state(
             self.particles
             + mean_reversion
             + mode_effect
+            + controlled_effect
             + self.rng.normal(
                 0.0,
                 [0.015, 0.017, 0.011, 0.015, 0.021, 0.011],
@@ -101,11 +111,20 @@ class CoffeeParticleFilter:
             )
         )
 
-    def update(self, obs: dict) -> Posterior:
-        """Update from whatever clues are actually present. Missing stays missing. 🌱"""
+    def update(
+        self,
+        obs: dict,
+        actions: RoutineActions | Mapping[str, float] | None = None,
+    ) -> Posterior:
+        """Update from present clues and optional actions from the preceding transition. 🌱
+
+        ``actions`` are treated as known controls that moved the routine from the
+        previous step toward the current observation. On the very first update there
+        is no previous transition, so the action basket patiently waits outside. ☕🎮
+        """
 
         if self.started:
-            self._predict()
+            self._predict(actions)
         self.started = True
 
         invite = _little_clue(obs, "invite", "cheng_invite")

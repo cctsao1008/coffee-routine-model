@@ -4,9 +4,11 @@ import argparse
 import csv
 import math
 from pathlib import Path
+from typing import Sequence
 
 import numpy as np
 
+from coffee_brain.actions import RoutineActions, action_effect
 from coffee_brain.model import MODE_NAMES, RoutineMode, relationship_index
 from coffee_brain.particles import CoffeeParticleFilter
 from coffee_brain.scenarios import DEFAULT_SCENARIO, CoffeeScenario, get_scenario, scenario_names
@@ -38,9 +40,23 @@ def _wiggle(logit: float, scenario: CoffeeScenario, rng: np.random.Generator) ->
     return float(logit + rng.normal(0.0, scenario.logit_noise_sigma))
 
 
-def generate_truth(days: int, rng: np.random.Generator, scenario: CoffeeScenario):
-    """Grow one synthetic coffee timeline inside the selected tiny universe. ☕🌱"""
+def generate_truth(
+    days: int,
+    rng: np.random.Generator,
+    scenario: CoffeeScenario,
+    actions: Sequence[RoutineActions] | None = None,
+):
+    """Grow one synthetic coffee timeline inside the selected tiny universe. ☕🌱
 
+    When an action schedule is supplied, action ``t-1`` nudges the transition into
+    state ``t``. With no schedule, the old neutral synthetic baseline stays exactly
+    where it was. Tiny controls are opt-in too. XD
+    """
+
+    if actions is not None and len(actions) != days:
+        raise ValueError("🎮🐾 Action schedule must have one tiny basket per synthetic day.")
+
+    action_schedule = actions if actions is not None else [RoutineActions() for _ in range(days)]
     states = np.zeros((days, 6))
     modes = np.zeros(days, dtype=int)
     states[0] = [0.78, 0.68, 0.88, 0.70, 0.36, 0.14]
@@ -53,6 +69,7 @@ def generate_truth(days: int, rng: np.random.Generator, scenario: CoffeeScenario
             states[t - 1]
             + scenario.mean_reversion * (scenario.target - states[t - 1])
             + mode_effect
+            + action_effect(action_schedule[t - 1])
             + rng.normal(0.0, scenario.process_noise),
             0.02,
             0.98,
