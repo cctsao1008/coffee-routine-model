@@ -43,18 +43,33 @@ H0: one mean regime for the whole timeline
 H1: one mean before tau + another mean after tau
 ```
 
-The evidence score is deliberately simple and inspectable:
+The evidence score is deliberately simple and inspectable. Each active clue first gets its own BIC-like gain:
 
 ```text
-score(tau)
-    = 0.5 * [SSE(H0) - SSE(H1) - d * log(T)]
+gain_j(tau)
+    = 0.5 * [SSE_j(H0) - SSE_j(H1) - log(T)]
 ```
 
-where:
+where `j` is one observable clue and `T` is the number of days.
 
-- `T` = number of days
-- `d` = number of active observable features
-- `d * log(T)` = a BIC-like complexity penalty
+Then:
+
+```text
+score(tau) = sum of positive gain_j(tau)
+```
+
+If no clue earns a positive gain, the least-negative clue carries the score so `no change` still receives stronger evidence.
+
+This makes the detector **sparse across clue channels**:
+
+```text
+one persistent delay shift
+    -> pays one complexity penalty
+
+one persistent delay shift
+    -> does NOT pay eleven penalties
+       for ten clues that stayed ordinary XD
+```
 
 The score is **not** treated as exact physical truth. It is an approximate log-evidence score for this detector family.
 
@@ -87,7 +102,7 @@ A one-day spike may improve one split a little, but it usually cannot overcome:
 
 ```text
 minimum segment length
-+ complexity penalty
++ per-clue complexity penalty
 + prior spread across many candidate days
 ```
 
@@ -131,6 +146,7 @@ This first detector is intentionally narrow:
 - offline, not online
 - one persistent change point at a time
 - mainly sensitive to persistent mean shifts in observable features
+- sparse across clue channels
 - does not explain *why* the generating process changed
 - does not yet make mode-transition dynamics regime-dependent
 
