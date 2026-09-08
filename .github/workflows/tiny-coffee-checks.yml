@@ -69,6 +69,12 @@ jobs:
           --after sleepy-reply-season
           --seed 20260908
           --out .tiny-change-point
+      - name: 🌦️ Let fixed dice race context-aware dice
+        run: >-
+          python -m tiny_tools.compare_transitions
+          --days 240
+          --seed 20260908
+          --out .tiny-transitions
       - name: 🌪️ Send the model on a tiny chaos picnic
         run: >-
           python -m tiny_tools.simulate
@@ -102,4 +108,7 @@ jobs:
           test -f .tiny-change-point/boundary-score.csv
           test -f .tiny-change-point/summary.csv
           test -f .tiny-change-point/change-point.png
+          test -f .tiny-transitions/transitions.csv
+          test -f .tiny-transitions/summary.csv
+          test -f .tiny-transitions/transition-race.png
           echo "☕✨ All tiny checks are happy."
