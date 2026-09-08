@@ -59,6 +59,16 @@ jobs:
           --scenario all
           --seed 20260908
           --out .tiny-calibration
+      - name: ✂️ Ask whether one tiny world quietly became another
+        run: >-
+          python -m tiny_tools.detect_change_points
+          --days 180
+          --change-day 91
+          --min-segment 24
+          --before cozy-normal-year
+          --after sleepy-reply-season
+          --seed 20260908
+          --out .tiny-change-point
       - name: 🌪️ Send the model on a tiny chaos picnic
         run: >-
           python -m tiny_tools.simulate
@@ -89,4 +99,7 @@ jobs:
           test -f .tiny-calibration/continuous-summary.csv
           test -f .tiny-calibration/scenario-summary.csv
           test -f .tiny-calibration/baseline-config.json
+          test -f .tiny-change-point/boundary-score.csv
+          test -f .tiny-change-point/summary.csv
+          test -f .tiny-change-point/change-point.png
           echo "☕✨ All tiny checks are happy."
