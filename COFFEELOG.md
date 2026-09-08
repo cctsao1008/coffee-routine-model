@@ -23,6 +23,8 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - gave the hidden-state transition an explicit action basket so known actions can move the tiny world instead of hiding inside observation likelihoods ☕🎮
 - added opt-in particle ancestry plus a fixed-lag genealogical smoother so later clues can refine earlier latent-state uncertainty 🔭🐣
 - gave `C = Shared Context` its own accumulation / decay / saturation memory reservoir instead of treating it like an ordinary daily state 🧠🌱
+- gathered every estimator-side observation probability knob into one explicit immutable configuration tray 🎛️☕
+- added a scenario-wise calibration bench with Brier score, log loss, reliability bins, ECE, and continuous residual diagnostics 🐣📏
 
 ## 🐣 Tiny Fixes
 
@@ -34,6 +36,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - protocol moments can now be split into a `RoutineActions` basket and an observation basket without asking the model to guess intention 🧺🎮👀
 - smoothing keeps filtered and hindsight posteriors separate, because learning later is not the same thing as rewriting yesterday 🎩
 - direct action drift no longer sneaks into `C`; memory-building actions enter through `shared_context_input()` instead 🧠🧺
+- scattered estimator likelihood constants no longer hide inside the Particle Filter; the filter now reads `ObservationModelConfig` explicitly 🎛️🐣
 
 ## 🌱 Recovery Improvements
 
@@ -54,6 +57,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - gave GitHub Actions tiny coffee robot names because CI deserves a personality too 🤖☕
 - taught the tiny robot to compare filtering with hindsight and paint a little `hindsight.png` 🔭🖼️
 - added a tiny memory inspector that paints build / quiet / long-pause phases without turning silence into amnesia 🧠🖼️
+- taught the tiny robot to ask whether probabilities keep their promises across every coffee-weather world 🎛️🌦️
 
 ## 🧺 Tidying
 
@@ -61,9 +65,10 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added generic source notes without names, screenshots, timestamps, or raw messages 🌿
 - added tiny protocol bridge docs and adapter contract notes
 - added reproducible scenario / seed / particle-count metadata
-- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, particle smoothing, and shared-context memory ✅
+- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, particle smoothing, shared-context memory, and observation calibration ✅
 - taught little robots to repack the reference CSV basket and repaint the gallery reproducibly
 - tucked model internals into `coffee_brain/` and runnable helpers into `tiny_tools/` so the root can breathe 🧺☕
+- preserved the original hand-set observation baseline as an inspectable config plus JSON export for reproducible future learning experiments 🎛️🧺
 
 ---
 
