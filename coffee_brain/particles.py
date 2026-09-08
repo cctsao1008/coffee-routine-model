@@ -42,6 +42,19 @@ def _little_clue(obs: dict, key: str, legacy_key: str | None = None):
     return value
 
 
+def _validated_fixed_transition(matrix: np.ndarray | None) -> np.ndarray:
+    """Keep optional fixed-dice perturbations honest and row-normalized. 🎲🐾"""
+
+    if matrix is None:
+        return CoffeeParticleFilter.transition.copy()
+    tiny = np.asarray(matrix, dtype=float)
+    if tiny.shape != (5, 5):
+        raise ValueError("🐾 Fixed transition matrix must be 5x5.")
+    if np.any(tiny <= 0.0) or not np.allclose(tiny.sum(axis=1), 1.0):
+        raise ValueError("🐾 Fixed transition rows must be positive and sum to 1.")
+    return tiny.copy()
+
+
 @dataclass
 class Posterior:
     mean: np.ndarray
@@ -80,6 +93,7 @@ class CoffeeParticleFilter:
     )
 
     target = np.array([0.80, 0.72, 0.90, 0.76, 0.42, 0.10], dtype=float)
+    process_noise_sigma = np.array([0.015, 0.017, 0.011, 0.000, 0.021, 0.011], dtype=float)
 
     def __init__(
         self,
@@ -90,7 +104,11 @@ class CoffeeParticleFilter:
         memory_config: SharedContextMemoryConfig = DEFAULT_SHARED_CONTEXT_MEMORY,
         observation_config: ObservationModelConfig = DEFAULT_OBSERVATION_MODEL,
         transition_config: ContextTransitionConfig | None = None,
+        fixed_transition: np.ndarray | None = None,
+        process_noise_scale: float = 1.0,
     ):
+        if process_noise_scale <= 0.0:
+            raise ValueError("🐾 process_noise_scale must be positive.")
         self.rng = np.random.default_rng(seed)
         self.n = particle_count
         self.particles = np.tile(
@@ -109,6 +127,8 @@ class CoffeeParticleFilter:
         self.memory_config = memory_config
         self.observation_config = observation_config
         self.transition_config = transition_config
+        self.fixed_transition = _validated_fixed_transition(fixed_transition)
+        self.process_noise_scale = float(process_noise_scale)
 
         self.record_history = bool(record_history)
         self.history: list[ParticleHistoryStep] = []
@@ -128,7 +148,7 @@ class CoffeeParticleFilter:
             for mode in range(5):
                 idx = np.where(self.modes == mode)[0]
                 if len(idx):
-                    new_modes[idx] = np.searchsorted(np.cumsum(self.transition[mode]), u[idx])
+                    new_modes[idx] = np.searchsorted(np.cumsum(self.fixed_transition[mode]), u[idx])
             self.modes = new_modes
         else:
             self.modes = sample_next_modes(
@@ -153,7 +173,7 @@ class CoffeeParticleFilter:
         controlled_effect = action_effect(actions)
         process_noise = self.rng.normal(
             0.0,
-            [0.015, 0.017, 0.011, 0.000, 0.021, 0.011],
+            self.process_noise_sigma * self.process_noise_scale,
             size=(self.n, 6),
         )
 
