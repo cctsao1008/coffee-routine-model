@@ -167,6 +167,40 @@ Different lengths automatically go to their own tiny basket:
 examples/<days>-cute-days/
 ```
 
+## Pick your coffee weather 🌦️☕
+
+The synthetic world can now have different moods without teaching the Particle Filter the answer key.
+
+```text
+Synthetic World != Estimator Assumptions
+```
+
+Available tiny weather:
+
+```text
+🌤️ cozy-normal-year
+🌧️ super-busy-month
+🏖️ long-leave-and-return
+💤 sleepy-reply-season
+🎂 special-day-sparkle
+🌪️ noisy-chaos-week
+🌱 slow-recovery
+```
+
+For example:
+
+```bash
+python simulate.py --scenario slow-recovery --days 365
+```
+
+Alternate worlds get their own little cubby so they do not overwrite the cozy baseline:
+
+```text
+examples/365-cute-days/slow-recovery/
+```
+
+Same seed + same scenario + same settings = same tiny adventure. 🐾✨
+
 ## Files 🧺
 
 ```text
@@ -175,6 +209,7 @@ coffee-routine-model/
 ├── CUTE_RULES.md
 ├── model.py
 ├── particles.py
+├── scenarios.py
 ├── simulate.py
 ├── requirements.txt
 ├── docs/
@@ -205,6 +240,12 @@ Want to invite even more tiny particle friends?
 
 ```bash
 python simulate.py --particles 10000
+```
+
+Want different weather?
+
+```bash
+python simulate.py --scenario noisy-chaos-week
 ```
 
 ## Related little project 🐾
