@@ -21,6 +21,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - taught `tiny_tools/visualize.py` to paint the coffee year into a little gallery wall 🎨🖼️
 - planted a tiny observability garden that hides one clue family at a time and checks which soft states can actually still be seen 🐣🔍
 - gave the hidden-state transition an explicit action basket so known actions can move the tiny world instead of hiding inside observation likelihoods ☕🎮
+- added opt-in particle ancestry plus a fixed-lag genealogical smoother so later clues can refine earlier latent-state uncertainty 🔭🐣
 
 ## 🐣 Tiny Fixes
 
@@ -30,6 +31,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - opt-in / pass likelihood is only scored when the tiny response door was actually open 🚪☕
 - story-specific observation names became generic `invite` / `opt_in`, while old synthetic baskets still get a polite compatibility hug 🧺
 - protocol moments can now be split into a `RoutineActions` basket and an observation basket without asking the model to guess intention 🧺🎮👀
+- smoothing keeps filtered and hindsight posteriors separate, because learning later is not the same thing as rewriting yesterday 🎩
 
 ## 🌱 Recovery Improvements
 
@@ -48,6 +50,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - made README, docs, commits, CLI messages, tests, workflows, issues, and plots live in the same tiny coffee universe
 - added the 365-day summary picture to the README front porch
 - gave GitHub Actions tiny coffee robot names because CI deserves a personality too 🤖☕
+- taught the tiny robot to compare filtering with hindsight and paint a little `hindsight.png` 🔭🖼️
 
 ## 🧺 Tidying
 
@@ -55,7 +58,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added generic source notes without names, screenshots, timestamps, or raw messages 🌿
 - added tiny protocol bridge docs and adapter contract notes
 - added reproducible scenario / seed / particle-count metadata
-- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, and recovery dynamics ✅
+- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, and particle smoothing ✅
 - taught little robots to repack the reference CSV basket and repaint the gallery reproducibly
 - tucked model internals into `coffee_brain/` and runnable helpers into `tiny_tools/` so the root can breathe 🧺☕
 
