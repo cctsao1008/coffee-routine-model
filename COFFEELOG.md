@@ -26,6 +26,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - gathered every estimator-side observation probability knob into one explicit immutable configuration tray 🎛️☕
 - added a scenario-wise calibration bench with Brier score, log loss, reliability bins, ECE, and continuous residual diagnostics 🐣📏
 - gave the tiny coffee brain an offline change-point detector that can compare `no change` with one persistent regime boundary ✂️🐣
+- added optional context-aware mode transitions so the same previous mode can roll different stochastic dice under different known weather 🌦️🎲
 
 ## 🐣 Tiny Fixes
 
@@ -39,6 +40,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - direct action drift no longer sneaks into `C`; memory-building actions enter through `shared_context_input()` instead 🧠🧺
 - scattered estimator likelihood constants no longer hide inside the Particle Filter; the filter now reads `ObservationModelConfig` explicitly 🎛️🐣
 - change-point evidence pays a complexity penalty and spreads prior mass across candidate days so one loud afternoon does not automatically become a whole new universe ✂️🌧️
+- voluntary `pass` no longer doubles as hidden Leave evidence, ordinary delivery + acknowledgment no longer masquerades as Recovery, and Special needs explicit special-event context 🌿🎲
 
 ## 🌱 Recovery Improvements
 
@@ -61,6 +63,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added a tiny memory inspector that paints build / quiet / long-pause phases without turning silence into amnesia 🧠🖼️
 - taught the tiny robot to ask whether probabilities keep their promises across every coffee-weather world 🎛️🌦️
 - added a little `change-point.png` where the scissors can show which boundary they currently believe in ✂️🖼️
+- built a tiny transition weather race where fixed dice and context-aware dice are judged by NLL, Brier score, and top-1 accuracy instead of one fake victory number 🌦️🏁
 
 ## 🧺 Tidying
 
@@ -68,11 +71,12 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added generic source notes without names, screenshots, timestamps, or raw messages 🌿
 - added tiny protocol bridge docs and adapter contract notes
 - added reproducible scenario / seed / particle-count metadata
-- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, particle smoothing, shared-context memory, observation calibration, and change-point detection ✅
+- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, particle smoothing, shared-context memory, observation calibration, change-point detection, and context-aware mode transitions ✅
 - taught little robots to repack the reference CSV basket and repaint the gallery reproducibly
 - tucked model internals into `coffee_brain/` and runnable helpers into `tiny_tools/` so the root can breathe 🧺☕
 - preserved the original hand-set observation baseline as an inspectable config plus JSON export for reproducible future learning experiments 🎛️🧺
 - kept the first change-point detector deliberately offline and single-boundary so the little scissors stay inspectable before they grow more blades ✂️🧺
+- preserved the original fixed transition matrix as the default Particle Filter baseline; context-aware transitions are explicit opt-in instead of silently changing old baskets 🎲🧺
 
 ---
 
