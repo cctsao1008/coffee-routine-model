@@ -90,7 +90,7 @@ The particles update their beliefs, unlikely guesses fade away, and plausible gu
 
 That's the **Particle Filter**.
 
-Cute outside. Probabilistic inside. ✨
+**Cute outside. Probabilistic inside. ✨**
 
 ## A tiny but important rule 🌿
 
@@ -104,7 +104,9 @@ The interesting question is whether the system can naturally recover.
 
 ## 100 cute days 🗓️☕
 
-The first demo contains 100 synthetic days:
+The first demo runs **100 synthetic days**.
+
+`simulate.py` generates:
 
 ```text
 examples/100-cute-days/
@@ -112,6 +114,8 @@ examples/100-cute-days/
 ├── output.csv
 └── metrics.csv
 ```
+
+A baseline `metrics.csv` is already committed so the first reference result is easy to inspect.
 
 The current baseline uses **6,000 particles** and estimates the six hidden states from behavior-level observations only.
 
@@ -136,10 +140,10 @@ coffee-routine-model/
 │   └── how-the-coffee-works.md
 └── examples/
     └── 100-cute-days/
-        ├── input.csv
-        ├── output.csv
         └── metrics.csv
 ```
+
+Run the simulator and the generated `input.csv` / `output.csv` will join it. ☕
 
 ## Run it ☕➡️🐣
 
