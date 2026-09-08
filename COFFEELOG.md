@@ -31,6 +31,10 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added a six-state chair test with posterior correlation, held-out leave-one-state-out reconstruction, five-dimensional projections, observation NLL/Brier, and Recovery-mode fidelity 🪑🐣
 - gave ten observation knobs a bounded synthetic learning spoon with held-out calibration checks and approximate parameter uncertainty 🎚️🥄
 - opened a model arena where six tiny competitors share one synthetic track and keep RMSE, calibration, mode, recovery, runtime, and memory trade-offs separate 🗺️🏁
+- added one stable `CSRDM` public facade so ordinary callers can use protocol events without opening every internal drawer 🏛️☕
+- gathered dynamics, memory, observation, transition, inference, smoothing, and learning policy into one `CSRDMConfig` tree 🧺🧠
+- gave experiments a deterministic `ExperimentSpec` fingerprint and portable `ExperimentResult` receipt 🛂🧪
+- declared architecture `0.3` as the first architecture-complete baseline and drew its contract in `docs/architecture.md` 🗺️🏛️
 
 ## 🐣 Tiny Fixes
 
@@ -48,6 +52,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - exposed fixed-transition and process-noise knobs explicitly so sensitivity tests can perturb assumptions without monkey-patching the tiny brain 🧪🔧
 - parameter learning freezes structural slopes, state dynamics, transitions, memory constants, and state meanings instead of letting one optimizer quietly rewrite the ontology 🎚️🔒
 - arena metrics leave non-comparable quantities as `N/A` instead of punishing simpler models with fake zeros 🗺️🙈
+- architecture cleanup preserves the fixed-transition baseline and keeps context-aware transitions opt-in instead of quietly changing old reference baskets 🏛️🎲
 
 ## 🌱 Recovery Improvements
 
@@ -75,6 +80,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added a sensitivity heatmap plus a posterior-correlation chair map so invisible model coupling can finally show its face 🗺️🪑
 - added a separate **Deep Coffee Diagnostics** workflow for longer 120-day / 800-particle sensitivity and seven-world chair exams 🔬☕
 - taught the deep-exam robot to learn a few bounded probability knobs and run a six-model comparison arena without awarding a fake universal crown 🎚️🗺️👑🙅
+- put the architecture version and public-door example on the README front porch so callers know where to knock 🏛️🚪🐣
 
 ## 🧺 Tidying
 
@@ -82,7 +88,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added generic source notes without names, screenshots, timestamps, or raw messages 🌿
 - added tiny protocol bridge docs and adapter contract notes
 - added reproducible scenario / seed / particle-count metadata
-- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, particle smoothing, shared-context memory, observation calibration, change-point detection, context-aware mode transitions, sensitivity mapping, state redundancy, bounded parameter learning, and model-arena comparison ✅
+- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, particle smoothing, shared-context memory, observation calibration, change-point detection, context-aware mode transitions, sensitivity mapping, state redundancy, bounded parameter learning, model-arena comparison, and the public architecture contract ✅
 - taught little robots to repack the reference CSV basket and repaint the gallery reproducibly
 - tucked model internals into `coffee_brain/` and runnable helpers into `tiny_tools/` so the root can breathe 🧺☕
 - preserved the original hand-set observation baseline as an inspectable config plus JSON export for reproducible future learning experiments 🎛️🧺
@@ -91,6 +97,8 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - kept reduced-state experiments labeled as projection/reconstruction diagnostics instead of pretending they are already fully retrained five-state filters 🪑🧺
 - kept learned configs in the normal `ObservationModelConfig` shape so optimization does not create a secret second model format 🎚️🧺
 - made the arena report synthetic-truth training flags, latent dimensions, hybrid/smoothing flags, learned parameter count, runtime, and memory proxy beside prediction metrics 🗺️📏
+- separated the stable public API from specialist internals so future refactors can move drawers without moving the front door 🚪🧺
+- made complete config snapshots JSON-shaped and experiment fingerprints independent of clocks, filenames, and display labels 📸🛂
 
 ---
 
