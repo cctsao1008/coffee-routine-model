@@ -34,7 +34,9 @@ def test_reduced_variant_scorecard_keeps_tradeoffs_visible():
     assert "reconstruct-E-from-other-5" in names
     assert "reconstruct-F-from-other-5" in names
     assert all("binary_observation_NLL" in row for row in report.variant_rows)
+    assert all("binary_observation_Brier" in row for row in report.variant_rows)
     assert all("relationship_RMSE" in row for row in report.variant_rows)
+    assert all("recovery_relationship_RMSE" in row for row in report.variant_rows)
 
 
 def test_short_chair_audition_gets_a_cute_nope():
