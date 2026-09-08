@@ -5,8 +5,8 @@ from particles import CoffeeParticleFilter
 
 def cozy_observation(**overrides):
     obs = {
-        "cheng_invite": 1,
-        "linda_opt_in": 1,
+        "invite": 1,
+        "opt_in": 1,
         "text_reply": 1,
         "reaction": 1,
         "state_share": 0,
@@ -56,7 +56,7 @@ def test_resampling_never_loses_any_tiny_particle_friends():
 
     for i in range(12):
         obs = cozy_observation(
-            linda_opt_in=i % 2,
+            opt_in=i % 2,
             pass_event=(i + 1) % 2,
             reaction=i % 2,
             response_delay_min=5.0 + i * 20.0,
@@ -75,7 +75,7 @@ def test_same_seed_gives_the_same_tiny_guess_parade():
     observations = [
         cozy_observation(),
         cozy_observation(text_reply=0, reaction=0, response_delay_min=75.0),
-        cozy_observation(pass_event=1, linda_opt_in=0, routine_maintenance=0),
+        cozy_observation(pass_event=1, opt_in=0, routine_maintenance=0),
         cozy_observation(resume_signal=1, response_delay_min=12.0),
     ]
 
@@ -93,8 +93,8 @@ def test_same_seed_gives_the_same_tiny_guess_parade():
 def test_everyday_pass_and_resume_clues_do_not_make_the_nest_explode():
     pf = CoffeeParticleFilter(particle_count=300, seed=7)
     observations = [
-        cozy_observation(pass_event=1, linda_opt_in=0, routine_maintenance=0),
-        cozy_observation(cheng_invite=0, linda_opt_in=0, text_reply=0, reaction=0),
+        cozy_observation(pass_event=1, opt_in=0, routine_maintenance=0),
+        cozy_observation(invite=0, opt_in=0, text_reply=0, reaction=0),
         cozy_observation(resume_signal=1, routine_maintenance=1, response_delay_min=10.0),
     ]
 
@@ -102,3 +102,32 @@ def test_everyday_pass_and_resume_clues_do_not_make_the_nest_explode():
         posterior = pf.update(obs)
         assert np.all(np.isfinite(posterior.mean))
         assert np.all((posterior.mean >= 0.01) & (posterior.mean <= 0.99))
+
+
+def test_missing_clues_are_allowed_to_stay_mysterious():
+    pf = CoffeeParticleFilter(particle_count=300, seed=77)
+
+    posterior = pf.update({"invite": 1, "opt_in": None, "reaction": None})
+
+    assert np.all(np.isfinite(posterior.mean))
+    assert np.isclose(posterior.mode_probabilities.sum(), 1.0)
+
+
+def test_old_baskets_still_get_a_polite_little_legacy_hug():
+    pf = CoffeeParticleFilter(particle_count=300, seed=88)
+
+    posterior = pf.update({
+        "cheng_invite": 1,
+        "linda_opt_in": 1,
+        "text_reply": 1,
+        "reaction": 1,
+        "state_share": 0,
+        "proactive_update": 0,
+        "routine_maintenance": 1,
+        "pass_event": 0,
+        "resume_signal": 0,
+        "tone_warmth": 0.5,
+        "response_delay_min": 20.0,
+    })
+
+    assert np.all(np.isfinite(posterior.mean))
