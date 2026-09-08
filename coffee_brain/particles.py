@@ -21,6 +21,11 @@ from .observation_model import (
     predict_delay_log_mean,
     predict_warmth_mean,
 )
+from .transitions import (
+    ContextTransitionConfig,
+    TransitionContext,
+    sample_next_modes,
+)
 
 
 def _bern_loglik(y: int, p: np.ndarray) -> np.ndarray:
@@ -84,6 +89,7 @@ class CoffeeParticleFilter:
         record_history: bool = False,
         memory_config: SharedContextMemoryConfig = DEFAULT_SHARED_CONTEXT_MEMORY,
         observation_config: ObservationModelConfig = DEFAULT_OBSERVATION_MODEL,
+        transition_config: ContextTransitionConfig | None = None,
     ):
         self.rng = np.random.default_rng(seed)
         self.n = particle_count
@@ -102,6 +108,7 @@ class CoffeeParticleFilter:
         self.started = False
         self.memory_config = memory_config
         self.observation_config = observation_config
+        self.transition_config = transition_config
 
         self.record_history = bool(record_history)
         self.history: list[ParticleHistoryStep] = []
@@ -110,18 +117,29 @@ class CoffeeParticleFilter:
     def _predict(
         self,
         actions: RoutineActions | Mapping[str, float] | None = None,
+        transition_context: TransitionContext | Mapping[str, object] | None = None,
     ) -> None:
-        """Move the tiny hidden world one step, optionally nudged by observable actions. 🎮🌱"""
+        """Move the hidden world one step, optionally letting context nudge the mode dice. 🎲🌦️"""
 
-        u = self.rng.random(self.n)
-        new_modes = np.empty(self.n, dtype=int)
+        if self.transition_config is None:
+            # Reproducible original fixed-matrix baseline. 🧺🎲
+            u = self.rng.random(self.n)
+            new_modes = np.empty(self.n, dtype=int)
+            for mode in range(5):
+                idx = np.where(self.modes == mode)[0]
+                if len(idx):
+                    new_modes[idx] = np.searchsorted(np.cumsum(self.transition[mode]), u[idx])
+            self.modes = new_modes
+        else:
+            self.modes = sample_next_modes(
+                self.rng,
+                self.modes,
+                self.particles,
+                actions,
+                transition_context,
+                config=self.transition_config,
+            )
 
-        for mode in range(5):
-            idx = np.where(self.modes == mode)[0]
-            if len(idx):
-                new_modes[idx] = np.searchsorted(np.cumsum(self.transition[mode]), u[idx])
-
-        self.modes = new_modes
         previous_c = self.particles[:, 3].copy()
         mean_reversion = 0.035 * (self.target - self.particles)
         mean_reversion[:, 3] = 0.0
@@ -173,16 +191,21 @@ class CoffeeParticleFilter:
         self,
         obs: dict,
         actions: RoutineActions | Mapping[str, float] | None = None,
+        transition_context: TransitionContext | Mapping[str, object] | None = None,
     ) -> Posterior:
-        """Update from present clues and optional actions from the preceding transition. 🌱
+        """Update from present clues and optional controls from the preceding transition. 🌱
 
-        ``actions`` are treated as known controls that moved the routine from the
-        previous step toward the current observation. On the very first update there
-        is no previous transition, so the action basket patiently waits outside. ☕🎮
+        ``actions`` are known controls that may move both soft-state dynamics and,
+        when a context transition model is enabled, next-mode probabilities.
+        ``transition_context`` carries explicit disturbance / regime information; it
+        never gets inferred by telepathy. XD
+
+        On the first update there is no previous transition, so both baskets wait
+        politely outside. ☕🎮
         """
 
         if self.started:
-            self._predict(actions)
+            self._predict(actions, transition_context)
         self.started = True
 
         invite = _little_clue(obs, "invite", "cheng_invite")
