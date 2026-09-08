@@ -54,6 +54,50 @@ And somehow...
 
 This repo tries to model that little rhythm without pretending people are deterministic machines.
 
+## Tiny protocol bridge ☕➡️🧠➡️🐣
+
+The companion [`coffee-routine-protocol`](https://github.com/cctsao1008/coffee-routine-protocol) speaks tiny coffee language:
+
+```text
++1?
++
+要
+對
+👍
+pass
+☕
+resume
+```
+
+`protocol_adapter.py` turns those observable events into behavior-level clues:
+
+```python
+from protocol_adapter import coffee_to_observation
+
+obs = coffee_to_observation(["+1?", "+", "☕", "👍"])
+```
+
+which gives the model a little basket like:
+
+```text
+invite              = 1
+opt_in              = 1
+routine_maintenance = 1
+reaction            = 1
+```
+
+The important bit:
+
+```text
+Protocol event != latent state
+```
+
+If a clue is missing, it stays `None`.  
+If a token is ambiguous, it stays ambiguous.  
+Silence is not secretly converted into yes or no. 🌱
+
+Even `👍` is contextual: after `+1?` it can be an opt-in; after `☕` it can be a reaction. A lonely `👍` is allowed to remain mysterious. XD
+
 ## The tiny brain inside 🧠✨
 
 The model watches six soft states:
@@ -102,6 +146,8 @@ late reply
 The particles update their beliefs, unlikely guesses fade away, and plausible guesses survive.
 
 That's the **Particle Filter**.
+
+Missing clues are simply skipped instead of being filled with made-up neutral values.
 
 **Cute outside. Probabilistic inside. ✨**
 
@@ -210,7 +256,7 @@ python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-The nest checks state math, Particle Filter invariants, reproducible seeds, every little weather card, and small end-to-end scenario picnics.
+The nest checks state math, Particle Filter invariants, protocol adaptation, ambiguous events, missing clues, reproducible seeds, every little weather card, and small end-to-end scenario picnics.
 
 When the command is green:
 
@@ -226,6 +272,7 @@ coffee-routine-model/
 ├── CUTE_RULES.md
 ├── model.py
 ├── particles.py
+├── protocol_adapter.py
 ├── scenarios.py
 ├── simulate.py
 ├── requirements.txt
@@ -233,6 +280,7 @@ coffee-routine-model/
 ├── tests/
 │   ├── test_model.py
 │   ├── test_particles.py
+│   ├── test_protocol_adapter.py
 │   ├── test_scenarios.py
 │   └── test_simulate.py
 ├── docs/
@@ -287,6 +335,7 @@ This repo looks at what might happen **over time** when those tiny interactions 
 Observed behavior != internal truth
 Continuity != obligation
 Disturbance != rupture
+Protocol event != latent state
 Model != human
 ```
 
