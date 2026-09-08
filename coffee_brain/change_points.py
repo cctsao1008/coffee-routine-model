@@ -107,11 +107,16 @@ def _prepare_features(matrix: np.ndarray) -> np.ndarray:
     return (tiny - np.mean(tiny, axis=0)) / np.maximum(scale, 1e-6)
 
 
-def _segment_sse(prefix: np.ndarray, prefix_sq: np.ndarray, start: int, stop: int) -> float:
+def _segment_sse_by_feature(
+    prefix: np.ndarray,
+    prefix_sq: np.ndarray,
+    start: int,
+    stop: int,
+) -> np.ndarray:
     count = stop - start
     total = prefix[stop] - prefix[start]
     total_sq = prefix_sq[stop] - prefix_sq[start]
-    return float(np.sum(total_sq - total * total / count))
+    return total_sq - total * total / count
 
 
 def detect_feature_change_point(
@@ -122,14 +127,15 @@ def detect_feature_change_point(
     penalty_scale: float = 1.0,
     detection_threshold: float = 0.80,
 ) -> ChangePointResult:
-    """Detect one persistent mean-regime change with an inspectable penalized split. ✂️☕
+    """Detect one persistent mean-regime change with an inspectable sparse split. ✂️☕
 
-    The score is a BIC-like approximation to the log evidence gained by allowing
-    different feature means before and after a candidate boundary. Candidate weights
-    are combined with an explicit prior over ``no change`` vs ``one change``.
+    Each active clue earns its own BIC-like gain for a candidate boundary and pays its
+    own complexity penalty. Positive clue gains may combine; unchanged clues do not
+    make one truly shifted channel pay for the entire observation basket.
 
-    This is intentionally conservative: one strange day should usually lose against
-    the model-complexity penalty, while a persistent shift may earn a boundary.
+    Candidate weights are then combined with an explicit prior over ``no change`` vs
+    ``one change``. One strange day should usually still lose because a global split
+    cannot explain it persistently and every candidate competes for shared prior mass.
     """
 
     if min_segment < 2:
@@ -150,18 +156,25 @@ def detect_feature_change_point(
 
     prefix = np.vstack([np.zeros(d), np.cumsum(z, axis=0)])
     prefix_sq = np.vstack([np.zeros(d), np.cumsum(z * z, axis=0)])
-    base_sse = _segment_sse(prefix, prefix_sq, 0, n)
+    base_sse = _segment_sse_by_feature(prefix, prefix_sq, 0, n)
 
     boundaries = np.arange(min_segment, n - min_segment + 1, dtype=int)
-    penalty = float(penalty_scale * d * math.log(n))
+    per_feature_penalty = float(penalty_scale * math.log(n))
     scores = np.empty(len(boundaries), dtype=float)
 
     for i, boundary in enumerate(boundaries):
-        split_sse = _segment_sse(prefix, prefix_sq, 0, boundary) + _segment_sse(
+        split_sse = _segment_sse_by_feature(prefix, prefix_sq, 0, boundary) + _segment_sse_by_feature(
             prefix, prefix_sq, boundary, n
         )
         improvement = base_sse - split_sse
-        scores[i] = 0.5 * (improvement - penalty)
+        clue_gains = 0.5 * (improvement - per_feature_penalty)
+        positive = clue_gains[clue_gains > 0.0]
+
+        # Sparse regime shifts are allowed: if only reply delay changes persistently,
+        # it should not pay eleven penalties for ten clues that stayed ordinary. 🫘✂️
+        # If no clue earns a positive gain, retain the least-bad negative clue so the
+        # no-change hypothesis still receives stronger evidence.
+        scores[i] = float(np.sum(positive) if len(positive) else np.max(clue_gains))
 
     # Prior mass for "one change" is shared across all candidate boundaries. This
     # naturally discourages boundary fishing across a very long timeline. 🎣✂️
