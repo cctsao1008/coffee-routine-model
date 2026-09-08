@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.DS_Store
+
+# Real/private data does not belong in this public repo ☕🔒
+data/private/
+data/real/
+*.teams.json
+*.private.csv
