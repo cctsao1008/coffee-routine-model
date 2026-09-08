@@ -28,6 +28,21 @@ jobs:
           --particles 120
           --seed 20260908
           --out .tiny-observability
+      - name: 🧪 Poke clues and assumptions one tiny bit at a time
+        run: >-
+          python -m tiny_tools.map_sensitivity
+          --days 36
+          --particles 120
+          --seed 20260908
+          --out .tiny-sensitivity
+      - name: 🪑 Ask whether every tiny state still earns its chair
+        run: >-
+          python -m tiny_tools.inspect_redundancy
+          --scenario all
+          --days 36
+          --particles 120
+          --seed 20260908
+          --out .tiny-redundancy
       - name: 🌱 See whether a tiny wobble can find its way home
         run: >-
           python -m tiny_tools.measure_recovery
@@ -91,6 +106,14 @@ jobs:
           test -f .tiny-observability/scorecard.csv
           test -f .tiny-observability/clue-visibility.csv
           test -f .tiny-observability/state-identifiability.csv
+          test -f .tiny-sensitivity/sensitivity.csv
+          test -f .tiny-sensitivity/summary.csv
+          test -f .tiny-sensitivity/sensitivity-map.png
+          test -f .tiny-redundancy/reconstruction-scorecard.csv
+          test -f .tiny-redundancy/variant-scorecard.csv
+          test -f .tiny-redundancy/posterior-correlation.csv
+          test -f .tiny-redundancy/posterior-correlation.png
+          test -f .tiny-redundancy/chair-summary.csv
           test -f .tiny-recovery/events.csv
           test -f .tiny-recovery/summary.csv
           test -f .tiny-recovery/recovery-story.png
