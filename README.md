@@ -9,6 +9,19 @@ Oops. XD
 > **Humans are not state machines.**  
 > Coffee routines are not either.
 
+## House rule: everything must be cute ☕🌸
+
+Yes, this is an actual repository rule. XD
+
+README, docs, commits, tests, plots, CLI messages, issues, PRs... all of it.
+
+The full tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).
+
+```text
+Cute != sloppy.
+Cute math is still math. 🧠✨
+```
+
 ## What's going on here? ☕💭
 
 Someone asks:
@@ -159,6 +172,7 @@ examples/<days>-cute-days/
 ```text
 coffee-routine-model/
 ├── README.md
+├── CUTE_RULES.md
 ├── model.py
 ├── particles.py
 ├── simulate.py
