@@ -179,8 +179,8 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
     )
 
     return {
-        "cheng_invite": invite,
-        "linda_opt_in": opt_in,
+        "invite": invite,
+        "opt_in": opt_in,
         "text_reply": text_reply,
         "reaction": reaction,
         "state_share": state_share,
