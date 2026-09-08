@@ -35,6 +35,15 @@ jobs:
           --scenario slow-recovery
           --seed 20260908
           --out .tiny-recovery
+      - name: 🔭 Let tomorrow lend yesterday a tiny hindsight hat
+        run: >-
+          python -m tiny_tools.compare_smoothing
+          --days 24
+          --particles 140
+          --lag 6
+          --scenario slow-recovery
+          --seed 20260908
+          --out .tiny-smoothing
       - name: 🌪️ Send the model on a tiny chaos picnic
         run: >-
           python -m tiny_tools.simulate
@@ -54,4 +63,7 @@ jobs:
           test -f .tiny-recovery/events.csv
           test -f .tiny-recovery/summary.csv
           test -f .tiny-recovery/recovery-story.png
+          test -f .tiny-smoothing/comparison.csv
+          test -f .tiny-smoothing/metrics.csv
+          test -f .tiny-smoothing/hindsight.png
           echo "☕✨ All tiny checks are happy."
