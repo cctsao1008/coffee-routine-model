@@ -123,7 +123,7 @@ def detect_feature_change_point(
     matrix: np.ndarray,
     *,
     min_segment: int = 30,
-    change_prior: float = 0.35,
+    change_prior: float = 0.20,
     penalty_scale: float = 1.0,
     detection_threshold: float = 0.80,
 ) -> ChangePointResult:
@@ -134,8 +134,8 @@ def detect_feature_change_point(
     make one truly shifted channel pay for the entire observation basket.
 
     Candidate weights are then combined with an explicit prior over ``no change`` vs
-    ``one change``. One strange day should usually still lose because a global split
-    cannot explain it persistently and every candidate competes for shared prior mass.
+    ``one change``. The default prior is deliberately skeptical: a structural change
+    should earn its little scissors instead of receiving them for free. XD
     """
 
     if min_segment < 2:
