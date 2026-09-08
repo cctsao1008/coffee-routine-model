@@ -6,7 +6,7 @@ from typing import Mapping, Sequence
 import numpy as np
 
 from .diagnostics import STATE_KEYS
-from .model import relationship_index
+from .model import RoutineMode, relationship_index
 from .observation_model import (
     BINARY_CHANNEL_NAMES,
     DEFAULT_OBSERVATION_MODEL,
@@ -48,13 +48,16 @@ def _ridge_predict(x: np.ndarray, beta: np.ndarray) -> np.ndarray:
     return np.column_stack([np.ones(len(x)), x]) @ beta
 
 
-def _binary_nll(
+def _binary_scores(
     states: np.ndarray,
     modes: np.ndarray,
     observations: Sequence[Mapping[str, object]],
-) -> float:
+) -> tuple[float, float]:
+    """Return mode-conditioned binary NLL and Brier for one state representation. 🎯🐣"""
+
     probabilities = predict_binary_channels(states, modes, DEFAULT_OBSERVATION_MODEL)
-    losses: list[float] = []
+    nll_losses: list[float] = []
+    brier_losses: list[float] = []
     invite = np.array([int(obs.get("invite", 0) or 0) for obs in observations], dtype=int)
 
     for name in BINARY_CHANNEL_NAMES:
@@ -64,8 +67,9 @@ def _binary_nll(
         if name in {"opt_in", "pass_event"}:
             mask = invite == 1
         if np.any(mask):
-            losses.extend((-y[mask] * np.log(p[mask]) - (1 - y[mask]) * np.log(1 - p[mask])).tolist())
-    return float(np.mean(losses))
+            nll_losses.extend((-y[mask] * np.log(p[mask]) - (1 - y[mask]) * np.log(1 - p[mask])).tolist())
+            brier_losses.extend(((p[mask] - y[mask]) ** 2).tolist())
+    return float(np.mean(nll_losses)), float(np.mean(brier_losses))
 
 
 def _continuous_errors(
@@ -91,7 +95,16 @@ def _score_variant(
     observations: Sequence[Mapping[str, object]],
 ) -> dict[str, object]:
     state_rmse = np.sqrt(np.mean((states - truth) ** 2, axis=0))
-    r_rmse = float(np.sqrt(np.mean((relationship_index(states) - relationship_index(truth)) ** 2)))
+    state_r = relationship_index(states)
+    truth_r = relationship_index(truth)
+    r_rmse = float(np.sqrt(np.mean((state_r - truth_r) ** 2)))
+    recovery_mask = modes == int(RoutineMode.RECOVERY)
+    recovery_r_rmse = (
+        float(np.sqrt(np.mean((state_r[recovery_mask] - truth_r[recovery_mask]) ** 2)))
+        if np.any(recovery_mask)
+        else float("nan")
+    )
+    binary_nll, binary_brier = _binary_scores(states, modes, observations)
     warmth_rmse, delay_log_rmse = _continuous_errors(states, modes, observations)
     return {
         "variant": name,
@@ -99,7 +112,9 @@ def _score_variant(
         "mean_state_RMSE": float(np.mean(state_rmse)),
         "max_state_RMSE": float(np.max(state_rmse)),
         "relationship_RMSE": r_rmse,
-        "binary_observation_NLL": _binary_nll(states, modes, observations),
+        "recovery_relationship_RMSE": recovery_r_rmse,
+        "binary_observation_NLL": binary_nll,
+        "binary_observation_Brier": binary_brier,
         "warmth_RMSE": warmth_rmse,
         "delay_log_RMSE": delay_log_rmse,
     }
