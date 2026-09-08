@@ -51,6 +51,14 @@ jobs:
           --quiet-days 8
           --long-pause-days 16
           --out .tiny-memory
+      - name: 🎛️ Ask whether the tiny probabilities keep their promises
+        run: >-
+          python -m tiny_tools.calibrate_observations
+          --days 80
+          --bins 5
+          --scenario all
+          --seed 20260908
+          --out .tiny-calibration
       - name: 🌪️ Send the model on a tiny chaos picnic
         run: >-
           python -m tiny_tools.simulate
@@ -76,4 +84,9 @@ jobs:
           test -f .tiny-memory/memory-story.csv
           test -f .tiny-memory/summary.csv
           test -f .tiny-memory/memory-story.png
+          test -f .tiny-calibration/channel-summary.csv
+          test -f .tiny-calibration/reliability.csv
+          test -f .tiny-calibration/continuous-summary.csv
+          test -f .tiny-calibration/scenario-summary.csv
+          test -f .tiny-calibration/baseline-config.json
           echo "☕✨ All tiny checks are happy."

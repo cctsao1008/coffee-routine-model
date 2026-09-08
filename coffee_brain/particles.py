@@ -14,10 +14,13 @@ from .memory import (
     shared_context_step,
 )
 from .model import MODE_NAMES, RoutineMode, clip_state
-
-
-def _sigmoid(x: np.ndarray) -> np.ndarray:
-    return 1.0 / (1.0 + np.exp(-x))
+from .observation_model import (
+    DEFAULT_OBSERVATION_MODEL,
+    ObservationModelConfig,
+    predict_binary_channels,
+    predict_delay_log_mean,
+    predict_warmth_mean,
+)
 
 
 def _bern_loglik(y: int, p: np.ndarray) -> np.ndarray:
@@ -80,6 +83,7 @@ class CoffeeParticleFilter:
         *,
         record_history: bool = False,
         memory_config: SharedContextMemoryConfig = DEFAULT_SHARED_CONTEXT_MEMORY,
+        observation_config: ObservationModelConfig = DEFAULT_OBSERVATION_MODEL,
     ):
         self.rng = np.random.default_rng(seed)
         self.n = particle_count
@@ -97,6 +101,7 @@ class CoffeeParticleFilter:
         self.weights = np.ones(self.n, dtype=float) / self.n
         self.started = False
         self.memory_config = memory_config
+        self.observation_config = observation_config
 
         self.record_history = bool(record_history)
         self.history: list[ParticleHistoryStep] = []
@@ -192,66 +197,56 @@ class CoffeeParticleFilter:
         tone_warmth = _little_clue(obs, "tone_warmth")
         response_delay_min = _little_clue(obs, "response_delay_min")
 
-        p, m, v, c, e, f = self.particles.T
-        mo = self.modes
-
-        mode_opt = np.select(
-            [mo == 1, mo == 2, mo == 3, mo == 4],
-            [-0.7, -2.5, 0.2, 0.15],
-            default=0.0,
+        probabilities = predict_binary_channels(
+            self.particles,
+            self.modes,
+            self.observation_config,
         )
-        prob_opt = _sigmoid(-1.2 + 1.7*m + 1.2*v + 0.8*p - 1.8*f + mode_opt)
-        prob_text = _sigmoid(-0.7 + 1.1*m + 0.6*c + 0.3*e - 0.8*f + 0.2*(mo == 3) - 0.2*(mo == 1))
-        prob_reaction = _sigmoid(-0.6 + 0.9*m + 0.5*p + 0.4*v - 0.5*f)
-        prob_share = _sigmoid(-2.2 + 2.0*e + 0.8*c + 0.3*m - 0.3*(mo == 1))
-        prob_update = _sigmoid(-1.8 + 1.3*m + 0.8*c + 0.5*e - 0.6*f + 0.45*((mo == 1) | (mo == 2)))
-
-        mode_maint = np.select([mo == 1, mo == 2, mo == 3, mo == 4], [-0.3, -1.4, 0.3, 0.6], default=0.0)
-        prob_maint = _sigmoid(-1.1 + 1.5*p + 1.4*m + 0.9*v + 0.7*c - 1.4*f + mode_maint)
-
-        mode_pass = np.select([mo == 1, mo == 2, mo == 3, mo == 4], [1.2, 2.7, -0.5, -1.0], default=-0.5)
-        prob_pass = _sigmoid(-2.5 - 1.0*m + 1.0*f + mode_pass)
-
-        mode_resume = np.select([mo == 1, mo == 2, mo == 3, mo == 4], [-0.5, -1.0, 0.0, 2.8], default=-0.8)
-        prob_resume = _sigmoid(-3.0 + 1.0*p + 0.6*m + mode_resume)
 
         ll = np.zeros(self.n)
-
         response_opportunity = invite is None or int(invite) == 1
-        if response_opportunity and opt_in is not None:
-            ll += _bern_loglik(int(opt_in), prob_opt)
-        if response_opportunity and pass_event is not None:
-            ll += _bern_loglik(int(pass_event), prob_pass)
 
+        if response_opportunity and opt_in is not None:
+            ll += _bern_loglik(int(opt_in), probabilities["opt_in"])
+        if response_opportunity and pass_event is not None:
+            ll += _bern_loglik(int(pass_event), probabilities["pass_event"])
         if text_reply is not None:
-            ll += _bern_loglik(int(text_reply), prob_text)
+            ll += _bern_loglik(int(text_reply), probabilities["text_reply"])
         if reaction is not None:
-            ll += _bern_loglik(int(reaction), prob_reaction)
+            ll += _bern_loglik(int(reaction), probabilities["reaction"])
         if state_share is not None:
-            ll += _bern_loglik(int(state_share), prob_share)
+            ll += _bern_loglik(int(state_share), probabilities["state_share"])
         if proactive_update is not None:
-            ll += _bern_loglik(int(proactive_update), prob_update)
+            ll += _bern_loglik(int(proactive_update), probabilities["proactive_update"])
         if routine_maintenance is not None:
-            ll += _bern_loglik(int(routine_maintenance), prob_maint)
+            ll += _bern_loglik(int(routine_maintenance), probabilities["routine_maintenance"])
         if resume_signal is not None:
-            ll += _bern_loglik(int(resume_signal), prob_resume)
+            ll += _bern_loglik(int(resume_signal), probabilities["resume_signal"])
 
         if tone_warmth is not None:
-            mu_warmth = 0.15 + 0.28*m + 0.18*v + 0.16*c + 0.12*e - 0.20*f
-            sigma_warmth = 0.07
-            ll += -0.5*((float(tone_warmth) - mu_warmth)/sigma_warmth)**2
+            mu_warmth = predict_warmth_mean(
+                self.particles,
+                self.modes,
+                self.observation_config,
+            )
+            sigma_warmth = self.observation_config.tone_warmth.sigma
+            ll += -0.5 * ((float(tone_warmth) - mu_warmth) / sigma_warmth) ** 2
 
         if response_delay_min is not None:
-            mu_delay = np.log(np.maximum(1.0, 8 + 45*(1-p) + 30*(1-m) + 75*(mo == 1) + 110*(mo == 2)))
+            mu_delay = predict_delay_log_mean(
+                self.particles,
+                self.modes,
+                self.observation_config,
+            )
             log_delay = math.log(max(float(response_delay_min), 0.2))
-            sigma_delay = 0.45
-            ll += -0.5*((log_delay - mu_delay)/sigma_delay)**2
+            sigma_delay = self.observation_config.response_delay.sigma_log
+            ll += -0.5 * ((log_delay - mu_delay) / sigma_delay) ** 2
 
         ll -= np.max(ll)
         w = np.exp(ll) * self.weights
         w /= np.sum(w)
 
-        ess = 1.0 / np.sum(w*w)
+        ess = 1.0 / np.sum(w * w)
         mean = np.sum(w[:, None] * self.particles, axis=0)
 
         low = np.zeros(6)
@@ -278,4 +273,10 @@ class CoffeeParticleFilter:
             self.weights = w
             self._next_parent_map = np.arange(self.n, dtype=np.int32)
 
-        return Posterior(mean=mean, ci95_low=low, ci95_high=high, mode_probabilities=mode_probs, ess=ess)
+        return Posterior(
+            mean=mean,
+            ci95_low=low,
+            ci95_high=high,
+            mode_probabilities=mode_probs,
+            ess=ess,
+        )
