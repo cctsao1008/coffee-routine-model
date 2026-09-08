@@ -1,6 +1,6 @@
 # Tiny Adapter Contract ☕🤝🐾
 
-`protocol_adapter.py` promises three small things:
+`coffee_brain/protocol_adapter.py` promises three small things:
 
 1. **Observable in, observable out.** 👀
 2. **Missing clues stay missing.** 🌱

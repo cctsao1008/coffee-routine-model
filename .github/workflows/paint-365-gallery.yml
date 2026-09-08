@@ -17,21 +17,16 @@ jobs:
     steps:
       - name: 🧺 Open the little repo basket
         uses: actions/checkout@v4
-
       - name: ☕ Warm up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: 🎨 Gather the tiny paint brushes
         run: python -m pip install -r requirements.txt
-
       - name: 🐣 Make sure the 365-day model output is home
         run: test -f examples/365-cute-days/output.csv
-
       - name: 🖼️ Paint the tiny coffee gallery
-        run: python visualize.py examples/365-cute-days/output.csv
-
+        run: python -m tiny_tools.visualize examples/365-cute-days/output.csv
       - name: 🔎 Count all the little pictures
         run: |
           for state in P M V C E F; do
@@ -41,13 +36,11 @@ jobs:
           test -f examples/365-cute-days/ess.png
           test -f examples/365-cute-days/tiny-year-summary.png
           echo "🎨☕ Every tiny picture found its frame."
-
       - name: 🐾 Hang the gallery back on main
         run: |
           git config user.name "tiny-coffee-painter"
           git config user.email "tiny-coffee-painter@users.noreply.github.com"
           git add examples/365-cute-days/*.png
-
           if git diff --cached --quiet; then
             echo "🖼️ The gallery already looks exactly right."
           else

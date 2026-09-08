@@ -30,7 +30,7 @@ particles = 6000
 Regenerate the same basket with:
 
 ```bash
-python simulate.py \
+python -m tiny_tools.simulate \
   --scenario cozy-normal-year \
   --days 365 \
   --particles 6000 \

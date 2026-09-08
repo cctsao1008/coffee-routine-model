@@ -70,10 +70,10 @@ pass
 resume
 ```
 
-`protocol_adapter.py` turns those observable events into behavior-level clues:
+`coffee_brain/protocol_adapter.py` turns those observable events into behavior-level clues:
 
 ```python
-from protocol_adapter import coffee_to_observation
+from coffee_brain.protocol_adapter import coffee_to_observation
 
 obs = coffee_to_observation(["+1?", "+", "☕", "👍"])
 ```
@@ -125,6 +125,8 @@ There are also a few routine modes:
 ```text
 Normal · Busy · Leave · Special · Recovery
 ```
+
+The soft-state machinery now lives together in `coffee_brain/`, while the runnable little toys live in `tiny_tools/`. Tiny things deserve tiny drawers. 🧺🐾
 
 ## Tiny particle friends 🐣🐣🐣
 
@@ -197,7 +199,7 @@ The exact recipe is tucked into [`examples/365-cute-days/README.md`](examples/36
 
 CSV is useful. CSV is not very cuddly. XD
 
-`visualize.py` paints the full synthetic year into separate, readable little pictures. Every soft state gets its own plot with synthetic truth, Particle Filter estimate, and the 95% uncertainty blanket.
+`tiny_tools/visualize.py` paints the full synthetic year into separate, readable little pictures. Every soft state gets its own plot with synthetic truth, Particle Filter estimate, and the 95% uncertainty blanket.
 
 ![One tiny coffee routine across one synthetic year](examples/365-cute-days/tiny-year-summary.png)
 
@@ -214,7 +216,7 @@ The mode picture lets Busy, Leave, Special, and Recovery moments show up without
 Paint it again with:
 
 ```bash
-python visualize.py examples/365-cute-days/output.csv
+python -m tiny_tools.visualize examples/365-cute-days/output.csv
 ```
 
 ```text
@@ -227,19 +229,19 @@ Uncertainty is allowed to be visible. 🐣
 The old 100-day demo stays around as a quick smoke test:
 
 ```bash
-python simulate.py --days 100
+python -m tiny_tools.simulate --days 100
 ```
 
 The main one-year demo is simply:
 
 ```bash
-python simulate.py
+python -m tiny_tools.simulate
 ```
 
 or explicitly:
 
 ```bash
-python simulate.py --days 365
+python -m tiny_tools.simulate --days 365
 ```
 
 Different lengths automatically go to their own tiny basket:
@@ -271,7 +273,7 @@ Available tiny weather:
 For example:
 
 ```bash
-python simulate.py --scenario slow-recovery --days 365
+python -m tiny_tools.simulate --scenario slow-recovery --days 365
 ```
 
 Alternate worlds get their own little cubby so they do not overwrite the cozy baseline:
@@ -303,26 +305,26 @@ When the command is green:
 
 ```bash
 python -m pip install -r requirements.txt
-python simulate.py
-python visualize.py
+python -m tiny_tools.simulate
+python -m tiny_tools.visualize
 ```
 
 Want a shorter coffee break?
 
 ```bash
-python simulate.py --days 100
+python -m tiny_tools.simulate --days 100
 ```
 
 Want to invite even more tiny particle friends?
 
 ```bash
-python simulate.py --particles 10000
+python -m tiny_tools.simulate --particles 10000
 ```
 
 Want different weather?
 
 ```bash
-python simulate.py --scenario noisy-chaos-week
+python -m tiny_tools.simulate --scenario noisy-chaos-week
 ```
 
 ## Related little project 🐾

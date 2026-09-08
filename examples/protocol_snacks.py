@@ -1,4 +1,4 @@
-from protocol_adapter import CoffeeEvent, coffee_to_observation
+from coffee_brain.protocol_adapter import CoffeeEvent, coffee_to_observation
 
 
 print("☕ tiny happy path")

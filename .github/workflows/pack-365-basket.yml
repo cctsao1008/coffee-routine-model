@@ -17,23 +17,19 @@ jobs:
     steps:
       - name: 🧺 Open the little basket
         uses: actions/checkout@v4
-
       - name: ☕ Warm up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: 🐣 Gather tiny dependencies
         run: python -m pip install -r requirements.txt
-
       - name: 🌱 Grow 365 cute synthetic days
         run: |
-          python simulate.py \
+          python -m tiny_tools.simulate \
             --scenario cozy-normal-year \
             --days 365 \
             --particles 6000 \
             --seed 20260908
-
       - name: 🔎 Check that the picnic basket is really full
         run: |
           test -f examples/365-cute-days/input.csv
@@ -42,15 +38,11 @@ jobs:
           test "$(($(wc -l < examples/365-cute-days/input.csv) - 1))" -eq 365
           test "$(($(wc -l < examples/365-cute-days/output.csv) - 1))" -eq 365
           echo "☕✨ 365 tiny days are all sitting nicely in the basket."
-
       - name: 🐾 Put the basket back on main
         run: |
           git config user.name "tiny-coffee-robot"
           git config user.email "tiny-coffee-robot@users.noreply.github.com"
-          git add examples/365-cute-days/input.csv \
-                  examples/365-cute-days/output.csv \
-                  examples/365-cute-days/metrics.csv
-
+          git add examples/365-cute-days/input.csv examples/365-cute-days/output.csv examples/365-cute-days/metrics.csv
           if git diff --cached --quiet; then
             echo "🌱 The basket already matches perfectly. Nothing to repack."
           else

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import numpy as np
 
-from model import MODE_NAMES, RoutineMode, relationship_index
-from particles import CoffeeParticleFilter
-from scenarios import DEFAULT_SCENARIO, CoffeeScenario, get_scenario, scenario_names
+from coffee_brain.model import MODE_NAMES, RoutineMode, relationship_index
+from coffee_brain.particles import CoffeeParticleFilter
+from coffee_brain.scenarios import DEFAULT_SCENARIO, CoffeeScenario, get_scenario, scenario_names
 
 
 DEFAULT_SEED = 20260908
@@ -76,13 +76,8 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
     opt_in = int(invite and rng.random() < sigmoid(opt_logit))
 
     text_logit = _wiggle(
-        -0.7
-        + 1.1 * m
-        + 0.6 * c
-        + 0.3 * e
-        - 0.8 * f
-        + 0.2 * (mode == RoutineMode.SPECIAL)
-        - 0.2 * (mode == RoutineMode.BUSY)
+        -0.7 + 1.1 * m + 0.6 * c + 0.3 * e - 0.8 * f
+        + 0.2 * (mode == RoutineMode.SPECIAL) - 0.2 * (mode == RoutineMode.BUSY)
         + scenario.text_reply_bias,
         scenario,
         rng,
@@ -97,11 +92,7 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
     reaction = int(rng.random() < sigmoid(reaction_logit))
 
     share_logit = _wiggle(
-        -2.2
-        + 2.0 * e
-        + 0.8 * c
-        + 0.3 * m
-        - 0.3 * (mode == RoutineMode.BUSY)
+        -2.2 + 2.0 * e + 0.8 * c + 0.3 * m - 0.3 * (mode == RoutineMode.BUSY)
         + scenario.state_share_bias,
         scenario,
         rng,
@@ -109,11 +100,7 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
     state_share = int(rng.random() < sigmoid(share_logit))
 
     update_logit = _wiggle(
-        -1.8
-        + 1.3 * m
-        + 0.8 * c
-        + 0.5 * e
-        - 0.6 * f
+        -1.8 + 1.3 * m + 0.8 * c + 0.5 * e - 0.6 * f
         + 0.45 * (mode in (RoutineMode.BUSY, RoutineMode.LEAVE))
         + scenario.proactive_update_bias,
         scenario,
@@ -123,14 +110,8 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
 
     mode_maint = {0: 0.0, 1: -0.3, 2: -1.4, 3: 0.3, 4: 0.6}[int(mode)]
     maint_logit = _wiggle(
-        -1.1
-        + 1.5 * p
-        + 1.4 * m
-        + 0.9 * v
-        + 0.7 * c
-        - 1.4 * f
-        + mode_maint
-        + scenario.maintenance_bias,
+        -1.1 + 1.5 * p + 1.4 * m + 0.9 * v + 0.7 * c - 1.4 * f
+        + mode_maint + scenario.maintenance_bias,
         scenario,
         rng,
     )
@@ -154,21 +135,16 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
 
     tone_warmth = float(
         np.clip(
-            0.15
-            + 0.28 * m
-            + 0.18 * v
-            + 0.16 * c
-            + 0.12 * e
-            - 0.20 * f
-            + scenario.warmth_bias
-            + rng.normal(0.0, scenario.warmth_sigma),
+            0.15 + 0.28 * m + 0.18 * v + 0.16 * c + 0.12 * e - 0.20 * f
+            + scenario.warmth_bias + rng.normal(0.0, scenario.warmth_sigma),
             0,
             1,
         )
     )
 
     delay_base = scenario.delay_multiplier * (
-        8 + 45 * (1 - p) + 30 * (1 - m) + 75 * (mode == RoutineMode.BUSY) + 110 * (mode == RoutineMode.LEAVE)
+        8 + 45 * (1 - p) + 30 * (1 - m)
+        + 75 * (mode == RoutineMode.BUSY) + 110 * (mode == RoutineMode.LEAVE)
     )
     response_delay_min = float(
         np.clip(
@@ -230,8 +206,6 @@ def main():
     truth, true_modes = generate_truth(args.days, rng, scenario)
     observations = [observe(truth[t], true_modes[t], rng, scenario) for t in range(args.days)]
 
-    # Important little trick: the estimator keeps its own assumptions.
-    # The selected scenario changes the synthetic world, not the Particle Filter's answer key. 🐣🔍
     pf = CoffeeParticleFilter(particle_count=args.particles, seed=args.seed)
     estimates = []
     estimated_modes = []
@@ -263,14 +237,10 @@ def main():
     r_rmse = float(np.sqrt(np.mean((est_r - true_r) ** 2)))
     r_mae = float(np.mean(np.abs(est_r - true_r)))
     r_corr = float(np.corrcoef(est_r, true_r)[0, 1])
-    mode_accuracy = float(
-        np.mean(
-            [
-                estimated_modes[t] == MODE_NAMES[RoutineMode(int(true_modes[t]))]
-                for t in range(args.days)
-            ]
-        )
-    )
+    mode_accuracy = float(np.mean([
+        estimated_modes[t] == MODE_NAMES[RoutineMode(int(true_modes[t]))]
+        for t in range(args.days)
+    ]))
 
     out.mkdir(parents=True, exist_ok=True)
 

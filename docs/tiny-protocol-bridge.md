@@ -81,7 +81,7 @@ Just missing information.
 When raw text is too ambiguous, callers can use an explicit `CoffeeEvent`:
 
 ```python
-from protocol_adapter import CoffeeEvent, coffee_to_observation
+from coffee_brain.protocol_adapter import CoffeeEvent, coffee_to_observation
 
 obs = coffee_to_observation([
     CoffeeEvent("proactive_update", "leave notice"),

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from model import MODE_NAMES, RoutineMode, clip_state
+from .model import MODE_NAMES, RoutineMode, clip_state
 
 
 def _sigmoid(x: np.ndarray) -> np.ndarray:
@@ -108,8 +108,6 @@ class CoffeeParticleFilter:
             self._predict()
         self.started = True
 
-        # Generic names are the new tiny language. Legacy names stay accepted so
-        # older synthetic baskets do not suddenly spill their coffee. XD
         invite = _little_clue(obs, "invite", "cheng_invite")
         opt_in = _little_clue(obs, "opt_in", "linda_opt_in")
         text_reply = _little_clue(obs, "text_reply")
@@ -147,8 +145,6 @@ class CoffeeParticleFilter:
 
         ll = np.zeros(self.n)
 
-        # Yes/pass are response opportunities. A mechanical zero on a no-invite
-        # day is not evidence about the routine; the tiny door was never opened. 🚪☕
         response_opportunity = invite is None or int(invite) == 1
         if response_opportunity and opt_in is not None:
             ll += _bern_loglik(int(opt_in), prob_opt)
@@ -178,9 +174,6 @@ class CoffeeParticleFilter:
             log_delay = math.log(max(float(response_delay_min), 0.2))
             sigma_delay = 0.45
             ll += -0.5*((log_delay - mu_delay)/sigma_delay)**2
-
-        # `invite` is intentionally not scored by itself yet. It is useful
-        # protocol context, not a hidden-state verdict. ☕
 
         ll -= np.max(ll)
         w = np.exp(ll) * self.weights

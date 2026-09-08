@@ -16,9 +16,9 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - invited thousands of tiny Particle Filter friends to keep uncertain guesses instead of pretending there is one perfect answer 🐣🐣🐣
 - grew the main demo from 100 cute days into a full **365-day synthetic coffee year** 🗓️🌱
 - added seven tiny weather worlds: cozy, busy, leave-and-return, sleepy replies, special sparkle, chaos, and slow recovery 🌦️
-- connected `coffee-routine-protocol` events to generic observation clues through `protocol_adapter.py` ☕➡️🧠
+- connected `coffee-routine-protocol` events to generic observation clues through `coffee_brain/protocol_adapter.py` ☕➡️🧠
 - packed the full reproducible 365-day picnic basket with `input.csv`, `output.csv`, `metrics.csv`, and its own tiny map 🧺
-- taught `visualize.py` to paint the coffee year into a little gallery wall 🎨🖼️
+- taught `tiny_tools/visualize.py` to paint the coffee year into a little gallery wall 🎨🖼️
 
 ## 🐣 Tiny Fixes
 
@@ -45,6 +45,8 @@ This little book remembers meaningful changes so nobody has to excavate every co
 
 ## 🧺 Tidying
 
+- tucked the model internals into `coffee_brain/` and the runnable helpers into `tiny_tools/` so the root can breathe again 🧺☕
+- renamed the protocol snack example to `examples/protocol_snacks.py` so it can live politely inside the examples drawer 🐾
 - separated the public synthetic model from private real-world source material
 - added generic source notes without names, screenshots, timestamps, or raw messages 🌿
 - added tiny protocol bridge docs and adapter contract notes
