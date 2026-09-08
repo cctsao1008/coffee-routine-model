@@ -26,11 +26,15 @@ class TransitionContext:
     """Known context that may gently reshape the next-mode dice. 🌦️🎲"""
 
     disturbance: float = 0.0
+    special_event: float = 0.0
+    recovery_hint: float = 0.0
     regime_logits: tuple[float, float, float, float, float] = (0.0, 0.0, 0.0, 0.0, 0.0)
 
     def __post_init__(self) -> None:
-        if not 0.0 <= float(self.disturbance) <= 1.0:
-            raise ValueError("🐾 Disturbance context must stay between 0 and 1.")
+        for name in ("disturbance", "special_event", "recovery_hint"):
+            value = float(getattr(self, name))
+            if not 0.0 <= value <= 1.0:
+                raise ValueError(f"🐾 Transition context '{name}' must stay between 0 and 1.")
         if len(self.regime_logits) != 5:
             raise ValueError("🐾 Regime context needs five tiny target-mode logits.")
 
@@ -38,13 +42,15 @@ class TransitionContext:
     def from_mapping(cls, values: Mapping[str, object] | None) -> "TransitionContext":
         if values is None:
             return cls()
-        allowed = {"disturbance", "regime_logits"}
+        allowed = {"disturbance", "special_event", "recovery_hint", "regime_logits"}
         unknown = sorted(set(values) - allowed)
         if unknown:
             raise ValueError(f"🙈 Unknown tiny transition context: {', '.join(unknown)}")
         regime = values.get("regime_logits", cls().regime_logits)
         return cls(
             disturbance=float(values.get("disturbance", 0.0)),
+            special_event=float(values.get("special_event", 0.0)),
+            recovery_hint=float(values.get("recovery_hint", 0.0)),
             regime_logits=tuple(float(value) for value in regime),
         )
 
@@ -115,17 +121,15 @@ def transition_features(
     weather = _context_basket(context)
     p, m, _, _, _, f = tiny_states.T
 
-    coordinated_exception = max(
-        basket.a_boundary_preserving,
-        basket.b_exception_sync,
-        basket.b_pass_choice,
-    )
+    # Exception sync is explicit coordination; a voluntary pass alone is not secretly
+    # reinterpreted as leave. 🌿
+    coordinated_exception = basket.b_exception_sync
     recovery_evidence = max(
-        basket.a_notify * basket.b_exception_sync,
         basket.b_closure,
-        basket.a_deliver * basket.b_acknowledge,
+        basket.a_notify * basket.b_exception_sync,
+        weather.recovery_hint,
     )
-    special_signal = basket.a_callback
+    special_signal = weather.special_event
 
     return np.column_stack(
         [
