@@ -83,6 +83,18 @@ def test_one_context_nudge_is_clipped_before_the_tiny_dice_fly_away():
     assert np.isclose(probability.sum(), 1.0)
 
 
+def test_context_model_has_lower_expected_log_loss_when_it_is_the_synthetic_truth():
+    actions = RoutineActions(a_boundary_preserving=1.0, b_exception_sync=1.0)
+    context = TransitionContext(disturbance=0.75)
+    truth_probability = context_transition_probabilities(0, COZY_STATE, actions, context)
+    fixed_probability = fixed_transition_probabilities(0)
+
+    context_cross_entropy = -np.sum(truth_probability * np.log(truth_probability))
+    fixed_cross_entropy = -np.sum(truth_probability * np.log(fixed_probability))
+
+    assert context_cross_entropy < fixed_cross_entropy
+
+
 def test_particle_filter_keeps_fixed_mode_baseline_unless_context_model_is_invited():
     fixed = CoffeeParticleFilter(particle_count=400, seed=55)
     aware = CoffeeParticleFilter(
