@@ -6,21 +6,22 @@ import json
 from pathlib import Path
 from typing import Any, Mapping
 
-from .config import ARCHITECTURE_VERSION, CSRDMConfig, config_snapshot
+from .config import CSRDMConfig, config_snapshot
 
 
 @dataclass(frozen=True)
 class ExperimentSpec:
-    """One deterministic recipe card for a model experiment. 🛂☕🐣"""
+    """One deterministic recipe card for a model experiment. 🛂☕🐣
+
+    Seed, particle count, and architecture version are derived from ``CSRDMConfig``
+    so the passport never contains two competing sources of truth.
+    """
 
     name: str
     scenario: str
     days: int
-    seed: int = 20260908
-    particle_count: int = 6000
     dataset_identity: str = "synthetic-generated"
     config: CSRDMConfig = CSRDMConfig()
-    architecture_version: str = ARCHITECTURE_VERSION
     tags: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
@@ -30,12 +31,20 @@ class ExperimentSpec:
             raise ValueError("🌦️ Tiny experiment scenario cannot be empty.")
         if self.days <= 0:
             raise ValueError("🗓️ Tiny experiment needs at least one day.")
-        if self.particle_count < 1:
-            raise ValueError("🐣 particle_count must be positive.")
         if not self.dataset_identity.strip():
             raise ValueError("🧺 dataset_identity cannot be an empty basket.")
-        if self.architecture_version != self.config.architecture_version:
-            raise ValueError("🏛️ Experiment and config architecture versions must match.")
+
+    @property
+    def seed(self) -> int:
+        return self.config.inference.seed
+
+    @property
+    def particle_count(self) -> int:
+        return self.config.inference.particle_count
+
+    @property
+    def architecture_version(self) -> str:
+        return self.config.architecture_version
 
     def recipe_dict(self) -> dict[str, Any]:
         """Return only identity-bearing recipe fields; display labels stay outside. 🧾"""
