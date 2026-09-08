@@ -40,8 +40,8 @@ def test_every_mode_can_make_a_tiny_clue_without_falling_over():
         obs = observe(FIXED_STATE, mode, rng, scenario)
 
         assert set(obs) == {
-            "cheng_invite",
-            "linda_opt_in",
+            "invite",
+            "opt_in",
             "text_reply",
             "reaction",
             "state_share",
