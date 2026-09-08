@@ -192,6 +192,35 @@ These numbers only tell us that the estimator can work on a synthetic world we u
 
 The exact recipe is tucked into [`examples/365-cute-days/README.md`](examples/365-cute-days/README.md), and a tiny robot can repack it reproducibly. 🧺🤖
 
+## Tiny coffee gallery 🎨☕🖼️
+
+CSV is useful. CSV is not very cuddly. XD
+
+`visualize.py` paints the full synthetic year into separate, readable little pictures. Every soft state gets its own plot with synthetic truth, Particle Filter estimate, and the 95% uncertainty blanket.
+
+![One tiny coffee routine across one synthetic year](examples/365-cute-days/tiny-year-summary.png)
+
+The gallery also contains:
+
+```text
+state-P.png   state-M.png   state-V.png
+state-C.png   state-E.png   state-F.png
+modes.png     ess.png       tiny-year-summary.png
+```
+
+The mode picture lets Busy, Leave, Special, and Recovery moments show up without pretending every interruption is a disaster. 🌧️💤🎂🌱
+
+Paint it again with:
+
+```bash
+python visualize.py examples/365-cute-days/output.csv
+```
+
+```text
+Cute plot != confusing plot.
+Uncertainty is allowed to be visible. 🐣
+```
+
 ### 100 cute days = quick coffee break ☕⚡
 
 The old 100-day demo stays around as a quick smoke test:
@@ -261,7 +290,7 @@ python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-The nest checks state math, Particle Filter invariants, protocol adaptation, ambiguous events, missing clues, reproducible seeds, every little weather card, and small end-to-end scenario picnics.
+The nest checks state math, Particle Filter invariants, protocol adaptation, ambiguous events, missing clues, reproducible seeds, every little weather card, the painter, and small end-to-end scenario picnics.
 
 When the command is green:
 
@@ -280,6 +309,7 @@ coffee-routine-model/
 ├── protocol_adapter.py
 ├── scenarios.py
 ├── simulate.py
+├── visualize.py
 ├── requirements.txt
 ├── requirements-dev.txt
 ├── tests/
@@ -287,7 +317,8 @@ coffee-routine-model/
 │   ├── test_particles.py
 │   ├── test_protocol_adapter.py
 │   ├── test_scenarios.py
-│   └── test_simulate.py
+│   ├── test_simulate.py
+│   └── test_visualize.py
 ├── docs/
 │   ├── how-the-coffee-works.md
 │   ├── tiny-protocol-bridge.md
@@ -301,16 +332,21 @@ coffee-routine-model/
         ├── README.md
         ├── input.csv
         ├── output.csv
-        └── metrics.csv
+        ├── metrics.csv
+        ├── state-P.png ... state-F.png
+        ├── modes.png
+        ├── ess.png
+        └── tiny-year-summary.png
 ```
 
-The 365-day basket is already packed. Re-run the simulator whenever you want to brew it again. ☕🧺
+The 365-day basket is packed and the gallery wall is painted. Re-run either one whenever you want another tiny coffee year. ☕🧺🎨
 
 ## Run it ☕➡️🐣
 
 ```bash
 python -m pip install -r requirements.txt
 python simulate.py
+python visualize.py
 ```
 
 Want a shorter coffee break?
