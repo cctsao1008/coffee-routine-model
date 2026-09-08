@@ -38,6 +38,8 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added `Busy`, `Leave`, and `Recovery` modes so an interruption does not automatically become a rupture
 - added a slow-recovery synthetic world because tiny routines are allowed to come back at their own pace 🐌🌱
 - made voluntary pass actions preserve `V` instead of secretly subtracting `M` just because coffee did not happen that day 🌿
+- added a nominal routine **set**, post-disturbance recovery time, repair-cost proxy, natural-resume flag, and resilience score so recovery is measurable without grading either person 🌱🩹
+- kept disturbance duration separate from recovery lag so a long coordinated leave is not automatically called fragile XD
 
 ## ✨ Sparkles
 
@@ -53,7 +55,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added generic source notes without names, screenshots, timestamps, or raw messages 🌿
 - added tiny protocol bridge docs and adapter contract notes
 - added reproducible scenario / seed / particle-count metadata
-- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, and action-aware dynamics ✅
+- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, and recovery dynamics ✅
 - taught little robots to repack the reference CSV basket and repaint the gallery reproducibly
 - tucked model internals into `coffee_brain/` and runnable helpers into `tiny_tools/` so the root can breathe 🧺☕
 

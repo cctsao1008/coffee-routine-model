@@ -28,6 +28,13 @@ jobs:
           --particles 120
           --seed 20260908
           --out .tiny-observability
+      - name: 🌱 See whether a tiny wobble can find its way home
+        run: >-
+          python -m tiny_tools.measure_recovery
+          --days 24
+          --scenario slow-recovery
+          --seed 20260908
+          --out .tiny-recovery
       - name: 🌪️ Send the model on a tiny chaos picnic
         run: >-
           python -m tiny_tools.simulate
@@ -44,4 +51,7 @@ jobs:
           test -f .tiny-observability/scorecard.csv
           test -f .tiny-observability/clue-visibility.csv
           test -f .tiny-observability/state-identifiability.csv
+          test -f .tiny-recovery/events.csv
+          test -f .tiny-recovery/summary.csv
+          test -f .tiny-recovery/recovery-story.png
           echo "☕✨ All tiny checks are happy."
