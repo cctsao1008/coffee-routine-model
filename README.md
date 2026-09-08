@@ -299,50 +299,6 @@ When the command is green:
 ☕✨ All tiny tests are happy.
 ```
 
-## Files 🧺
-
-```text
-coffee-routine-model/
-├── README.md
-├── CUTE_RULES.md
-├── COFFEELOG.md
-├── model.py
-├── particles.py
-├── protocol_adapter.py
-├── scenarios.py
-├── simulate.py
-├── visualize.py
-├── requirements.txt
-├── requirements-dev.txt
-├── tests/
-│   ├── test_model.py
-│   ├── test_particles.py
-│   ├── test_protocol_adapter.py
-│   ├── test_scenarios.py
-│   ├── test_simulate.py
-│   └── test_visualize.py
-├── docs/
-│   ├── how-the-coffee-works.md
-│   ├── tiny-protocol-bridge.md
-│   ├── adapter-little-contract.md
-│   └── source-notes.md
-└── examples/
-    ├── protocol-snacks.py
-    ├── 100-cute-days/
-    │   └── metrics.csv
-    └── 365-cute-days/
-        ├── README.md
-        ├── input.csv
-        ├── output.csv
-        ├── metrics.csv
-        ├── state-P.png ... state-F.png
-        ├── modes.png
-        ├── ess.png
-        └── tiny-year-summary.png
-```
-
-The 365-day basket is packed and the gallery wall is painted. Re-run either one whenever you want another tiny coffee year. ☕🧺🎨
-
 ## Run it ☕➡️🐣
 
 ```bash
