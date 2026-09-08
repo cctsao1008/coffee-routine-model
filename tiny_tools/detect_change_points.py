@@ -151,7 +151,7 @@ def parse_args():
     parser.add_argument("--days", type=int, default=240)
     parser.add_argument("--change-day", type=int, default=121)
     parser.add_argument("--min-segment", type=int, default=30)
-    parser.add_argument("--change-prior", type=float, default=0.35)
+    parser.add_argument("--change-prior", type=float, default=0.20)
     parser.add_argument("--before", choices=scenario_names(), default="cozy-normal-year")
     parser.add_argument("--after", choices=scenario_names(), default="sleepy-reply-season")
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
