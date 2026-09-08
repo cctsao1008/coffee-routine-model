@@ -147,10 +147,14 @@ class CoffeeParticleFilter:
 
         ll = np.zeros(self.n)
 
-        if opt_in is not None:
+        # Yes/pass are response opportunities. A mechanical zero on a no-invite
+        # day is not evidence about the routine; the tiny door was never opened. 🚪☕
+        response_opportunity = invite is None or int(invite) == 1
+        if response_opportunity and opt_in is not None:
             ll += _bern_loglik(int(opt_in), prob_opt)
-        if pass_event is not None:
+        if response_opportunity and pass_event is not None:
             ll += _bern_loglik(int(pass_event), prob_pass)
+
         if text_reply is not None:
             ll += _bern_loglik(int(text_reply), prob_text)
         if reaction is not None:
@@ -177,7 +181,6 @@ class CoffeeParticleFilter:
 
         # `invite` is intentionally not scored by itself yet. It is useful
         # protocol context, not a hidden-state verdict. ☕
-        _ = invite
 
         ll -= np.max(ll)
         w = np.exp(ll) * self.weights
