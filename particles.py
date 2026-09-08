@@ -17,6 +17,15 @@ def _bern_loglik(y: int, p: np.ndarray) -> np.ndarray:
     return y * np.log(p) + (1 - y) * np.log(1 - p)
 
 
+def _little_clue(obs: dict, key: str, legacy_key: str | None = None):
+    """Fetch one observable clue, while politely supporting old baskets. 🧺"""
+
+    value = obs.get(key)
+    if value is None and legacy_key is not None:
+        value = obs.get(legacy_key)
+    return value
+
+
 @dataclass
 class Posterior:
     mean: np.ndarray
@@ -93,21 +102,25 @@ class CoffeeParticleFilter:
         )
 
     def update(self, obs: dict) -> Posterior:
+        """Update from whatever clues are actually present. Missing stays missing. 🌱"""
+
         if self.started:
             self._predict()
         self.started = True
 
-        invite = int(obs["cheng_invite"])
-        opt_in = int(obs["linda_opt_in"])
-        text_reply = int(obs["text_reply"])
-        reaction = int(obs["reaction"])
-        state_share = int(obs["state_share"])
-        proactive_update = int(obs["proactive_update"])
-        routine_maintenance = int(obs["routine_maintenance"])
-        pass_event = int(obs["pass_event"])
-        resume_signal = int(obs["resume_signal"])
-        tone_warmth = float(obs["tone_warmth"])
-        response_delay_min = float(obs["response_delay_min"])
+        # Generic names are the new tiny language. Legacy names stay accepted so
+        # older synthetic baskets do not suddenly spill their coffee. XD
+        invite = _little_clue(obs, "invite", "cheng_invite")
+        opt_in = _little_clue(obs, "opt_in", "linda_opt_in")
+        text_reply = _little_clue(obs, "text_reply")
+        reaction = _little_clue(obs, "reaction")
+        state_share = _little_clue(obs, "state_share")
+        proactive_update = _little_clue(obs, "proactive_update")
+        routine_maintenance = _little_clue(obs, "routine_maintenance")
+        pass_event = _little_clue(obs, "pass_event")
+        resume_signal = _little_clue(obs, "resume_signal")
+        tone_warmth = _little_clue(obs, "tone_warmth")
+        response_delay_min = _little_clue(obs, "response_delay_min")
 
         p, m, v, c, e, f = self.particles.T
         mo = self.modes
@@ -133,25 +146,38 @@ class CoffeeParticleFilter:
         prob_resume = _sigmoid(-3.0 + 1.0*p + 0.6*m + mode_resume)
 
         ll = np.zeros(self.n)
-        if invite:
-            ll += _bern_loglik(opt_in, prob_opt)
-            ll += _bern_loglik(pass_event, prob_pass)
 
-        ll += _bern_loglik(text_reply, prob_text)
-        ll += _bern_loglik(reaction, prob_reaction)
-        ll += _bern_loglik(state_share, prob_share)
-        ll += _bern_loglik(proactive_update, prob_update)
-        ll += _bern_loglik(routine_maintenance, prob_maint)
-        ll += _bern_loglik(resume_signal, prob_resume)
+        if opt_in is not None:
+            ll += _bern_loglik(int(opt_in), prob_opt)
+        if pass_event is not None:
+            ll += _bern_loglik(int(pass_event), prob_pass)
+        if text_reply is not None:
+            ll += _bern_loglik(int(text_reply), prob_text)
+        if reaction is not None:
+            ll += _bern_loglik(int(reaction), prob_reaction)
+        if state_share is not None:
+            ll += _bern_loglik(int(state_share), prob_share)
+        if proactive_update is not None:
+            ll += _bern_loglik(int(proactive_update), prob_update)
+        if routine_maintenance is not None:
+            ll += _bern_loglik(int(routine_maintenance), prob_maint)
+        if resume_signal is not None:
+            ll += _bern_loglik(int(resume_signal), prob_resume)
 
-        mu_warmth = 0.15 + 0.28*m + 0.18*v + 0.16*c + 0.12*e - 0.20*f
-        sigma_warmth = 0.07
-        ll += -0.5*((tone_warmth - mu_warmth)/sigma_warmth)**2
+        if tone_warmth is not None:
+            mu_warmth = 0.15 + 0.28*m + 0.18*v + 0.16*c + 0.12*e - 0.20*f
+            sigma_warmth = 0.07
+            ll += -0.5*((float(tone_warmth) - mu_warmth)/sigma_warmth)**2
 
-        mu_delay = np.log(np.maximum(1.0, 8 + 45*(1-p) + 30*(1-m) + 75*(mo == 1) + 110*(mo == 2)))
-        log_delay = math.log(max(response_delay_min, 0.2))
-        sigma_delay = 0.45
-        ll += -0.5*((log_delay - mu_delay)/sigma_delay)**2
+        if response_delay_min is not None:
+            mu_delay = np.log(np.maximum(1.0, 8 + 45*(1-p) + 30*(1-m) + 75*(mo == 1) + 110*(mo == 2)))
+            log_delay = math.log(max(float(response_delay_min), 0.2))
+            sigma_delay = 0.45
+            ll += -0.5*((log_delay - mu_delay)/sigma_delay)**2
+
+        # `invite` is intentionally not scored by itself yet. It is useful
+        # protocol context, not a hidden-state verdict. ☕
+        _ = invite
 
         ll -= np.max(ll)
         w = np.exp(ll) * self.weights
