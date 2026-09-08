@@ -201,6 +201,23 @@ examples/365-cute-days/slow-recovery/
 
 Same seed + same scenario + same settings = same tiny adventure. 🐾✨
 
+## Tiny test nest 🐣✅
+
+The particles are cute. They are still not allowed to misbehave. XD
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
+The nest checks state math, Particle Filter invariants, reproducible seeds, every little weather card, and small end-to-end scenario picnics.
+
+When the command is green:
+
+```text
+☕✨ All tiny tests are happy.
+```
+
 ## Files 🧺
 
 ```text
@@ -212,6 +229,12 @@ coffee-routine-model/
 ├── scenarios.py
 ├── simulate.py
 ├── requirements.txt
+├── requirements-dev.txt
+├── tests/
+│   ├── test_model.py
+│   ├── test_particles.py
+│   ├── test_scenarios.py
+│   └── test_simulate.py
 ├── docs/
 │   └── how-the-coffee-works.md
 └── examples/
