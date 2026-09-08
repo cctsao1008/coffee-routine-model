@@ -44,6 +44,13 @@ jobs:
           --scenario slow-recovery
           --seed 20260908
           --out .tiny-smoothing
+      - name: 🧠 Watch one tiny memory reservoir build and rest
+        run: >-
+          python -m tiny_tools.inspect_memory
+          --build-days 12
+          --quiet-days 8
+          --long-pause-days 16
+          --out .tiny-memory
       - name: 🌪️ Send the model on a tiny chaos picnic
         run: >-
           python -m tiny_tools.simulate
@@ -66,4 +73,7 @@ jobs:
           test -f .tiny-smoothing/comparison.csv
           test -f .tiny-smoothing/metrics.csv
           test -f .tiny-smoothing/hindsight.png
+          test -f .tiny-memory/memory-story.csv
+          test -f .tiny-memory/summary.csv
+          test -f .tiny-memory/memory-story.png
           echo "☕✨ All tiny checks are happy."
