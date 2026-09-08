@@ -41,6 +41,16 @@ class Posterior:
         return MODE_NAMES[RoutineMode(int(np.argmax(self.mode_probabilities)))]
 
 
+@dataclass(frozen=True)
+class ParticleHistoryStep:
+    """One compact filtered particle cloud plus its tiny family tree. 🔭🐣"""
+
+    particles: np.ndarray
+    modes: np.ndarray
+    weights: np.ndarray
+    parents: np.ndarray | None
+
+
 class CoffeeParticleFilter:
     """A small Sequential Monte Carlo estimator with many tiny guesses. 🐣"""
 
@@ -57,7 +67,13 @@ class CoffeeParticleFilter:
 
     target = np.array([0.80, 0.72, 0.90, 0.76, 0.42, 0.10], dtype=float)
 
-    def __init__(self, particle_count: int = 6000, seed: int = 20260908):
+    def __init__(
+        self,
+        particle_count: int = 6000,
+        seed: int = 20260908,
+        *,
+        record_history: bool = False,
+    ):
         self.rng = np.random.default_rng(seed)
         self.n = particle_count
         self.particles = np.tile(
@@ -73,6 +89,10 @@ class CoffeeParticleFilter:
         self.modes = np.zeros(self.n, dtype=int)
         self.weights = np.ones(self.n, dtype=float) / self.n
         self.started = False
+
+        self.record_history = bool(record_history)
+        self.history: list[ParticleHistoryStep] = []
+        self._next_parent_map: np.ndarray | None = None
 
     def _predict(
         self,
@@ -108,6 +128,27 @@ class CoffeeParticleFilter:
                 0.0,
                 [0.015, 0.017, 0.011, 0.015, 0.021, 0.011],
                 size=(self.n, 6),
+            )
+        )
+
+    def _remember_filtered_cloud(self, w: np.ndarray) -> None:
+        """Save only what the smoother needs, and only when invited. 🧺🔭"""
+
+        if not self.record_history:
+            return
+
+        parents = None
+        if self.history:
+            if self._next_parent_map is None:
+                raise RuntimeError("🐣 Tiny ancestry map wandered off before smoothing.")
+            parents = self._next_parent_map.astype(np.int32, copy=True)
+
+        self.history.append(
+            ParticleHistoryStep(
+                particles=self.particles.astype(np.float32, copy=True),
+                modes=self.modes.astype(np.int8, copy=True),
+                weights=w.astype(np.float32, copy=True),
+                parents=parents,
             )
         )
 
@@ -211,6 +252,8 @@ class CoffeeParticleFilter:
 
         mode_probs = np.array([np.sum(w[self.modes == mode]) for mode in range(5)])
 
+        self._remember_filtered_cloud(w)
+
         if ess < 0.55 * self.n:
             positions = (self.rng.random() + np.arange(self.n)) / self.n
             cdf = np.cumsum(w)
@@ -218,7 +261,9 @@ class CoffeeParticleFilter:
             self.particles = self.particles[idx]
             self.modes = self.modes[idx]
             self.weights = np.ones(self.n) / self.n
+            self._next_parent_map = idx.astype(np.int32, copy=False)
         else:
             self.weights = w
+            self._next_parent_map = np.arange(self.n, dtype=np.int32)
 
         return Posterior(mean=mean, ci95_low=low, ci95_high=high, mode_probabilities=mode_probs, ess=ess)
