@@ -77,27 +77,23 @@ def test_experiment_fingerprint_is_recipe_stable_but_label_independent():
         name="tiny-a",
         scenario="cozy-normal-year",
         days=120,
-        seed=7,
-        particle_count=200,
         config=config,
     )
     right = ExperimentSpec(
         name="renamed-for-display",
         scenario="cozy-normal-year",
         days=120,
-        seed=7,
-        particle_count=200,
         config=config,
     )
     changed = ExperimentSpec(
         name="tiny-a",
         scenario="cozy-normal-year",
         days=121,
-        seed=7,
-        particle_count=200,
         config=config,
     )
 
+    assert left.seed == 7
+    assert left.particle_count == 200
     assert left.fingerprint == right.fingerprint
     assert left.fingerprint != changed.fingerprint
 
@@ -107,7 +103,6 @@ def test_experiment_result_writes_one_complete_portable_receipt(tmp_path):
         name="tiny receipt",
         scenario="cozy-normal-year",
         days=24,
-        particle_count=100,
         config=CSRDMConfig(inference=InferenceConfig(particle_count=100)),
     )
     result = ExperimentResult(
@@ -121,6 +116,7 @@ def test_experiment_result_writes_one_complete_portable_receipt(tmp_path):
     path = result.write_json(tmp_path / "receipt.json")
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert payload["experiment"]["fingerprint"] == spec.fingerprint
+    assert payload["experiment"]["particle_count"] == 100
     assert payload["metrics"]["rmse"] == pytest.approx(0.123)
     assert payload["diagnostics"]["state"] == [1, 2, 3]
     assert payload["artifacts"] == ["tiny.png"]
