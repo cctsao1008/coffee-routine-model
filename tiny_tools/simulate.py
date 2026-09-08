@@ -9,6 +9,12 @@ from typing import Sequence
 import numpy as np
 
 from coffee_brain.actions import RoutineActions, action_effect
+from coffee_brain.memory import (
+    DEFAULT_SHARED_CONTEXT_MEMORY,
+    SharedContextMemoryConfig,
+    shared_context_input,
+    shared_context_step,
+)
 from coffee_brain.model import MODE_NAMES, RoutineMode, relationship_index
 from coffee_brain.particles import CoffeeParticleFilter
 from coffee_brain.scenarios import DEFAULT_SCENARIO, CoffeeScenario, get_scenario, scenario_names
@@ -45,12 +51,14 @@ def generate_truth(
     rng: np.random.Generator,
     scenario: CoffeeScenario,
     actions: Sequence[RoutineActions] | None = None,
+    memory_config: SharedContextMemoryConfig = DEFAULT_SHARED_CONTEXT_MEMORY,
 ):
     """Grow one synthetic coffee timeline inside the selected tiny universe. ☕🌱
 
     When an action schedule is supplied, action ``t-1`` nudges the transition into
-    state ``t``. With no schedule, the old neutral synthetic baseline stays exactly
-    where it was. Tiny controls are opt-in too. XD
+    state ``t``. Shared Context uses its own slow accumulation / decay law instead of
+    behaving like a daily mood. With no schedule, the memory reservoir simply has a
+    quiet day and decays gently. 🧠🌱
     """
 
     if actions is not None and len(actions) != days:
@@ -63,17 +71,22 @@ def generate_truth(
 
     for t in range(1, days):
         modes[t] = rng.choice(5, p=scenario.transition[modes[t - 1]])
-        mode_effect = scenario.mode_effects[modes[t]]
+        mode_effect = np.array(scenario.mode_effects[modes[t]], dtype=float, copy=True)
+        mode_effect[3] = 0.0
+        controlled_effect = action_effect(action_schedule[t - 1])
+        process_noise = rng.normal(0.0, scenario.process_noise)
+        process_noise[3] = 0.0
 
-        states[t] = np.clip(
-            states[t - 1]
-            + scenario.mean_reversion * (scenario.target - states[t - 1])
-            + mode_effect
-            + action_effect(action_schedule[t - 1])
-            + rng.normal(0.0, scenario.process_noise),
-            0.02,
-            0.98,
+        mean_reversion = scenario.mean_reversion * (scenario.target - states[t - 1])
+        mean_reversion[3] = 0.0
+        proposal = states[t - 1] + mean_reversion + mode_effect + controlled_effect + process_noise
+        proposal[3] = shared_context_step(
+            states[t - 1, 3],
+            shared_context_input(action_schedule[t - 1]),
+            config=memory_config,
+            noise=rng.normal(0.0, memory_config.process_noise),
         )
+        states[t] = np.clip(proposal, 0.02, 0.98)
 
     return states, modes
 
