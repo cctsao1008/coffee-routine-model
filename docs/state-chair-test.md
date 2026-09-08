@@ -57,10 +57,14 @@ Each candidate is scored on the same held-out synthetic segment for:
 ```text
 mean / max state RMSE
 relationship-index RMSE
+Recovery-mode relationship-index RMSE
 binary observation NLL
+binary observation Brier score
 warmth RMSE
 log reply-delay RMSE
 ```
+
+The Brier score gives the reduced representations a probability-calibration check instead of judging them only by latent RMSE. Recovery-mode `R` RMSE asks whether a reduction keeps its shape specifically during synthetic recovery periods.
 
 These are **projection/reconstruction diagnostics**, not fully retrained five-state Particle Filters. That distinction matters.
 
@@ -90,9 +94,9 @@ chair-summary.csv
 
 ## Reading the result carefully 🌱
 
-If `C` and `E` are highly correlated but `merge-C-E` noticeably damages observation NLL or held-out RMSE, that is evidence to keep them separate for now.
+If `C` and `E` are highly correlated but `merge-C-E` noticeably damages observation NLL, Brier score, held-out RMSE, or recovery fidelity, that is evidence to keep them separate for now.
 
-If `F` can be reconstructed cheaply and removing its independent chair barely changes predictive metrics, that would justify a proper reduced-model experiment later.
+If `F` can be reconstructed cheaply and removing its independent chair barely changes those metrics, that would justify a proper reduced-model experiment later.
 
 ```text
 Chair test -> evidence for the next model experiment.
