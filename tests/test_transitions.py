@@ -96,26 +96,22 @@ def test_context_model_has_lower_expected_log_loss_when_it_is_the_synthetic_trut
 
 
 def test_particle_filter_keeps_fixed_mode_baseline_unless_context_model_is_invited():
-    fixed = CoffeeParticleFilter(particle_count=400, seed=55)
+    fixed = CoffeeParticleFilter(particle_count=1200, seed=55)
     aware = CoffeeParticleFilter(
-        particle_count=400,
+        particle_count=1200,
         seed=55,
         transition_config=DEFAULT_CONTEXT_TRANSITIONS,
     )
-    obs = {
-        "invite": 1,
-        "opt_in": 1,
-        "routine_maintenance": 1,
-        "tone_warmth": 0.55,
-        "response_delay_min": 20.0,
-    }
 
-    fixed.update(obs)
-    aware.update(obs)
-    fixed.update(obs, actions=RoutineActions(a_boundary_preserving=1.0, b_exception_sync=1.0))
+    # First update only starts the filters. Empty clues keep the mode experiment clean.
+    fixed.update({})
+    aware.update({})
+
+    actions = RoutineActions(a_boundary_preserving=1.0, b_exception_sync=1.0)
+    fixed.update({}, actions=actions)
     aware.update(
-        obs,
-        actions=RoutineActions(a_boundary_preserving=1.0, b_exception_sync=1.0),
+        {},
+        actions=actions,
         transition_context=TransitionContext(disturbance=0.8),
     )
 
