@@ -21,6 +21,13 @@ jobs:
         run: python -m pip install -r requirements-dev.txt
       - name: 🐣 Check the particle nest
         run: python -m pytest -q
+      - name: 🔍 Ask which clues can see the tiny states
+        run: >-
+          python -m tiny_tools.diagnose_observability
+          --days 18
+          --particles 120
+          --seed 20260908
+          --out .tiny-observability
       - name: 🌪️ Send the model on a tiny chaos picnic
         run: >-
           python -m tiny_tools.simulate
@@ -29,9 +36,12 @@ jobs:
           --scenario noisy-chaos-week
           --seed 20260908
           --out .tiny-ci-output
-      - name: ☕✨ Make sure the picnic basket came home
+      - name: ☕✨ Make sure every little basket came home
         run: |
           test -f .tiny-ci-output/input.csv
           test -f .tiny-ci-output/output.csv
           test -f .tiny-ci-output/metrics.csv
+          test -f .tiny-observability/scorecard.csv
+          test -f .tiny-observability/clue-visibility.csv
+          test -f .tiny-observability/state-identifiability.csv
           echo "☕✨ All tiny checks are happy."

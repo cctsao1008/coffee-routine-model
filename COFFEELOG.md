@@ -19,6 +19,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - connected `coffee-routine-protocol` events to generic observation clues through `coffee_brain/protocol_adapter.py` ☕➡️🧠
 - packed the full reproducible 365-day picnic basket with `input.csv`, `output.csv`, `metrics.csv`, and its own tiny map 🧺
 - taught `tiny_tools/visualize.py` to paint the coffee year into a little gallery wall 🎨🖼️
+- planted a tiny observability garden that hides one clue family at a time and checks which soft states can actually still be seen 🐣🔍
 
 ## 🐣 Tiny Fixes
 
@@ -45,14 +46,13 @@ This little book remembers meaningful changes so nobody has to excavate every co
 
 ## 🧺 Tidying
 
-- tucked the model internals into `coffee_brain/` and the runnable helpers into `tiny_tools/` so the root can breathe again 🧺☕
-- renamed the protocol snack example to `examples/protocol_snacks.py` so it can live politely inside the examples drawer 🐾
 - separated the public synthetic model from private real-world source material
 - added generic source notes without names, screenshots, timestamps, or raw messages 🌿
 - added tiny protocol bridge docs and adapter contract notes
 - added reproducible scenario / seed / particle-count metadata
-- added tests for model math, particles, scenarios, simulator, protocol adapter, and tiny painter ✅
+- added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, and observability diagnostics ✅
 - taught little robots to repack the reference CSV basket and repaint the gallery reproducibly
+- tucked model internals into `coffee_brain/` and runnable helpers into `tiny_tools/` so the root can breathe 🧺☕
 
 ---
 
