@@ -1,0 +1,49 @@
+name: 🔬 Deep Coffee Diagnostics
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/deep-coffee-diagnostics.yml
+
+jobs:
+  deep-tiny-brain-check:
+    name: 🐣 Let the tiny brain sit for the long exam
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧺 Pick up the little repo basket
+        uses: actions/checkout@v4
+      - name: ☕ Warm up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: 🐾 Gather tiny dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: 🧪 Check the sensitivity and chair-test nests
+        run: python -m pytest -q tests/test_sensitivity.py tests/test_redundancy.py
+      - name: 🗺️ Poke the tiny brain 21 different ways
+        run: >-
+          python -m tiny_tools.map_sensitivity
+          --days 120
+          --particles 800
+          --seed 20260908
+          --out .deep-sensitivity
+      - name: 🪑 Run seven full tiny chair auditions
+        run: >-
+          python -m tiny_tools.inspect_redundancy
+          --scenario all
+          --days 120
+          --particles 800
+          --seed 20260908
+          --out .deep-redundancy
+      - name: ☕✨ Count the deep-exam receipts
+        run: |
+          test -f .deep-sensitivity/sensitivity.csv
+          test -f .deep-sensitivity/summary.csv
+          test -f .deep-sensitivity/sensitivity-map.png
+          test -f .deep-redundancy/reconstruction-scorecard.csv
+          test -f .deep-redundancy/variant-scorecard.csv
+          test -f .deep-redundancy/chair-summary.csv
+          echo "🔬☕ Deep tiny-brain exam is complete."
