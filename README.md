@@ -15,7 +15,8 @@ Yes, this is an actual repository rule. XD
 
 README, docs, commits, tests, plots, CLI messages, issues, PRs... all of it.
 
-The full tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).
+The full tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).  
+The little history book lives in [`COFFEELOG.md`](COFFEELOG.md). 📖☕
 
 ```text
 Cute != sloppy.
@@ -304,6 +305,7 @@ When the command is green:
 coffee-routine-model/
 ├── README.md
 ├── CUTE_RULES.md
+├── COFFEELOG.md
 ├── model.py
 ├── particles.py
 ├── protocol_adapter.py
