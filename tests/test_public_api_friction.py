@@ -146,7 +146,7 @@ def test_smoothing_error_points_to_the_configuration_that_enables_history():
     brain = tiny_brain(9013)
     brain.update({})
 
-    with pytest.raises(RuntimeError, match="SmoothingConfig\(enabled=True"):
+    with pytest.raises(RuntimeError, match=r"SmoothingConfig\(enabled=True"):
         brain.smooth()
 
 
