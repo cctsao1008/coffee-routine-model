@@ -196,7 +196,16 @@ print(result.posterior.mode)
 Raw arrays remain available under `result.posterior`; the named views keep the ordinary path readable.
 For missing-data rules, action timing, smoothing, context-aware transitions, and input validation, see [`docs/public-api.md`](docs/public-api.md).
 
-Install the runtime dependencies:
+Install the package from the repository root:
+
+```bash
+python -m pip install .
+```
+
+The current package snapshot is `0.3.0`; the CSRDM architecture remains `0.3`.
+A packaging patch release does not silently relabel the mathematical architecture.
+
+For repo-local tooling and CI, `requirements.txt` remains a readable mirror of the runtime dependencies declared in `pyproject.toml`:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -307,7 +316,7 @@ python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-CI exercises the public model, adapters, diagnostics, memory, smoothing, calibration, change points, controlled reference, and synthetic runs.
+CI exercises the public model, adapters, diagnostics, memory, smoothing, calibration, change points, controlled reference, synthetic runs, and an installed-package smoke test from outside the source tree.
 
 ```text
 Cute CI != weak CI
