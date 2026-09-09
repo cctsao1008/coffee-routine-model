@@ -135,16 +135,28 @@ Synthetic reference != real-human validation
 Synthetic World != Estimator Assumptions
 ```
 
-## ⚖️ License gate
+## ⚖️ License
 
-No license is being chosen silently.
+The repository owner explicitly selected the **MIT License**.
 
-The formal GitHub Release remains blocked until the repository owner makes an explicit license decision and package / README metadata can be made consistent with it.
+The authoritative legal text now lives at:
 
 ```text
-No explicit license choice
-→ no invented legal terms
-→ no formal release yet
+LICENSE
+```
+
+The package metadata declares the same MIT license and points packaging tools at that root license file. The README carries only a human-facing pointer back to the authoritative text.
+
+```text
+LICENSE           → legal source of truth
+README            → human-facing pointer
+pyproject.toml     → package metadata
+```
+
+```text
+One license choice
+→ one legal source of truth
+→ matching public metadata
 ```
 
 ## 🚪 Release gate
@@ -153,7 +165,6 @@ Before `v0.3.0` becomes a formal GitHub Release:
 
 - installed-package smoke CI must pass from outside the source tree;
 - normal project CI must remain green;
-- the final snapshot commit must be intentionally selected;
-- the owner must make the license decision.
+- the final snapshot commit must be intentionally selected.
 
-Until those gates close, this document describes a **release candidate**, not a published release. ☕📦🐣
+The license gate is now closed. Until the remaining validation and snapshot gates close, this document still describes a **release candidate**, not a published release. ☕📦🐣
