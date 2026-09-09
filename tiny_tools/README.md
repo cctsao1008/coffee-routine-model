@@ -40,7 +40,7 @@ python -m tiny_tools.visualize examples/365-cute-days/output.csv
 |---|---|---|
 | Can the clues distinguish the states? | `diagnose_observability.py` | [`../docs/observability-garden.md`](../docs/observability-garden.md) |
 | Does V track when the synthetic truth is deliberately excited? | `excite_voluntariness.py` | [`../docs/voluntariness-excitation.md`](../docs/voluntariness-excitation.md) |
-| Why does the excited V posterior stay compressed? | `diagnose_v_compression.py` | GitHub issue `#38` records the current diagnostic question |
+| Why does the excited V posterior stay compressed? | `diagnose_v_compression.py` | [`../docs/v-compression-result.md`](../docs/v-compression-result.md) |
 | Do observation probabilities keep their promises? | `calibrate_observations.py` | [`../docs/calibration-bench.md`](../docs/calibration-bench.md) |
 | Which assumptions move the answer most? | `map_sensitivity.py` | [`../docs/sensitivity-map.md`](../docs/sensitivity-map.md) |
 | Does Shared Context accumulate and decay slowly? | `inspect_memory.py` | [`../docs/memory-garden.md`](../docs/memory-garden.md) |

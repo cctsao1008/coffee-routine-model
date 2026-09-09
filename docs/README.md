@@ -33,16 +33,16 @@ Use these when you already know the ideas and want the present design contract:
 - [`memory-garden.md`](memory-garden.md) — Shared Context memory mechanism
 - [`transition-weather.md`](transition-weather.md) — optional context-aware mode transitions
 - [`smoothing-garden.md`](smoothing-garden.md) — fixed-lag smoothing
-- [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided claim status
 
-These documents describe the current mechanism or interpretation contract. Development-era roadmap language does not belong here once the feature already exists.
+These documents describe the current mechanism. Development-era roadmap language does not belong here once the feature already exists.
 
 ## 🧪 Challenge one modeling assumption
 
 These are labs, not required reading for the first journey:
 
 - [`observability-garden.md`](observability-garden.md) — can the clues distinguish the states?
-- [`voluntariness-excitation.md`](voluntariness-excitation.md) — does V track when the synthetic truth is deliberately given enough dynamic range?
+- [`voluntariness-excitation.md`](voluntariness-excitation.md) — does V still look awkward when truth V is deliberately excited?
+- [`v-compression-result.md`](v-compression-result.md) — why did the excited V posterior still stay compressed?
 - [`calibration-bench.md`](calibration-bench.md) — do predicted probabilities behave as promised?
 - [`sensitivity-map.md`](sensitivity-map.md) — which assumptions matter most?
 - [`state-chair-test.md`](state-chair-test.md) — does every latent state earn a separate chair?
@@ -60,11 +60,9 @@ one modeling doubt
 → limited conclusion
 ```
 
-A focused excitation lab may deliberately move one synthetic latent variable more than ordinary dynamics would. That makes it a diagnostic stress test, not a claim that real trajectories behave that way.
-
 ## 📏 Result snapshots
 
-Small result documents such as [`change-point-result.md`](change-point-result.md) record a particular reproducible synthetic recipe or smoke result.
+Small result documents such as [`change-point-result.md`](change-point-result.md) and [`v-compression-result.md`](v-compression-result.md) record a particular reproducible synthetic recipe or diagnostic result.
 
 They are **not** architecture definitions and should not be read as universal model performance.
 
@@ -108,7 +106,7 @@ First visit      → README.md
 Want to learn    → docs/tutorial/
 Want the spec    → docs/architecture.md
 Want claim status→ docs/epistemic-status.md
-Want experiments → docs/*garden.md / *bench.md / *test.md / focused labs / model-arena.md
+Want experiments → docs/*garden.md / *bench.md / *test.md / model-arena.md
 Want to run      → examples/ and tiny_tools/
 Want history     → COFFEELOG.md
 ```
