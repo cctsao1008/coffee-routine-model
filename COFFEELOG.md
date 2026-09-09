@@ -10,6 +10,19 @@ This little book remembers meaningful changes so nobody has to excavate every co
 
 ## ☕ Fresh Brew
 
+### Teaching-path brew — 2026-09-09
+
+- turned the README into a guided first walk where each modeling problem creates the need for the next abstraction 📖🌱
+- added a ten-chapter `docs/tutorial/` spine from observable coffee events through protocol semantics, `P / M / V / C / E / F`, hybrid weather, Particle Filtering, diagnostics, and the model arena ☕➡️🧠
+- added `docs/README.md` so tutorial, architecture/reference, labs, result snapshots, and runnable examples each have a clear door 🗺️
+- added `docs/objective-story-contract.md` so synthetic story warmth stays separate from evidence, intention, and private human truth ⚖️📖
+- taught specialist labs to begin with **why this exists** instead of dropping readers into a feature inventory 🧪
+- replaced stale development-era wording with the current architecture `0.3` contract and linked existing learning / arena / transition features instead of promising work that already exists 🧹
+- switched key display equations to GitHub-friendly fenced `math` blocks after the old display syntax rendered as plain text 🐛📐
+- clarified that the legacy `relationship_index()` helper is only a derived synthetic demo metric, not a public latent state or universal human score 📏
+- added a documentation contract test so the tutorial spine, evidence guardrails, visible reading doors, and GitHub-safe display math cannot quietly wander off 🐣🛡️
+- formalized the tiny style rule: **`XD` is seasoning, not punctuation.** ☕
+
 ### Story-first hygiene brew — 2026-09-09
 
 - gave the README a real story-first path: synthetic Cheng / Linda coffee beats → intuition → generic model → math 📖☕
@@ -75,7 +88,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added a slow-recovery synthetic world because tiny routines are allowed to come back at their own pace 🐌🌱
 - made voluntary pass actions preserve `V` instead of secretly subtracting `M` just because coffee did not happen that day 🌿
 - added a nominal routine **set**, post-disturbance recovery time, repair-cost proxy, natural-resume flag, and resilience score so recovery is measurable without grading either person 🌱🩹
-- kept disturbance duration separate from recovery lag so a long coordinated leave is not automatically called fragile XD
+- kept disturbance duration separate from recovery lag so a long coordinated leave is not automatically called fragile
 - made state-reduction candidates report Recovery-mode relationship-index error instead of hiding recovery behavior inside an all-days average 🌱🪑
 
 ## ✨ Sparkles
@@ -104,7 +117,7 @@ This little book remembers meaningful changes so nobody has to excavate every co
 - added tests for model math, particles, scenarios, simulator, protocol adapter, tiny painter, observability diagnostics, action-aware dynamics, recovery dynamics, particle smoothing, shared-context memory, observation calibration, change-point detection, context-aware mode transitions, sensitivity mapping, state redundancy, bounded parameter learning, model-arena comparison, and the public architecture contract ✅
 - taught little robots to repack the reference CSV basket and repaint the gallery reproducibly
 - tucked model internals into `coffee_brain/` and runnable helpers into `tiny_tools/` so the root can breathe 🧺☕
-- preserved the original hand-set observation baseline as an inspectable config plus JSON export for reproducible future learning experiments 🎛️🧺
+- preserved the original hand-set observation baseline as an inspectable config plus JSON export for reproducible learning experiments and comparisons 🎛️🧺
 - kept the first change-point detector deliberately offline and single-boundary so the little scissors stay inspectable before they grow more blades ✂️🧺
 - preserved the original fixed transition matrix as the default Particle Filter baseline; context-aware transitions are explicit opt-in instead of silently changing old baskets 🎲🧺
 - kept reduced-state experiments labeled as projection/reconstruction diagnostics instead of pretending they are already fully retrained five-state filters 🪑🧺
