@@ -1,0 +1,9 @@
+{
+  "architecture_version": "0.3",
+  "days": 365,
+  "numpy_version": "2.5.3",
+  "particle_count": 6000,
+  "python_version": "3.12.14",
+  "scenario": "cozy-normal-year",
+  "seed": 20260908
+}
