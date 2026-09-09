@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - .github/workflows/paint-365-gallery.yml
+      - requirements.txt
+      - tiny_tools/visualize.py
+      - examples/365-cute-days/output.csv
   workflow_dispatch:
 
 permissions:
@@ -44,6 +47,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "🖼️ The gallery already looks exactly right."
           else
-            git commit -m "🎨☕ hang 365 tiny coffee days on the gallery wall"
+            git commit -m "🎨☕ repaint the reproducible 365-day gallery"
             git push
           fi

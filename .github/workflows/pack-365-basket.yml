@@ -4,6 +4,15 @@ on:
   push:
     paths:
       - .github/workflows/pack-365-basket.yml
+      - requirements.txt
+      - tiny_tools/simulate.py
+      - coffee_brain/actions.py
+      - coffee_brain/config.py
+      - coffee_brain/memory.py
+      - coffee_brain/model.py
+      - coffee_brain/observation_model.py
+      - coffee_brain/particles.py
+      - coffee_brain/scenarios.py
   workflow_dispatch:
 
 permissions:
@@ -30,22 +39,59 @@ jobs:
             --days 365 \
             --particles 6000 \
             --seed 20260908
-      - name: 🔎 Check that the picnic basket is really full
+      - name: 🧾 Save the exact little kitchen receipt
+        run: |
+          printf '%s\n' "$GITHUB_SHA" > examples/365-cute-days/source-revision.txt
+          {
+            python --version
+            python -m pip freeze
+          } > examples/365-cute-days/environment.txt
+      - name: 🔎 Check that the picnic basket is coherent and full
         run: |
           test -f examples/365-cute-days/input.csv
           test -f examples/365-cute-days/output.csv
           test -f examples/365-cute-days/metrics.csv
+          test -f examples/365-cute-days/recipe.json
+          test -f examples/365-cute-days/source-revision.txt
+          test -f examples/365-cute-days/environment.txt
           test "$(($(wc -l < examples/365-cute-days/input.csv) - 1))" -eq 365
           test "$(($(wc -l < examples/365-cute-days/output.csv) - 1))" -eq 365
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          rows = list(csv.DictReader(Path("examples/365-cute-days/input.csv").open(encoding="utf-8")))
+          for row in rows:
+              invite = int(row["invite"])
+              opt_in = int(row["opt_in"])
+              text_reply = int(row["text_reply"])
+              maintenance = int(row["routine_maintenance"])
+              pass_event = int(row["pass_event"])
+              delay = row["response_delay_min"].strip()
+
+              assert not (opt_in and pass_event), row["sample_id"]
+              assert invite or not (opt_in or pass_event), row["sample_id"]
+              assert text_reply or not (opt_in or pass_event), row["sample_id"]
+              assert opt_in or not maintenance, row["sample_id"]
+              assert bool(delay) == bool(text_reply), row["sample_id"]
+
+          print("☕🧭 The synthetic protocol grammar is coherent across all 365 days.")
+          PY
           echo "☕✨ 365 tiny days are all sitting nicely in the basket."
       - name: 🐾 Put the basket back on main
         run: |
           git config user.name "tiny-coffee-robot"
           git config user.email "tiny-coffee-robot@users.noreply.github.com"
-          git add examples/365-cute-days/input.csv examples/365-cute-days/output.csv examples/365-cute-days/metrics.csv
+          git add \
+            examples/365-cute-days/input.csv \
+            examples/365-cute-days/output.csv \
+            examples/365-cute-days/metrics.csv \
+            examples/365-cute-days/recipe.json \
+            examples/365-cute-days/source-revision.txt \
+            examples/365-cute-days/environment.txt
           if git diff --cached --quiet; then
             echo "🌱 The basket already matches perfectly. Nothing to repack."
           else
-            git commit -m "🗓️☕ pack 365 tiny days into the picnic basket"
+            git commit -m "🗓️☕ repack the reproducible 365-day reference basket"
             git push
           fi
