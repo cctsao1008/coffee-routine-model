@@ -14,20 +14,7 @@ The coffee can wear tiny paws. The math still has to work. 🧠✨
 
 ## 1. Cute is repo-wide ☕🌱
 
-The tone applies to:
-
-- `README.md` ☕
-- docs 📖
-- commit messages 🐾
-- code comments and docstrings 🧠
-- CLI output 🐣
-- error messages 🙈
-- tests ✅
-- plots 🎨
-- examples 🧺
-- issues and pull requests 🌸
-- release notes and changelogs 🎁
-- workflow names 🤖☕
+The tone applies to README, docs, commits, comments, docstrings, CLI output, errors, tests, plots, examples, issues, workflows, and release notes.
 
 If humans can see it, it should feel coherent with the rest of the repo.
 
@@ -35,24 +22,19 @@ If humans can see it, it should feel coherent with the rest of the repo.
 
 ## 2. Cute outside. Cute inside. Math still works. 🧠☕
 
-Keep these precise:
-
-- equations;
-- state definitions;
-- probability calculations;
-- reproducibility;
-- tests;
-- uncertainty;
-- file formats;
-- numerical results.
+Keep equations, state definitions, probability calculations, reproducibility, tests, uncertainty, file formats, and numerical results precise.
 
 A tiny particle is still a particle. 🐣
+
+```text
+Cute != sloppy
+```
 
 ---
 
 ## 3. Hard math should still tell a little story 📖☕🐣
 
-This project contains stochastic dynamics, latent states, hybrid modes, memory, Particle Filtering, smoothing, calibration, and a suspicious number of matrices.
+This project contains stochastic dynamics, hidden states, hybrid modes, memory, Particle Filtering, smoothing, calibration, and a suspicious number of matrices.
 
 That is not permission to make the reader suffer.
 
@@ -72,15 +54,62 @@ A story should explain **why a concept exists** before an equation explains **ho
 Story != evidence
 ```
 
-The full model-design learning path lives in [`docs/tutorial/`](docs/tutorial/).
+---
+
+## 4. Plain words get the first sip 🌱🧮
+
+Use ordinary words before specialist terms.
+
+Prefer this order:
+
+```text
+hidden state
+→ latent state
+
+many possible explanations
+→ posterior distribution
+
+known action
+→ controlled input
+
+observable clue
+→ likelihood evidence
+
+slow memory
+→ dedicated state reservoir
+```
+
+When a specialist term appears, explain it immediately in plain language.
+
+```text
+Simple != false
+Plain language != missing rigor
+Cute != childish
+```
+
+The math path follows the same rule:
+
+```text
+Starter Math
+→ first mathematical view
+
+Full Math
+→ same model, all the gears
+```
+
+There is no separate Lite CSRDM.
+
+```text
+Same model.
+Same example.
+Different depth.
+```
 
 ---
 
-## 4. Persona at the edge, generic math in the center 🎭🧠
+## 5. Persona at the edge, generic math in the center 🎭🧠
 
 Synthetic teaching personas are welcome where names make difficult ideas easier to follow.
-
-For example, `Cheng` and `Linda` may appear as clearly synthetic story characters in README, tutorials, and `examples/`.
 
 They must translate into generic semantics before entering architecture-defining code:
 
@@ -102,7 +131,7 @@ Persona != core ontology
 
 ---
 
-## 5. Story-driven does not mean interpretive overreach ⚖️📖
+## 6. Story-driven does not mean interpretive overreach ⚖️📖
 
 The repo may be warm and playful, but statements must remain auditable.
 
@@ -130,18 +159,9 @@ The detailed writing contract lives in [`docs/objective-story-contract.md`](docs
 
 ---
 
-## 6. Synthetic coffee stays synthetic 🧪☕
+## 7. Synthetic coffee stays synthetic 🧪☕
 
-Do not publish private source material in this public repository.
-
-That includes:
-
-- private conversations or exports;
-- screenshots;
-- private timestamps;
-- company-identifying context;
-- private files;
-- claims that teaching personas are ground-truth psychological datasets.
+Do not publish private conversations, screenshots, private timestamps, company-identifying context, private files, or claims that teaching personas are ground-truth psychological datasets.
 
 A private design history may inspire an abstract pattern. The public story must remain synthetic, generalized, and self-contained.
 
@@ -152,7 +172,7 @@ Public story != private data
 
 ---
 
-## 7. Comments should protect meaning, not narrate syntax 🧠🛡️
+## 8. Comments should protect meaning, not narrate syntax 🧠🛡️
 
 Useful comments explain a design reason, invariant, temporal alignment, or intentionally surprising choice.
 
@@ -170,18 +190,9 @@ Not useful:
 probability = ...
 ```
 
-Comments are especially valuable around:
-
-- temporal alignment;
-- state-space invariants;
-- intentionally omitted terms;
-- synthetic-world vs estimator assumptions;
-- numerical guards;
-- story/core boundaries.
-
 ---
 
-## 8. `XD` is seasoning, not punctuation ☕
+## 9. `XD` is seasoning, not punctuation ☕
 
 `XD` can still appear when it adds a real punchline or makes a deliberately light example easier to read.
 
@@ -192,11 +203,9 @@ cute != noisy
 playful != repetitive
 ```
 
-Emoji can carry much of the personality without turning every sentence into a punchline.
-
 ---
 
-## 9. Commit messages must still say what changed ☕🐾
+## 10. Commit messages must still say what changed ☕🐾
 
 Good little commits:
 
@@ -208,11 +217,11 @@ Good little commits:
 📖 give the scary math a tiny story to walk in with
 ```
 
-Cute does not mean mysterious. A commit message should still communicate the change.
+Cute does not mean mysterious.
 
 ---
 
-## 10. Errors may be adorable, but they must help 🙈🛠️
+## 11. Errors may be adorable, but they must help 🙈🛠️
 
 Bad:
 
@@ -230,7 +239,7 @@ A useful error tells us what went wrong and, when practical, how to fix it.
 
 ---
 
-## 11. Tests live in a tiny nest 🐣✅
+## 12. Tests live in a tiny nest 🐣✅
 
 Tests should remain precise, reproducible, and behavior-focused.
 
@@ -242,7 +251,7 @@ Never claim a check is happy unless it actually passed.
 
 ---
 
-## 12. Plots should be cute, not confusing 🎨☕
+## 13. Plots should be cute, not confusing 🎨☕
 
 A plot belongs here when it is readable, honest about uncertainty, visually friendly, and technically useful.
 
@@ -254,7 +263,7 @@ The data gets the front seat. The sparkles sit politely in the back. ✨
 
 ---
 
-## 13. The final tiny rule 🌸
+## 14. The final tiny rule 🌸
 
 When choosing between:
 
@@ -283,6 +292,7 @@ choose correctness first, then make it cute.
 ☕ Cute outside.  
 🐣 Cute inside.  
 🧠 Math still works.  
+🌱 Plain words get the first sip.  
 📖 Hard math still tells a little story.  
 ⚖️ Story remains objective.  
 🌱 Humans may still surprise the model.

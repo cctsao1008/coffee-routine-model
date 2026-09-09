@@ -3,6 +3,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TUTORIAL = ROOT / "docs" / "tutorial"
+MATH = ROOT / "docs" / "math"
 
 EXPECTED_TUTORIAL_CHAPTERS = (
     "README.md",
@@ -18,17 +19,51 @@ EXPECTED_TUTORIAL_CHAPTERS = (
     "10-let-the-model-lose.md",
 )
 
+EXPECTED_MATH_DOORS = (
+    "README.md",
+    "starter-math.md",
+    "full-math.md",
+)
+
 
 def test_tutorial_spine_keeps_all_ten_little_steps():
     missing = [name for name in EXPECTED_TUTORIAL_CHAPTERS if not (TUTORIAL / name).is_file()]
     assert missing == []
 
 
-def test_readme_keeps_the_learning_and_reference_doors_visible():
+def test_math_path_keeps_starter_and_full_views_together():
+    missing = [name for name in EXPECTED_MATH_DOORS if not (MATH / name).is_file()]
+    assert missing == []
+
+    starter = (MATH / "starter-math.md").read_text(encoding="utf-8")
+    full = (MATH / "full-math.md").read_text(encoding="utf-8")
+
+    for state in ("Predictability", "Mutuality", "Voluntariness", "Shared Context", "Everyday State Sharing", "Friction"):
+        assert state in starter
+        assert state in full
+
+    assert "Starter Math\n= fewer symbols, same meaning" in starter
+    assert "architecture `0.3`" in full
+    assert "x_{t+1}\\sim p(x_{t+1}\\mid x_t,m_t,a_t,d_t)" in full
+    assert "C_{t+1}=C_t+\\eta I_t(1-C_t)-\\lambda C_t+w_t^C" in starter
+    assert "C_{t+1}=C_t+\\eta I_t(1-C_t)-\\lambda C_t+w_t^C" in full
+
+
+def test_readme_keeps_depth_doors_visible_without_becoming_the_math_textbook():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "docs/tutorial/README.md" in readme
-    assert "docs/architecture.md" in readme
-    assert "docs/objective-story-contract.md" in readme
+    for door in (
+        "docs/tutorial/README.md",
+        "docs/math/starter-math.md",
+        "docs/math/full-math.md",
+        "docs/architecture.md",
+        "docs/objective-story-contract.md",
+    ):
+        assert door in readme
+
+    assert "Same model. Same example. Different depth." in readme
+    # The front door should point to the formal math rather than reproducing it. ☕🚪
+    assert "x_{t+1}\\sim p(x_{t+1}\\mid x_t,m_t,a_t,d_t)" not in readme
+    assert "p(x_t,m_t\\mid z_{1:T})" not in readme
 
 
 def test_objective_story_contract_keeps_the_main_boundaries_explicit():
@@ -70,8 +105,8 @@ def test_epistemic_status_contract_keeps_probability_and_future_choice_distinct(
 
 
 def test_key_markdown_uses_github_friendly_display_math():
-    # GitHub rendered legacy \[ ... \] blocks as plain text in the README once.
-    # Keep the main equation-bearing docs on fenced `math` blocks instead. ☕🛡️
+    # GitHub rendered legacy \[ ... \] blocks as plain text once.
+    # Keep equation-bearing docs on fenced `math` blocks instead. ☕🛡️
     paths = (
         ROOT / "README.md",
         ROOT / "docs" / "architecture.md",
@@ -79,6 +114,8 @@ def test_key_markdown_uses_github_friendly_display_math():
         ROOT / "docs" / "memory-garden.md",
         ROOT / "docs" / "recovery-garden.md",
         ROOT / "docs" / "smoothing-garden.md",
+        MATH / "starter-math.md",
+        MATH / "full-math.md",
     )
     for path in paths:
         text = path.read_text(encoding="utf-8")
@@ -86,6 +123,9 @@ def test_key_markdown_uses_github_friendly_display_math():
         assert "\n\\]\n" not in text, path
 
 
-def test_cute_rules_keep_xd_as_seasoning_not_punctuation():
+def test_cute_rules_keep_plain_words_and_xd_in_their_proper_places():
     rules = (ROOT / "CUTE_RULES.md").read_text(encoding="utf-8")
+    assert "Plain words get the first sip" in rules
+    assert "Simple != false" in rules
+    assert "Plain language != missing rigor" in rules
     assert "`XD` is seasoning, not punctuation" in rules

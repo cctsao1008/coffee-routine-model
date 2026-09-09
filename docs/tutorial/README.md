@@ -32,28 +32,7 @@ Action != intention
 Model != human
 ```
 
-## A compact design-principle map first 🗺️🌱
-
-If you want to see the recurring modeling problems before walking through all ten chapters, read [`../design-principles.md`](../design-principles.md).
-
-It distills private design inspiration into public-safe principles such as:
-
-```text
-stable routine != entitlement
-pass != failure
-mutuality != 50/50 symmetry
-disturbance != rupture
-missing clue != zero
-one anomaly != a new regime
-high historical probability != future commitment
-```
-
-The document also marks what came later as **modeling interpretation** — for example the exact `P/M/V/C/E/F` ontology, Shared Context equation, Particle Filter, and diagnostic machinery.
-
-```text
-Recurring design problem can motivate an abstraction.
-It does not prove the abstraction is true. ☕🧭
-```
+For the compact public-safe map of the recurring design lessons behind these chapters, see [`../design-principles.md`](../design-principles.md).
 
 ## The reading path 🌱
 
@@ -86,7 +65,28 @@ code / equation
 next natural question
 ```
 
-The compact principle map links each distilled lesson back to the chapters where the engineering response is taught, so the tutorial does not need to duplicate the source-inspired story in every chapter.
+## Need a math bridge? 🧮☕
+
+The tutorial teaches **why** each piece exists. The dedicated math path controls **how much notation** you see at once.
+
+```text
+🌱 Starter Math
+→ ../math/starter-math.md
+→ first mathematical view
+→ fewer symbols, same CSRDM
+
+📐 Full Math
+→ ../math/full-math.md
+→ complete mathematical view of architecture 0.3
+```
+
+This is progressive disclosure, not two models:
+
+```text
+Same model.
+Same example.
+Different depth.
+```
 
 ## Three doors, one model 🚪
 
@@ -98,8 +98,8 @@ For other kinds of reading:
 📖 Learn the design progressively
    → docs/tutorial/
 
-📚 See the distilled design problems
-   → docs/design-principles.md
+🧮 Choose mathematical depth
+   → docs/math/
 
 🏛️ Look up the formal architecture contract
    → docs/architecture.md
@@ -111,7 +111,7 @@ For other kinds of reading:
    → examples/
 ```
 
-The tutorial intentionally does not duplicate every technical detail. When a question becomes deep enough, it links to the relevant lab or reference document.
+The tutorial intentionally does not duplicate every technical detail. When a question becomes deep enough, it links to the relevant math page, lab, or reference document.
 
 ## What you should know at the end 🎯
 
@@ -126,7 +126,6 @@ After these ten chapters, you should be able to explain:
 - why temporary modes differ from persistent regime change;
 - why latent-state uncertainty leads naturally to Particle Filtering;
 - why observability, calibration, sensitivity, and model comparison are needed to challenge the design;
-- why synthetic success is still not evidence that real people follow the equations;
-- why the history can explain **which modeling questions mattered** without becoming a public dataset or answer key.
+- why synthetic success is still not evidence that real people follow the equations.
 
-If those ideas make sense, the scary-looking math has already lost most of its teeth. ☕🐣
+If those ideas make sense, choose the next depth that helps you. The math path is there when you want it. ☕🌱📐
