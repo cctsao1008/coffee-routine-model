@@ -2,7 +2,7 @@
 
 Different documents answer different questions on purpose.
 
-> **Story welcomes. Tutorial teaches. Starter Math bridges. Full Math formalizes. Architecture defines. Labs challenge. Results record.**
+> **Story welcomes. Tutorial teaches. Starter Math bridges. Full Math formalizes. Public API guides. Architecture defines. Labs challenge. Results record.**
 
 ## ☕ Story / gentle explanation
 
@@ -47,6 +47,24 @@ Full Math != separate model
 Same model. Different depth.
 ```
 
+## 🛠️ Public API path
+
+Use [`public-api.md`](public-api.md) when the question is **how do I call this safely without knowing the internal drawers?**
+
+It covers:
+
+```text
+CSRDM.step(...)
+CSRDM.update(...)
+missing clues
+strict public observation validation
+action timing
+context-aware transition opt-in
+smoothing
+named posterior summaries
+reproducible recipe cards
+```
+
 ## 🏛️ Architecture / mechanism reference
 
 Use these when you already understand the ideas and want the current implementation contract:
@@ -59,7 +77,7 @@ Use these when you already understand the ideas and want the current implementat
 - [`smoothing-garden.md`](smoothing-garden.md) — fixed-lag smoothing
 - [`observation-provenance.md`](observation-provenance.md) — which clue relationships are observed, probable, assumed, or still undefined
 
-Math pages explain equations. Architecture pages define software behavior and boundaries. Provenance pages explain what kind of claim a relationship is.
+Math pages explain equations. Public API pages explain safe calling behavior. Architecture pages define software behavior and boundaries. Provenance pages explain what kind of claim a relationship is.
 
 ## 🧪 Labs — challenge one assumption
 
@@ -146,17 +164,18 @@ Design inspiration != public dataset
 ## The short version 🌱
 
 ```text
-First visit        → README.md
-Want the story     → docs/how-the-coffee-works.md
-Want to learn      → docs/tutorial/
-Want Starter Math  → docs/math/starter-math.md
-Want Full Math     → docs/math/full-math.md
-Want the spec      → docs/architecture.md
-Want claim status  → docs/epistemic-status.md
+First visit          → README.md
+Want the story       → docs/how-the-coffee-works.md
+Want to learn        → docs/tutorial/
+Want Starter Math    → docs/math/starter-math.md
+Want Full Math       → docs/math/full-math.md
+Want to call the API → docs/public-api.md
+Want the spec        → docs/architecture.md
+Want claim status    → docs/epistemic-status.md
 Want clue provenance → docs/observation-provenance.md
-Want experiments   → labs / result docs
-Want to run        → examples/ and tiny_tools/
-Want history       → COFFEELOG.md
+Want experiments     → labs / result docs
+Want to run          → examples/ and tiny_tools/
+Want history         → COFFEELOG.md
 ```
 
 Same model. Different questions. Different depth. Different doors. ☕🌱📐🐣

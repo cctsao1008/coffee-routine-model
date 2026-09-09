@@ -55,6 +55,7 @@ def test_readme_keeps_depth_doors_visible_without_becoming_the_math_textbook():
         "docs/tutorial/README.md",
         "docs/math/starter-math.md",
         "docs/math/full-math.md",
+        "docs/public-api.md",
         "docs/architecture.md",
         "docs/objective-story-contract.md",
     ):
@@ -76,6 +77,7 @@ def test_redundant_doc_residue_stays_out_of_the_current_map():
 
     docs_map = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
     examples_map = (ROOT / "examples" / "README.md").read_text(encoding="utf-8")
+    root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
     assert "adapter-little-contract.md" not in docs_map
     assert "source-notes.md" not in docs_map
@@ -83,6 +85,31 @@ def test_redundant_doc_residue_stays_out_of_the_current_map():
     assert "tiny_tools/controlled_reference.py" in docs_map
     assert "tiny_tools.controlled_reference" in examples_map
     assert "../docs/controlled-reference-result.md" in examples_map
+
+    # The root front door must not link to a generated-and-gitignored basket as if it were committed. ☕🧹
+    assert "examples/controlled-cute-days/" not in root_readme
+    assert "python -m tiny_tools.controlled_reference" in root_readme
+    assert "docs/controlled-reference-result.md" in root_readme
+
+
+def test_public_api_guide_keeps_the_real_friction_boundaries_visible():
+    guide = (ROOT / "docs" / "public-api.md").read_text(encoding="utf-8")
+    for rule in (
+        "Missing clue != zero",
+        "transition_applied",
+        "DEFAULT_CONTEXT_TRANSITIONS",
+        "response_delay_min",
+        "LearningConfig(enabled=True)",
+        "SmoothingConfig(enabled=True",
+    ):
+        assert rule in guide
+
+    docs_map = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
+    core_map = (ROOT / "coffee_brain" / "README.md").read_text(encoding="utf-8")
+    architecture = (ROOT / "docs" / "architecture.md").read_text(encoding="utf-8")
+    assert "public-api.md" in docs_map
+    assert "docs/public-api.md" in core_map
+    assert "public-api.md" in architecture
 
 
 def test_objective_story_contract_keeps_the_main_boundaries_explicit():

@@ -7,6 +7,7 @@ This document is the formal design contract for the current baseline. It defines
 > **Feature growth is not the default. Architecture clarity is.**
 
 For the progressive learning path, start with [`tutorial/README.md`](tutorial/README.md). This file assumes the reader already understands why the main pieces exist.
+For safe public calling behavior, use [`public-api.md`](public-api.md).
 
 ## Story door before the math door 📖☕
 
@@ -46,10 +47,11 @@ from coffee_brain import CSRDM, CSRDMConfig
 brain = CSRDM(CSRDMConfig())
 result = brain.step(["+1?", "要", "☕", "👍"])
 
-print(result.posterior.mean)
+print(result.mean_by_state)
 ```
 
 The public facade owns the plumbing between protocol events, action extraction, observations, filtering, and optional smoothing.
+It also validates the public observation basket so typos and contradictory protocol values do not silently become different evidence.
 
 ## Full vertical stack 🧠🌱
 
@@ -152,6 +154,8 @@ m_t = latent discrete mode
 
 Temporal alignment matters: the action basket supplied with update `t` is associated with the transition from the previous hidden state into the current hidden state. The first update has no preceding transition.
 
+`CSRDMResult.transition_applied` exposes that first-step boundary to public callers instead of leaving it implicit.
+
 Actions and observations stay in separate baskets on purpose.
 
 ## One transition baseline, many synthetic worlds 🎲🌦️
@@ -167,6 +171,8 @@ Synthetic World != Estimator Assumptions
 This keeps synthetic validation from becoming an exam where the estimator quietly owns the answer key.
 
 The fixed transition matrix remains the default. Context-aware transitions are explicit opt-in behavior; see [`transition-weather.md`](transition-weather.md).
+
+Public callers can opt into the current default context-aware transition recipe with `coffee_brain.DEFAULT_CONTEXT_TRANSITIONS`. Passing `transition_context` while context-aware transitions are disabled is rejected rather than silently ignored.
 
 ## Shared Context memory 🧠🌱
 
@@ -214,6 +220,8 @@ Architecture-defining numpy tables are made physically read-only where practical
 Model definition = code + config
 ```
 
+`LearningConfig` is part of the architecture recipe, but the online `CSRDM` facade does not perform hidden online parameter learning. Bounded learning remains an explicit specialist bench.
+
 ## Experiment contract 🛂🧪
 
 A reproducible run should be describable by one `ExperimentSpec`:
@@ -248,6 +256,19 @@ coffee_brain.ExperimentSpec
 coffee_brain.ExperimentResult
 ```
 
+### Public configuration / recipe helpers
+
+```text
+coffee_brain.DynamicsConfig
+coffee_brain.InferenceConfig
+coffee_brain.SmoothingConfig
+coffee_brain.LearningConfig
+coffee_brain.DEFAULT_CONTEXT_TRANSITIONS
+coffee_brain.config_snapshot
+```
+
+These helpers do not expose Particle Filter internals. They make declared public configuration paths reachable without hidden repository imports.
+
 ### Optional story surface
 
 ```text
@@ -260,6 +281,7 @@ examples/cheng_linda_story.py
 CoffeeParticleFilter
 particle genealogy / smoother internals
 observation calibration helpers
+custom observation / memory / transition model internals
 change-point detector
 sensitivity / redundancy benches
 model arena runners

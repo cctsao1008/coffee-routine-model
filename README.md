@@ -157,6 +157,9 @@ You do not need to read the whole repo at one mathematical level.
 📐 Show me the Full Math
 → docs/math/full-math.md
 
+🛠️ Show me how to call the public API safely
+→ docs/public-api.md
+
 🏛️ Show me the software architecture
 → docs/architecture.md
 
@@ -186,8 +189,12 @@ from coffee_brain import CSRDM, CSRDMConfig
 brain = CSRDM(CSRDMConfig())
 result = brain.step(["+1?", "要", "☕", "👍"])
 
-print(result.posterior.mean)
+print(result.mean_by_state)
+print(result.posterior.mode)
 ```
+
+Raw arrays remain available under `result.posterior`; the named views keep the ordinary path readable.
+For missing-data rules, action timing, smoothing, context-aware transitions, and input validation, see [`docs/public-api.md`](docs/public-api.md).
 
 Install the runtime dependencies:
 
@@ -202,7 +209,13 @@ python -m tiny_tools.simulate --scenario slow-recovery --days 365
 ```
 
 The committed observation-only reference lives in [`examples/365-cute-days/`](examples/365-cute-days/).
-A separate known-action reference lives in [`examples/controlled-cute-days/`](examples/controlled-cute-days/).
+The separate known-action reference is generated on demand:
+
+```bash
+python -m tiny_tools.controlled_reference
+```
+
+Its committed result summary lives in [`docs/controlled-reference-result.md`](docs/controlled-reference-result.md).
 
 ```text
 Synthetic reference != real-human validation

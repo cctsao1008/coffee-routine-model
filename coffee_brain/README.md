@@ -9,9 +9,13 @@ from coffee_brain import CSRDM, CSRDMConfig
 
 brain = CSRDM(CSRDMConfig())
 result = brain.step(["+1?", "要", "☕", "👍"])
+
+print(result.mean_by_state)
 ```
 
 > **Public API first. Specialist internals only when the question actually needs them.**
+
+The safe-calling guide lives in [`../docs/public-api.md`](../docs/public-api.md).
 
 ## The little map 🗺️
 
@@ -47,13 +51,60 @@ ExperimentSpec
 ExperimentResult
 ```
 
+Common public helpers include:
+
+```text
+DynamicsConfig
+InferenceConfig
+SmoothingConfig
+LearningConfig
+DEFAULT_CONTEXT_TRANSITIONS
+config_snapshot
+```
+
 `CSRDM.particle_filter` exists as an explicit diagnostic escape hatch, not as the default application interface.
+
+## Public-input guardrails 🛡️☕
+
+`CSRDM.step(...)` accepts protocol events.
+`CSRDM.update(...)` accepts generic observation/action mappings.
+
+The public facade keeps a few mistakes from becoming silent inference changes:
+
+```text
+unknown observation key
+→ error, not hidden missing data
+
+fractional binary clue
+→ error, not int(...) truncation
+
+measured reply delay + text_reply=0
+→ error
+
+transition_context with fixed-only transition config
+→ error with an opt-in path
+```
+
+Missing observations are still allowed:
+
+```text
+omitted field
+or
+field = None
+→ missing clue
+```
+
+```text
+Missing clue != zero
+```
+
+The first API call establishes the initial filtered state and therefore has no preceding transition. `CSRDMResult.transition_applied` makes that boundary visible.
 
 ## Core drawers 🧺
 
 | Drawer | Responsibility |
 |---|---|
-| `api.py` | stable `CSRDM` facade and online step contract |
+| `api.py` | stable `CSRDM` facade, public validation, online step contract |
 | `config.py` | unified architecture/configuration tree |
 | `protocol_adapter.py` | observable protocol events → generic actions / clues |
 | `actions.py` | explicit controlled action basket and action effects |
