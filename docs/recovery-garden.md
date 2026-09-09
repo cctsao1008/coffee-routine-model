@@ -1,41 +1,44 @@
 # Tiny Recovery Meter 🌱🩹☕
 
-The model already knows that tiny routines can wobble:
+## Why this exists
+
+Busy days, leave, pauses, and delayed replies can disturb a routine without proving that the routine has failed.
+
+So recovery is measured separately from disturbance.
+
+The question is:
+
+> **After a disturbance ends, how quickly and with how much explicit repair does the modeled routine return toward its nominal set?**
+
+This is the deeper lab for [`tutorial/07-weather-and-recovery.md`](tutorial/07-weather-and-recovery.md).
 
 ```text
-Busy
-Leave
-pass
-late reply
-Recovery
+Disturbance != rupture
 ```
-
-But a wobble should not automatically become a failure score.
-
-So recovery is measured separately.
 
 ## Nominal routine set 🌿
 
-The routine does **not** have to return to one magical exact equilibrium point.
+The routine does **not** have to return to one exact equilibrium point.
 
-Instead, recovery uses a small acceptable region:
+Instead, recovery uses an acceptable region:
 
 ```text
 E = nominal routine set
 ```
 
-Each soft state gets a center and a tolerance.
-If the state lands comfortably inside that box, its normalized distance is zero.
+Each soft state has a center and a tolerance. If the state lies comfortably inside that region, its normalized distance is zero.
 
 ```text
-dist(x, E) = 0  -> comfortably inside
+dist(x, E) = 0  → inside the nominal region
 
-dist(x, E) > 0  -> outside the little routine neighborhood
+dist(x, E) > 0  → outside the nominal region
 ```
+
+This makes stability set-based rather than point-based.
 
 ## Disturbance windows 🌧️
 
-The first recovery meter treats `Busy` and `Leave` modes as explicit disturbance windows.
+The current recovery meter treats `Busy` and `Leave` modes as explicit disturbance windows.
 
 A disturbance window has:
 
@@ -45,33 +48,31 @@ end
 duration
 ```
 
-Then recovery begins **after the disturbance itself ends**.
+Recovery begins **after the disturbance itself ends**.
 
-That distinction matters.
-
-A three-day planned leave should not automatically look less resilient than a one-day busy morning just because the leave lasted longer. XD
+That distinction prevents a coordinated three-day leave from automatically looking less resilient than a one-day busy period merely because the disturbance lasted longer.
 
 ## Recovery time 🌱
 
-For one disturbance ending at time `t_end`:
+For a disturbance ending at `t_end`:
 
 ```text
 T_r = first k >= 0 such that x[t_end + k] is back inside E
 ```
 
-So:
+Therefore:
 
 ```text
 recovery_time = 0
 ```
 
-means the first post-disturbance state was already back inside the nominal routine set.
+means the first post-disturbance state is already back inside the nominal routine set.
 
 ## Repair cost 🩹
 
-Recovery can happen naturally, or it can require explicit repair / coordination effort.
+Recovery can happen naturally or require explicit coordination effort.
 
-The current tiny proxy counts only action channels that look like repair work:
+The current proxy counts action channels that look like repair or exception handling:
 
 ```text
 notify
@@ -88,8 +89,7 @@ proactive_update
 resume_signal
 ```
 
-Ordinary coffee delivery is **not** billed as repair work.
-Neither is ordinary opt-in.
+Ordinary coffee delivery is **not** billed as repair work. Neither is ordinary opt-in.
 
 ## Natural resume ☕🌱
 
@@ -97,22 +97,24 @@ Neither is ordinary opt-in.
 natural_resume = recovered with repair_cost == 0
 ```
 
-This captures the small but important pattern:
+This captures a simple observable pattern:
 
 ```text
 interruption
     ↓
 ordinary return
     ↓
-no repair drama required
+no explicit repair proxy required
 ```
+
+It does not assign hidden meaning to the return.
 
 ## Resilience score 🧠✨
 
 For recovered disturbances:
 
-```text
-R = 1 / (1 + T_r + lambda * C_r)
+```math
+R_{resilience}=\frac{1}{1+T_r+\lambda C_r}
 ```
 
 where:
@@ -128,7 +130,7 @@ If the routine never returns inside the nominal set during the available timelin
 R = 0
 ```
 
-No imaginary happy ending is inserted. 🐾
+No unobserved recovery is invented.
 
 ## Tiny recovery basket 🧺
 
@@ -147,16 +149,13 @@ examples/recovery-garden/
 └── recovery-story.png
 ```
 
-The picture shows one disturbance window and the normalized distance back toward the nominal set.
-
-## Important tiny rules 🌿
+## Important boundaries 🌿
 
 ```text
-Disturbance != rupture.
-Long leave != slow recovery.
-Fast recovery != mandatory recovery.
-Repair cost != blame.
+Disturbance != rupture
+Long leave != slow recovery
+Fast recovery != mandatory recovery
+Repair cost != blame
 ```
 
-The meter describes how the **routine dynamics** recover.
-It does not grade either person. ☕🐾✨
+The meter describes how the **routine dynamics** recover. It does not grade either person. ☕🐾

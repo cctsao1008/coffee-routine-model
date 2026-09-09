@@ -1,24 +1,30 @@
 # Tiny Parameter Learning Spoon 🎚️🥄🐣
 
-The observation model already keeps every probability knob in one visible tray.
+## Why this exists
 
-Now a **small** subset is allowed to learn from synthetic hidden-state data.
+Calibration can reveal that a probability family is biased or overconfident. The next temptation is to let an optimizer rewrite everything.
+
+This repo deliberately does **not** do that.
+
+The learning spoon asks one narrow question:
+
+> **If the structural observation model stays fixed, can a few bounded calibration knobs adapt to a shifted synthetic world without rewriting CSRDM's ontology?**
+
+This is one of the final labs linked from [`tutorial/10-let-the-model-lose.md`](tutorial/10-let-the-model-lose.md).
 
 ```text
 Explicit parameters
     ↓
 Calibration
     ↓
-Tiny bounded learning spoon
+Bounded learning
     ↓
 Held-out calibration again
 ```
 
-No giant parameter buffet. XD
-
 ## What learns 🌱
 
-The first learner adjusts only:
+The current learner adjusts only:
 
 ```text
 8 Bernoulli intercepts
@@ -26,7 +32,7 @@ warmth sigma
 delay sigma
 ```
 
-Everything else stays frozen:
+Everything structural stays frozen:
 
 ```text
 state slopes
@@ -38,9 +44,7 @@ process noise
 state definitions
 ```
 
-So the experiment asks a narrow question:
-
-> If the structural observation model is already reasonable, can a few calibration knobs adapt to a shifted synthetic world without destabilizing the rest of CSRDM?
+So the experiment changes probability calibration, not the meaning of `P / M / V / C / E / F`.
 
 ## Tiny optimizer 🐣🎚️
 
@@ -56,7 +60,7 @@ and only `b` is learned.
 
 The continuous sigmas use residual RMS, which is the Gaussian / log-normal scale MLE under the fixed mean model.
 
-Hard bounds keep the knobs from wandering into nonsense:
+Hard bounds keep the knobs inside the declared experiment family:
 
 ```text
 binary intercept : [-6, 6]
@@ -67,18 +71,18 @@ delay sigma_log  : [0.10, 1.50]
 Approximate standard errors and 95% intervals are reported for every learned knob.
 
 ```text
-Parameter uncertainty != posterior state uncertainty.
+Parameter uncertainty != posterior state uncertainty
 ```
 
-They are separate little creatures. 🐣🐣
+They answer different questions.
 
 ## Train is not validation ☕📚
 
 The timeline is split chronologically:
 
 ```text
-first 60%  -> synthetic training
-last 40%   -> held-out validation
+first 60%  → synthetic training
+last 40%   → held-out validation
 ```
 
 Before and after learning, both splits report:
@@ -109,17 +113,31 @@ baseline-config.json
 learned-config.json
 ```
 
-`learned-config.json` has the same normal `ObservationModelConfig` shape as the hand-set baseline, so later experiments do not need a secret optimizer-only format.
+`learned-config.json` has the normal `ObservationModelConfig` shape. Optimization does not create a secret second model format.
 
-## Important tiny rule 🧠✨
+## Why the boundary is intentionally small 🧠✨
+
+A learner that can freely change dynamics, state definitions, transition semantics, and observation semantics at once could improve a loss while making the model harder to interpret.
+
+So this experiment keeps the hypothesis narrow enough to inspect:
 
 ```text
-Better train fit != better model.
-Better validation likelihood != better ontology.
-Synthetic adaptation != real-human truth.
-Learning a knob != discovering an intention.
+Can a few observation-calibration parameters adapt?
 ```
 
-The learner is allowed to improve probability calibration.
+not:
 
-It is not allowed to rewrite what `P / M / V / C / E / F` mean just because one loss function asked nicely. XD
+```text
+Can an optimizer invent a new ontology for us?
+```
+
+## Epistemic boundary
+
+```text
+Better train fit != better model
+Better validation likelihood != better ontology
+Synthetic adaptation != real-human truth
+Learning a knob != discovering an intention
+```
+
+The learner may improve probability calibration. It may not redefine the meaning of the model because one loss function prefers a different shape.

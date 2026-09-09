@@ -2,6 +2,8 @@
 
 The repository has several kinds of documents. They answer different questions on purpose.
 
+> **Tutorial teaches the path. Reference defines the contract. Labs challenge assumptions. Results record one recipe.**
+
 ## 📖 Learn the model-design story
 
 Start here if you want to understand **why the model gradually became this shape**:
@@ -20,15 +22,19 @@ story
 → diagnostics
 ```
 
-## 🏛️ Look up the architecture
+## 🏛️ Look up the current architecture
 
-Use these when you already know the ideas and want the current design contract:
+Use these when you already know the ideas and want the present design contract:
 
 - [`architecture.md`](architecture.md) — architecture `0.3`
-- [`tiny-protocol-bridge.md`](tiny-protocol-bridge.md) — protocol / adapter boundary
+- [`adapter-little-contract.md`](adapter-little-contract.md) — minimum adapter invariant
+- [`tiny-protocol-bridge.md`](tiny-protocol-bridge.md) — protocol / adapter semantics
 - [`action-aware-dynamics.md`](action-aware-dynamics.md) — controlled transition semantics
 - [`memory-garden.md`](memory-garden.md) — Shared Context memory mechanism
+- [`transition-weather.md`](transition-weather.md) — optional context-aware mode transitions
 - [`smoothing-garden.md`](smoothing-garden.md) — fixed-lag smoothing
+
+These documents describe the current mechanism. Development-era roadmap language does not belong here once the feature already exists.
 
 ## 🧪 Challenge one modeling assumption
 
@@ -37,10 +43,31 @@ These are labs, not required reading for the first journey:
 - [`observability-garden.md`](observability-garden.md) — can the clues distinguish the states?
 - [`calibration-bench.md`](calibration-bench.md) — do predicted probabilities behave as promised?
 - [`sensitivity-map.md`](sensitivity-map.md) — which assumptions matter most?
+- [`state-chair-test.md`](state-chair-test.md) — does every latent state earn a separate chair?
 - [`change-point-garden.md`](change-point-garden.md) — anomaly vs persistent generating change
 - [`recovery-garden.md`](recovery-garden.md) — interruption and return toward the nominal set
 - [`learning-spoon.md`](learning-spoon.md) — bounded observation-parameter learning
 - [`model-arena.md`](model-arena.md) — compare variants without one combined winner score
+
+The common lab pattern is:
+
+```text
+one modeling doubt
+→ one explicit experiment
+→ multiple visible metrics
+→ limited conclusion
+```
+
+## 📏 Result snapshots
+
+Small result documents such as [`change-point-result.md`](change-point-result.md) record a particular reproducible synthetic recipe or smoke result.
+
+They are **not** architecture definitions and should not be read as universal model performance.
+
+```text
+Result snapshot != design contract
+Synthetic metric != human validation
+```
 
 ## ☕ Run examples
 
@@ -51,10 +78,13 @@ Useful starting points:
 - [`../examples/cheng_linda_story.py`](../examples/cheng_linda_story.py) — synthetic persona → generic model semantics
 - [`../examples/365-cute-days/`](../examples/365-cute-days/) — committed synthetic reference basket
 
+Runnable diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
+
 ## ⚖️ Writing and evidence boundaries
 
 - [`../CUTE_RULES.md`](../CUTE_RULES.md) — repository tone and engineering rules
-- [`objective-story-contract.md`](objective-story-contract.md) — how to keep story-driven teaching objective
+- [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract
+- [`source-notes.md`](source-notes.md) — public boundary around design inspiration
 - [`../COFFEELOG.md`](../COFFEELOG.md) — project history
 
 ## The short version 🌱
@@ -63,8 +93,9 @@ Useful starting points:
 First visit      → README.md
 Want to learn    → docs/tutorial/
 Want the spec    → docs/architecture.md
-Want experiments → docs/*garden.md / *bench.md / model-arena.md
+Want experiments → docs/*garden.md / *bench.md / *test.md / model-arena.md
 Want to run      → examples/ and tiny_tools/
+Want history     → COFFEELOG.md
 ```
 
-Same model. Different questions. Different doors.
+Same model. Different questions. Different doors. ☕

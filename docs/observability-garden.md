@@ -1,27 +1,31 @@
 # Tiny Observability Garden 🐣🔍☕
 
-The Particle Filter can estimate six soft states:
+## Why this exists
+
+The Particle Filter can produce estimates for six soft states:
 
 ```text
 P = Predictability
 M = Mutuality
 V = Voluntariness
 C = Shared Context
-E = State Sharing
+E = Everyday State Sharing
 F = Friction
 ```
 
-But a tiny estimator being able to produce six numbers does **not** automatically mean all six states are independently visible.
+But producing six numbers does **not** prove that the observations can distinguish six independent latent dimensions.
 
-So this garden asks a more careful question:
+This garden asks:
 
-> Which behavior-level clues actually help distinguish which hidden states?
+> **Which behavior-level clue families actually help distinguish which hidden states in the synthetic test world?**
+
+This is the first diagnostic question in [`tutorial/09-challenge-the-model.md`](tutorial/09-challenge-the-model.md).
 
 ## What kind of observability is this? 🌱
 
 This is **practical synthetic identifiability**, not a formal nonlinear observability proof.
 
-We already know the synthetic truth, so we can hide one clue family at a time and watch what happens to estimation quality.
+Because synthetic hidden truth is known, the experiment can hide one clue family at a time and measure what changes:
 
 ```text
 all clues
@@ -31,9 +35,11 @@ all - response_delay
 ...
 ```
 
-If hiding one clue makes a state estimate much worse, that clue was carrying useful visibility for that state.
+If hiding one clue makes a state estimate worse, that clue was carrying useful visibility for that state under that experiment.
 
-If nothing changes, the clue may be redundant, weak, or simply unnecessary in that synthetic world.
+If little changes, the clue may be redundant, weak, or unnecessary in that synthetic world.
+
+None of those outcomes is a causal statement about real people.
 
 ## Tiny scorecards 🧺
 
@@ -56,12 +62,12 @@ examples/observability-garden/
 
 For the full baseline and every ablation, it records:
 
-- RMSE
-- MAE
-- Pearson correlation
-- mean 95% interval width
-- 95% interval coverage
-- mode accuracy
+- RMSE;
+- MAE;
+- Pearson correlation;
+- mean 95% interval width;
+- 95% interval coverage;
+- mode accuracy.
 
 ### `clue-visibility.csv` 🔍
 
@@ -73,13 +79,13 @@ correlation loss
 credible-interval width increase
 ```
 
-No mysterious single "observability score" is invented just to make the table look tidy. XD
+No single “observability score” is invented just to make the table look tidy.
 
 ### `state-identifiability.csv` 🧩
 
 Each estimated state is compared with every synthetic truth state through cross-correlation.
 
-The little summary keeps:
+The summary keeps:
 
 ```text
 self-truth correlation
@@ -87,16 +93,31 @@ strongest other-truth correlation
 identification margin
 ```
 
-A small or negative margin is a reason to look more closely for state cross-talk.
-It is not automatic proof that two states should be merged.
+A small or negative margin is a reason to inspect state cross-talk. It is not automatic proof that two states should be merged.
 
-## The important tiny warning 🧠✨
+## What this garden cannot prove
+
+A strong synthetic result can support:
 
 ```text
-Estimable != identifiable.
-Narrow posterior != automatically correct.
-Correlation != causal meaning.
-Synthetic visibility != real-human validity.
+these clues distinguish these injected synthetic states under this model family
 ```
 
-The garden exists to make the model more skeptical of its own tiny brain. ☕🐾
+It cannot establish:
+
+```text
+these six states are uniquely real in humans
+this correlation proves causal meaning
+this narrow posterior proves the ontology is correct
+```
+
+## Important boundaries 🧠✨
+
+```text
+Estimable != identifiable
+Narrow posterior != automatically correct
+Correlation != causal meaning
+Synthetic visibility != real-human validity
+```
+
+The garden exists to make the model skeptical of its own output. ☕🐾

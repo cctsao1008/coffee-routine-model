@@ -1,13 +1,17 @@
 # Tiny Model Comparison Arena 🗺️☕🐣
 
-CSRDM is not allowed to win merely by comparing against itself.
+## Why this exists
+
+CSRDM should not win merely by comparing against itself.
 
 The arena gives several model variants the **same synthetic timeline**, the same seed, and the same held-out scoring rules.
 
+This is the final comparison lab behind [`tutorial/10-let-the-model-lose.md`](tutorial/10-let-the-model-lose.md).
+
 ```text
-Winner != truth.
-Simpler != worse.
-One metric != model quality.
+Winner != truth
+Simpler != worse
+One metric != model quality
 ```
 
 ## Common little contract 🧺
@@ -29,7 +33,7 @@ notes
 
 That keeps comparison code from quietly giving one model a different exam.
 
-## First arena roster 🐣🏁
+## Current arena roster 🐣🏁
 
 ```text
 CSRDM-6 hand-set PF
@@ -40,19 +44,19 @@ CSRDM-5 reconstruct C
 static prior non-hybrid
 ```
 
-A few caveats matter:
+Important caveats:
 
 - `CSRDM-6 hand-set PF` is the fixed-mode-transition / no-smoothing baseline.
-- `CSRDM-6 learned observation` learns only the small parameter family from the parameter-learning spoon.
-- `CSRDM-6 frozen context memory` is a memory ablation: the C reservoir is frozen rather than accumulated/decayed.
-- `CSRDM-5 reconstruct C` is still the projection/reconstruction diagnostic from the chair test, **not** a fully retrained five-state PF.
-- `static prior non-hybrid` estimates no modes, so mode accuracy is intentionally reported as missing instead of assigning a fake zero.
+- `CSRDM-6 learned observation` learns only the bounded parameter family in [`learning-spoon.md`](learning-spoon.md).
+- `CSRDM-6 frozen context memory` is a memory ablation: the `C` reservoir is frozen rather than accumulated/decayed.
+- `CSRDM-5 reconstruct C` is the projection/reconstruction diagnostic from [`state-chair-test.md`](state-chair-test.md), **not** a fully retrained five-state Particle Filter.
+- `static prior non-hybrid` estimates no modes, so mode accuracy is reported as missing rather than assigned a fake zero.
 
 ## Same basket, held-out scoring ☕📏
 
 The first 60% of the synthetic timeline may be used by competitors that explicitly learn something.
 
-All reported model-quality metrics use the held-out final 40%:
+Reported model-quality metrics use the held-out final 40%:
 
 ```text
 mean state RMSE / MAE
@@ -65,25 +69,25 @@ runtime
 memory footprint proxy
 ```
 
-Observation NLL and Brier are evaluated with the **synthetic true mode fixed**. That intentionally isolates state-representation quality.
+Observation NLL and Brier are evaluated with the **synthetic true mode fixed**. That intentionally isolates state-representation quality for this experiment.
 
 ```text
-Synthetic scoring convenience != real-world deployable information.
+Synthetic scoring convenience != deployable real-world information
 ```
 
-The arena says this out loud instead of sneaking the answer key under the table. XD
+The answer key is explicit rather than hidden.
 
 ## Change-point metrics ✂️
 
-The default arena uses one stationary synthetic weather world, so change-point metrics are explicitly marked:
+The default arena uses one stationary synthetic weather world, so change-point metrics are marked:
 
 ```text
 n/a for one stationary arena basket
 ```
 
-When a later arena introduces multi-regime datasets, change-point timing/probability can become a comparable metric.
-
 `N/A` is better than manufacturing a number that answers the wrong question.
+
+If a different arena recipe contains explicit multi-regime synthetic data, change-point timing/probability can be evaluated as a separate comparable metric.
 
 ## Run the tiny arena 🗺️
 
@@ -119,4 +123,22 @@ more synthetic-trained parameters
 
 and the arena leaves those trade-offs visible.
 
-That is the point. ☕🧠
+## What the arena can and cannot say
+
+It can support statements such as:
+
+```text
+variant A had lower held-out synthetic RMSE on this recipe
+variant B used less runtime or memory
+variant C produced better probability calibration
+```
+
+It cannot establish:
+
+```text
+variant A is universally true
+more complex is automatically better
+one synthetic winner is the final ontology
+```
+
+That is the point of the arena: let the model lose when the evidence says it should. ☕🧠

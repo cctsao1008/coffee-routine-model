@@ -1,15 +1,19 @@
 # Tiny State Chair Test 🪑🐣☕
 
-Six latent states are useful only if six distinct soft-state dimensions are actually buying us something.
+## Why this exists
+
+Six latent states are useful only if six distinct dimensions are buying the model something measurable.
 
 The chair test asks:
 
 > **Can one state be reconstructed or merged without much measurable loss?**
 
+This is a redundancy diagnostic linked from [`tutorial/09-challenge-the-model.md`](tutorial/09-challenge-the-model.md) and the model arena.
+
 ```text
-More states != better model.
-Fewer states != simpler truth.
-Redundancy != permission to erase semantics.
+More states != better model
+Fewer states != simpler truth
+Redundancy != permission to erase semantics
 ```
 
 ## Three little diagnostics 🧭
@@ -26,7 +30,7 @@ High correlation is a warning light, not proof of redundancy.
 
 ### 2. Leave-one-state-out reconstruction
 
-For each target state, a tiny ridge model uses the other five filtered estimates to reconstruct that target on a held-out synthetic validation segment.
+For each target state, a small ridge model uses the other five filtered estimates to reconstruct that target on a held-out synthetic validation segment.
 
 It compares:
 
@@ -38,11 +42,11 @@ vs
 mean-only baseline RMSE
 ```
 
-A small reconstruction penalty means the current model may not be using that state very independently.
+A small reconstruction penalty means the current representation may not be using that state very independently.
 
 ### 3. Five-dimensional projection variants
 
-The first candidates are:
+The current candidates are:
 
 ```text
 full-6
@@ -64,11 +68,11 @@ warmth RMSE
 log reply-delay RMSE
 ```
 
-The Brier score gives the reduced representations a probability-calibration check instead of judging them only by latent RMSE. Recovery-mode `R` RMSE asks whether a reduction keeps its shape specifically during synthetic recovery periods.
+The Brier score checks probability calibration instead of judging reduced representations only by latent RMSE. Recovery-mode error asks whether a reduction keeps its shape specifically during synthetic recovery periods.
 
-These are **projection/reconstruction diagnostics**, not fully retrained five-state Particle Filters. That distinction matters.
+These are **projection/reconstruction diagnostics**, not fully retrained five-state Particle Filters.
 
-The test can tell us that a reduced representation looks competitive enough to investigate next. It cannot by itself prove that a smaller latent model is the final answer.
+That distinction is part of the experiment contract.
 
 ## Across tiny weather worlds 🌦️
 
@@ -94,13 +98,15 @@ chair-summary.csv
 
 ## Reading the result carefully 🌱
 
-If `C` and `E` are highly correlated but `merge-C-E` noticeably damages observation NLL, Brier score, held-out RMSE, or recovery fidelity, that is evidence to keep them separate for now.
+If `C` and `E` are highly correlated but `merge-C-E` noticeably damages observation NLL, Brier score, held-out RMSE, or recovery fidelity, that is evidence to keep them separate under the current architecture.
 
-If `F` can be reconstructed cheaply and removing its independent chair barely changes those metrics, that would justify a proper reduced-model experiment later.
+If `F` can be reconstructed cheaply and removing its independent chair barely changes those metrics, that is evidence that a proper reduced-model experiment may be worth building.
+
+It is not yet evidence that the ontology should be changed.
 
 ```text
-Chair test -> evidence for the next model experiment.
-Chair test != final ontology verdict.
+Chair test → evidence for a model experiment
+Chair test != final ontology verdict
 ```
 
-Tiny chairs. Real diagnostics. No aesthetic symmetry tax. XD
+Tiny chairs. Real diagnostics. No symmetry tax. 🪑☕

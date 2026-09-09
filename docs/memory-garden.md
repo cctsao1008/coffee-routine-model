@@ -1,26 +1,32 @@
 # Tiny Shared-Memory Garden 🧠🌱☕
 
-`C = Shared Context` is not a daily mood score anymore.
+## Why this exists
 
-It now behaves like accumulated history with slower gravity:
+`C = Shared Context` represents accumulated routine context, so treating it like an ordinary daily variable makes it forget too quickly.
 
-```text
-C[t+1] = C[t]
-       + eta * I[t] * (1 - C[t])
-       - lambda * C[t]
-       + tiny process noise
+The design question is:
+
+> **How can repeated context-bearing coordination accumulate without letting one quiet day erase the reservoir?**
+
+This is the deeper lab for [`tutorial/06-shared-context-memory.md`](tutorial/06-shared-context-memory.md).
+
+## The memory law
+
+```math
+C_{t+1}=C_t+\eta I_t(1-C_t)-\lambda C_t+w_t^C
 ```
 
 where:
 
-- `I[t]` is bounded shared-context input from observable coordination actions
-- `eta` is the accumulation rate
-- `lambda` is the slow decay rate
-- `(1 - C[t])` creates saturation instead of infinite memory growth
+- `I_t` is bounded shared-context input from observable coordination actions;
+- `eta` is the accumulation rate;
+- `lambda` is the slow decay rate;
+- `(1 - C_t)` creates saturation instead of unbounded growth;
+- `w_t^C` is dedicated memory noise.
 
-## What feeds the tiny reservoir? ☕🧺
+## What feeds the reservoir? ☕🧺
 
-The current structural prototype gives memory input to generic things such as:
+The current structural prototype gives memory input to generic events such as:
 
 ```text
 callback
@@ -34,57 +40,63 @@ coffee delivered + acknowledged
 These weights are **model assumptions**, not learned human constants.
 
 ```text
-Observable action != intention.
-Memory input != emotional meaning.
+Observable action != intention
+Memory input != emotional meaning
 ```
 
-## What changed from the old C? 🐣
+## Why `C` owns a separate path 🐣
 
-Previously, `C` lived inside the same generic state update as the other soft states:
+`P / M / V / E / F` use ordinary soft-state dynamics.
+
+`C` deliberately bypasses:
 
 ```text
-mean reversion
-+ mode effect
-+ action drift
-+ daily process noise
+ordinary target pull
+generic mode drift
+generic process noise
+direct action drift
 ```
 
-That made Shared Context too easy to wiggle like a daily variable.
-
-Now:
+Actions feed `C` through `shared_context_input()` instead.
 
 ```text
-P / M / V / E / F  -> ordinary soft-state dynamics
-C                  -> dedicated memory reservoir
+P / M / V / E / F → ordinary soft-state dynamics
+C                 → dedicated memory reservoir
 ```
 
-The direct `C` column in `ACTION_EFFECTS` is intentionally zero. Actions feed `C` through `shared_context_input()` instead.
+This prevents two update mechanisms from competing over the same semantic state.
 
 ## Quiet is not forgetting 🌿
 
-A quiet day produces:
+A quiet day can produce:
 
 ```text
-I[t] = 0
+I_t = 0
 ```
 
-not:
+without implying:
 
 ```text
-C[t] = 0
+C_t = 0
 ```
 
-So one quiet day only applies slow decay.
-A long disconnected period can reduce `C`, but the shared history does not vanish overnight.
+So one quiet day applies only the reservoir's slow decay. A long disconnected period can reduce `C`, but accumulated context does not vanish overnight.
 
 ## Saturation matters ✨
 
-Repeated callbacks and familiar coordination can keep building context, but `(1 - C[t])` makes new additions smaller as the reservoir gets fuller.
+Repeated context-bearing events can continue adding evidence, but `(1 - C_t)` makes each new addition smaller as the reservoir fills.
 
-That prevents:
+That keeps `C` bounded and makes “more history” different from unbounded accumulation.
+
+## What memory means here
+
+`C` does **not** measure either person's private memory.
+
+It represents the model's accumulated evidence that the routine contains recurring shared context.
 
 ```text
-shared context = 1.8 coffees XD
+Shared Context state != someone's private memory
+Memory != mood
 ```
 
 ## Tiny inspection tool 🔍
@@ -112,8 +124,8 @@ memory-story.png
 ## Tiny law 🌟
 
 ```text
-No event today != no shared history.
-Memory != mood.
+No event today != no shared history
+Memory != mood
 ```
 
 Tiny memories deserve slower gravity. 🧠🌱🐾

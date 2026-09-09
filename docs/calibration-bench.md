@@ -1,16 +1,25 @@
 # Tiny Observation Calibration Bench 🎛️☕🐣
 
-The coffee brain is allowed to have hand-set probability knobs.
+## Why this exists
 
-It is **not** allowed to hide them under the rug forever. XD
+The observation model contains hand-set probability assumptions. That is acceptable for a structural prototype only if those assumptions stay visible and testable.
 
-This little bench makes the observation model inspectable and asks whether its probabilities keep their promises before any optimizer is invited into the kitchen.
+This bench asks:
 
-> **Calibration first. Optimization later.**
+> **When the model predicts a probability, does that probability behave like the number it claims to be in the synthetic test world?**
+
+This is the lab behind tutorial chapter [`tutorial/09-challenge-the-model.md`](tutorial/09-challenge-the-model.md).
+
+```text
+Calibration first
+Optimization later
+```
+
+Calibration does not prove the ontology is correct. It checks whether probabilistic predictions keep their stated promises under a defined synthetic experiment.
 
 ## The tiny knob tray 🧺
 
-All estimator-side observation parameters now live in:
+Estimator-side observation parameters live in:
 
 ```text
 coffee_brain/observation_model.py
@@ -41,7 +50,7 @@ The baseline is a **structural prototype assumption**. It is not a learned psych
 
 ## Bernoulli clues ☕
 
-Each binary clue has a logistic recipe:
+Each binary clue uses a logistic recipe:
 
 ```text
 logit p = intercept + beta · x + mode_offset
@@ -53,7 +62,7 @@ where:
 x = [P, M, V, C, E, F]
 ```
 
-The calibration bench reports:
+The bench reports:
 
 ```text
 Brier score
@@ -65,7 +74,7 @@ expected calibration error (ECE)
 reliability bins
 ```
 
-For `opt_in` and `pass_event`, only days with an invitation are scored. A closed response door is not silently counted as a zero. 🚪☕
+For `opt_in` and `pass_event`, only days with an invitation are scored. A closed response door is not silently counted as a zero.
 
 ## Continuous clues 📏
 
@@ -84,21 +93,19 @@ normalized residual mean
 normalized residual standard deviation
 ```
 
-A normalized residual standard deviation near `1` is one clue that the assumed noise scale is not wildly wrong. It is not proof that the whole model is correct. 🐣
+A normalized residual standard deviation near `1` is evidence that the assumed noise scale is not wildly inconsistent with that synthetic sample. It is not proof that the full model is correct.
 
 ## Scenario weather matters 🌦️
 
-The synthetic generator deliberately has weather-specific biases and noise that the estimator baseline does not automatically know.
-
-That is useful.
+The synthetic generator deliberately contains weather-specific biases and noise that the estimator baseline does not automatically know.
 
 ```text
 Synthetic World != Estimator Assumptions
 ```
 
-So a cozy matched world may look well calibrated while a noisy or special-day world can expose overconfidence, bias, or a missing context term.
+A matched synthetic world may look well calibrated while a noisy or special-day world can expose overconfidence, bias, or a missing context term.
 
-Run every weather world:
+Run every public weather world:
 
 ```bash
 python -m tiny_tools.calibrate_observations --scenario all --days 365
@@ -114,7 +121,7 @@ scenario-summary.csv
 baseline-config.json
 ```
 
-## A clean hook for later learning 🔧🐣
+## Calibration and learning are separate questions 🎚️🥄
 
 The observation config is immutable and replaceable:
 
@@ -125,13 +132,16 @@ better_guess = DEFAULT_OBSERVATION_MODEL.with_binary_channel(
 )
 ```
 
-That gives a future EM, Bayesian, gradient-based, or other parameter learner a clean parameter surface without forcing the current repo to pretend learning is already solved.
+The repository now also contains a deliberately narrow bounded learner in [`learning-spoon.md`](learning-spoon.md). That learner adjusts only a small parameter family, then returns to held-out calibration for evaluation.
 
-The hand-set default remains preserved for reproducibility.
+```text
+Learning a knob != validating the ontology
+Better train fit != better model
+```
 
-## Tiny epistemology rule 🧠✨
+The hand-set default remains preserved for reproducibility and comparison.
 
-A prettier loss is not enough.
+## Epistemic boundary 🧠✨
 
 ```text
 well optimized != well specified
@@ -139,6 +149,6 @@ well calibrated != causally true
 synthetic calibration != real-human validation
 ```
 
-The purpose of this bench is to reveal which probability families deserve learning next, not to manufacture confidence.
+The purpose of this bench is to expose probability behavior, not to manufacture confidence.
 
-Tiny knobs. Visible assumptions. Measurable promises. 🎛️☕✨
+Tiny knobs. Visible assumptions. Measurable promises. 🎛️☕

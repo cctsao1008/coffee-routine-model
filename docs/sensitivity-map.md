@@ -1,20 +1,22 @@
 # Tiny Sensitivity Map 🧪🗺️☕
 
-The observability garden asks whether a clue family helps the estimator at all.
+## Why this exists
 
-This sensitivity map asks a wider question:
+Observability asks whether a clue family helps distinguish latent states. Sensitivity asks a different question:
 
-> **If one clue or one estimator assumption changes, which soft states wobble the most?**
+> **If one clue or one estimator assumption changes, which outputs move the most?**
+
+This is one of the challenge labs linked from [`tutorial/09-challenge-the-model.md`](tutorial/09-challenge-the-model.md).
 
 ```text
-Sensitivity != causality.
-Big model effect != psychological importance.
-Small model effect != useless clue.
+Sensitivity != causality
+Big model effect != psychological importance
+Small model effect != useless clue
 ```
 
 ## What gets poked 🐾
 
-The first map changes one thing at a time while reusing the exact same synthetic timeline and random seed.
+The map changes one thing at a time while reusing the same synthetic timeline and random seed.
 
 ### Clue ablations 🙈
 
@@ -53,7 +55,7 @@ continuous-state process noise
 fixed mode-transition temperature
 ```
 
-Transition temperature preserves every row as a valid probability distribution. A lower temperature sharpens the old fixed transition table; a higher temperature flattens it.
+Transition temperature preserves every row as a valid probability distribution. A lower temperature sharpens the fixed transition table; a higher temperature flattens it.
 
 ## What gets measured 📏
 
@@ -74,9 +76,25 @@ The heatmap uses signed relative RMSE change:
 (RMSE_variant - RMSE_baseline) / RMSE_baseline
 ```
 
-Positive means the poke made estimation worse under that synthetic experiment. Negative means it happened to improve RMSE.
+Positive means the perturbation made estimation worse under that synthetic experiment. Negative means it happened to improve RMSE.
 
-That sign is diagnostic, not moral. XD
+The sign is diagnostic, not moral.
+
+## How to read a strong sensitivity
+
+If one assumption strongly changes an output, the correct conclusion is:
+
+```text
+this model output depends strongly on this assumption
+```
+
+not:
+
+```text
+this assumption is therefore a real-world causal driver
+```
+
+Sensitivity is especially useful for deciding which assumptions deserve calibration, additional diagnostics, or a simpler alternative model.
 
 ## Run the tiny map 🧺
 
@@ -95,4 +113,12 @@ summary.csv
 sensitivity-map.png
 ```
 
-The public benchmark stays synthetic and generic. No private messages, names, or raw human timelines belong in this basket.
+The benchmark stays synthetic and generic. No private messages, names, or raw human timelines belong in this basket.
+
+## Epistemic boundary
+
+```text
+Sensitivity != causality
+Parameter influence != human importance
+Synthetic robustness != real-world validity
+```

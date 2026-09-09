@@ -1,6 +1,8 @@
 # Tiny Protocol Bridge ☕➡️🧠➡️🐣
 
-The coffee world starts with very small observable things:
+## Why this exists
+
+The coffee world begins with very small observable tokens:
 
 ```text
 +1?
@@ -15,9 +17,11 @@ resume
 水費
 ```
 
-Those events are useful because they describe **what happened**.
+Those events describe **what happened**. They do not reveal **why it happened**.
 
-They do not magically reveal **why it happened**.
+The bridge exists to translate protocol-shaped vocabulary into generic observable model fields without jumping directly to latent-state claims.
+
+This is the deeper reference for tutorial chapters [`tutorial/01-a-tiny-routine.md`](tutorial/01-a-tiny-routine.md) and [`tutorial/02-event-not-meaning.md`](tutorial/02-event-not-meaning.md).
 
 ```text
 Protocol event != latent state
@@ -25,7 +29,7 @@ Protocol event != latent state
 
 ## Tiny translation table 🧺
 
-| Little event | Observation clue |
+| Little event | Generic observable field |
 |---|---|
 | `+1?` | `invite = 1` |
 | `+`, `要`, `對` | `opt_in = 1` |
@@ -36,33 +40,39 @@ Protocol event != latent state
 | explicit leave / exception update | `proactive_update = 1` |
 | `水費` / payment | `payment_event = 1` |
 
-`pause_event` and `payment_event` are preserved as observable metadata even though the current Particle Filter does not score them directly yet. Tiny clues are allowed to wait patiently for a future model. 🌱
+`pause_event` and `payment_event` are preserved as observable metadata even though the current Particle Filter does not score them directly.
 
-## The little `👍` problem XD
-
-The protocol accepts `👍` as a yes.
-
-But the same symbol can also be a reaction after coffee arrives.
-
-So context matters:
+That is intentional:
 
 ```text
-+1? → 👍     = opt-in
-☕  → 👍     = reaction
-👍 by itself  = ambiguous
+observable metadata may exist without being forced into the current latent model
 ```
 
-A lonely thumb is not forced into a story. 🐾
+## The little `👍` problem
+
+The protocol accepts `👍` as a yes in the right context, but the same symbol can also be a reaction after coffee arrives.
+
+```text
++1? → 👍      = may be opt-in
+☕  → 👍      = may be reaction
+👍 by itself   = ambiguous
+```
+
+A lonely thumb is not forced into a story.
+
+```text
+Ambiguous clue != forced story
+```
 
 ## Silence gets its own chair 🌿
 
-If we only see:
+If the only observed token is:
 
 ```text
 +1?
 ```
 
-then the adapter returns:
+then the adapter returns the response fields as missing:
 
 ```text
 invite = 1
@@ -70,13 +80,28 @@ opt_in = None
 pass_event = None
 ```
 
-No hidden yes.
-No hidden no.
-No imaginary mood.
+No hidden yes. No hidden no. Just missing information.
 
-Just missing information.
+```text
+Missing clue != zero
+```
 
-## Tiny explicit events 🐣
+## Actions and observations are separate 🎮👀
+
+The combined adapter path parses one protocol moment and splits it into the two baskets used by CSRDM:
+
+```python
+from coffee_brain.protocol_adapter import coffee_to_step
+
+step = coffee_to_step(["+1?", "要", "☕", "👍"])
+
+print(step.actions)
+print(step.observation)
+```
+
+This avoids reparsing the same story moment independently for dynamics and inference.
+
+## Explicit events 🐣
 
 When raw text is too ambiguous, callers can use an explicit `CoffeeEvent`:
 
@@ -90,10 +115,12 @@ obs = coffee_to_observation([
 ])
 ```
 
-This keeps the adapter small and honest:
+The bridge stays deliberately modest:
 
 ```text
-Observable facts in.
-Soft probabilistic guesses later.
-Humans remain humans. ☕✨
+Observable facts in
+Generic event semantics out
+Probabilistic hidden-state inference later
 ```
+
+Cute bridge. Serious boundary. ☕✨
