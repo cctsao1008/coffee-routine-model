@@ -125,12 +125,18 @@ Synthetic metric != human validation
 
 ## 📦 Release / packaging snapshot
 
-Use [`release-notes-0.3.0.md`](release-notes-0.3.0.md) when the question is **what belongs in the v0.3.0 release candidate, and what is still gated?**
+Use [`release-notes-0.3.1.md`](release-notes-0.3.1.md) when the question is **what belongs in the current formal release candidate?**
 
-It keeps package version, architecture version, installation, reproducibility, API fixes, and the explicit license gate in one place.
+The earlier [`release-notes-0.3.0.md`](release-notes-0.3.0.md) records why the existing `v0.3.0` tag is kept as an immutable architecture-baseline marker instead of being moved forward.
 
 ```text
-Package 0.3.0 != new architecture
+Package 0.3.1 → current release candidate
+Architecture 0.3 → unchanged model baseline
+v0.3.0 → historical architecture tag
+```
+
+```text
+Packaging patch version != architecture relabel
 Release hygiene != model growth
 ```
 
@@ -185,7 +191,7 @@ Want the spec        → docs/architecture.md
 Want claim status    → docs/epistemic-status.md
 Want clue provenance → docs/observation-provenance.md
 Want experiments     → labs / result docs
-Want release status  → docs/release-notes-0.3.0.md
+Want release status  → docs/release-notes-0.3.1.md
 Want to run          → examples/ and tiny_tools/
 Want history         → COFFEELOG.md
 ```
