@@ -112,7 +112,7 @@ See [`../examples/`](../examples/):
 - [`../examples/cheng_linda_story.py`](../examples/cheng_linda_story.py) — synthetic persona → generic semantics
 - [`../examples/365-cute-days/`](../examples/365-cute-days/) — observation-only synthetic reference
 
-The separate action-aware reference is generated on demand with:
+The separate action-aware reference is generated on demand by [`../tiny_tools/controlled_reference.py`](../tiny_tools/controlled_reference.py):
 
 ```bash
 python -m tiny_tools.controlled_reference
