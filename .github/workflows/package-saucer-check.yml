@@ -1,0 +1,44 @@
+name: 📦☕ Tiny Package Saucer
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  package-saucer:
+    name: 🐣 Install the tiny coffee brain away from its source tree
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧺 Pick up the little repo basket
+        uses: actions/checkout@v4
+
+      - name: ☕ Warm up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 📦 Put the package on its saucer
+        run: python -m pip install .
+
+      - name: 🩺 Check the installed dependency cup
+        run: python -m pip check
+
+      - name: 🚪 Knock on the public door from outside the repo
+        shell: bash
+        run: |
+          outside="$(mktemp -d)"
+          cd "$outside"
+          python - <<'PY'
+          from coffee_brain import ARCHITECTURE_VERSION, CSRDM, CSRDMConfig
+          import tiny_tools
+
+          brain = CSRDM(CSRDMConfig())
+          result = brain.step(["+1?", "要", "☕", "👍"])
+
+          assert ARCHITECTURE_VERSION == "0.3"
+          assert "P" in result.mean_by_state
+          assert tiny_tools.__name__ == "tiny_tools"
+          print("📦☕ Installed package can open its public door away from the source tree.")
+          PY
