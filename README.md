@@ -322,4 +322,13 @@ CI exercises the public model, adapters, diagnostics, memory, smoothing, calibra
 Cute CI != weak CI
 ```
 
+## 11. License 📜☕
+
+Coffee, code, and tiny particles are shared under the **MIT License**.
+See [`LICENSE`](LICENSE) for the full legal text.
+
+```text
+Cute license note != replacement for LICENSE
+```
+
 One tiny routine. Many levels of depth. Same mathematical skeleton. ☕🌱📐🐣
