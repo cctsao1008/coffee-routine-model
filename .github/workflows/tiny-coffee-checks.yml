@@ -46,6 +46,16 @@ jobs:
           --high-v 0.94
           --seed 20260908
           --out .tiny-v-compression
+      - name: 🌿🎛️ Scan bounded V dynamics priors
+        run: >-
+          python -m tiny_tools.scan_v_dynamics
+          --days 180
+          --particles 800
+          --seeds 20260908,20260909,20260910
+          --low-v 0.58
+          --high-v 0.94
+          --baseline-dir examples/365-cute-days
+          --out .tiny-v-dynamics
       - name: 🧪 Poke clues and assumptions one tiny bit at a time
         run: >-
           python -m tiny_tools.map_sensitivity
@@ -135,6 +145,10 @@ jobs:
           test -f .tiny-v-compression/dynamics-pressure.csv
           test -f .tiny-v-compression/recipe.json
           test -f .tiny-v-compression/v-compression.png
+          test -f .tiny-v-dynamics/candidate-summary.csv
+          test -f .tiny-v-dynamics/stress-runs.csv
+          test -f .tiny-v-dynamics/baseline-guard.csv
+          test -f .tiny-v-dynamics/recipe.json
           test -f .tiny-sensitivity/sensitivity.csv
           test -f .tiny-sensitivity/summary.csv
           test -f .tiny-sensitivity/sensitivity-map.png
