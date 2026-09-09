@@ -38,7 +38,7 @@ jobs:
           result = brain.step(["+1?", "要", "☕", "👍"])
 
           assert ARCHITECTURE_VERSION == "0.3"
-          assert "P" in result.mean_by_state
+          assert "predictability" in result.mean_by_state
           assert tiny_tools.__name__ == "tiny_tools"
           print("📦☕ Installed package can open its public door away from the source tree.")
           PY
