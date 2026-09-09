@@ -73,6 +73,24 @@ jobs:
           cat .tiny-c-bias/mode-bias.csv
           echo "--- quiet memory ---"
           cat .tiny-c-bias/quiet-memory.csv
+      - name: 🎮☕ Run the separate known-action reference
+        run: >-
+          python -m tiny_tools.controlled_reference
+          --days 96
+          --particles 1200
+          --seed 20260908
+          --scenario cozy-normal-year
+          --out .tiny-controlled-reference
+      - name: 🧾🎮 Read the controlled-reference receipts
+        run: |
+          echo "--- scope ---"
+          cat .tiny-controlled-reference/scope.csv
+          echo "--- summary ---"
+          cat .tiny-controlled-reference/summary.csv
+          echo "--- state excitation ---"
+          cat .tiny-controlled-reference/state-excitation.csv
+          echo "--- scorecard ---"
+          cat .tiny-controlled-reference/scorecard.csv
       - name: 🧪 Poke clues and assumptions one tiny bit at a time
         run: >-
           python -m tiny_tools.map_sensitivity
@@ -173,6 +191,14 @@ jobs:
           test -f .tiny-c-bias/quiet-memory.csv
           test -f .tiny-c-bias/recipe.json
           test -f .tiny-c-bias/shared-context-bias.png
+          test -f .tiny-controlled-reference/action-schedule.csv
+          test -f .tiny-controlled-reference/input.csv
+          test -f .tiny-controlled-reference/output.csv
+          test -f .tiny-controlled-reference/scorecard.csv
+          test -f .tiny-controlled-reference/state-excitation.csv
+          test -f .tiny-controlled-reference/summary.csv
+          test -f .tiny-controlled-reference/scope.csv
+          test -f .tiny-controlled-reference/recipe.json
           test -f .tiny-sensitivity/sensitivity.csv
           test -f .tiny-sensitivity/summary.csv
           test -f .tiny-sensitivity/sensitivity-map.png

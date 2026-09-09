@@ -45,6 +45,7 @@ These are labs, not required reading for the first journey:
 - [`v-compression-result.md`](v-compression-result.md) — why did the excited V posterior still stay compressed?
 - [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md) — does a more permissive V prior help without harming the ordinary baseline?
 - [`shared-context-bias-result.md`](shared-context-bias-result.md) — is C error mostly shape error or a slow prior offset?
+- [`controlled-reference-result.md`](controlled-reference-result.md) — does the declared known-action path run end-to-end without changing the observation-only baseline?
 - [`calibration-bench.md`](calibration-bench.md) — do predicted probabilities behave as promised?
 - [`sensitivity-map.md`](sensitivity-map.md) — which assumptions matter most?
 - [`state-chair-test.md`](state-chair-test.md) — does every latent state earn a separate chair?
@@ -64,7 +65,7 @@ one modeling doubt
 
 ## 📏 Result snapshots
 
-Small result documents such as [`change-point-result.md`](change-point-result.md), [`v-compression-result.md`](v-compression-result.md), [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md), and [`shared-context-bias-result.md`](shared-context-bias-result.md) record a particular reproducible synthetic recipe or diagnostic result.
+Small result documents such as [`change-point-result.md`](change-point-result.md), [`v-compression-result.md`](v-compression-result.md), [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md), [`shared-context-bias-result.md`](shared-context-bias-result.md), and [`controlled-reference-result.md`](controlled-reference-result.md) record a particular reproducible synthetic recipe or diagnostic result.
 
 They are **not** architecture definitions and should not be read as universal model performance.
 
@@ -80,7 +81,8 @@ The runnable story and synthetic baskets live in [`../examples/`](../examples/).
 Useful starting points:
 
 - [`../examples/cheng_linda_story.py`](../examples/cheng_linda_story.py) — synthetic persona → generic model semantics
-- [`../examples/365-cute-days/`](../examples/365-cute-days/) — committed synthetic reference basket
+- [`../examples/365-cute-days/`](../examples/365-cute-days/) — committed observation-only synthetic reference basket
+- [`../examples/controlled-cute-days/`](../examples/controlled-cute-days/) — declared home for the separate controlled action-aware reference
 
 Runnable diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
