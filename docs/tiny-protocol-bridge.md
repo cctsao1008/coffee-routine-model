@@ -27,6 +27,29 @@ This is the deeper reference for tutorial chapters [`tutorial/01-a-tiny-routine.
 Protocol event != latent state
 ```
 
+## Four little promises ☕🤝
+
+The adapter boundary can be remembered with four promises:
+
+1. **Observable in, observable out.** 👀
+2. **Missing clues stay missing.** 🌱
+3. **Ambiguous clues stay ambiguous.** 🙈
+4. **Story vocabulary becomes generic semantics before core inference.** 🧠
+
+They are small rules, but they protect a large boundary:
+
+```text
+protocol / persona event
+        ↓
+parse once
+        ↓
+known actions + observed clues
+        ↓
+CSRDM inference
+```
+
+The bridge does not skip directly from a coffee token to a claim about a person's internal state.
+
 ## Tiny translation table 🧺
 
 | Little event | Generic observable field |

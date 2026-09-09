@@ -81,6 +81,33 @@ Useful lesson:
 Synthetic reference != real-human validation
 ```
 
+### Controlled action-aware reference — generated on demand 🎮☕
+
+The known-action reference is deliberately **not** a second committed example basket. Generate it when you want to inspect the controlled path:
+
+```bash
+python -m tiny_tools.controlled_reference
+```
+
+By default the tool writes scratch receipts under `examples/controlled-cute-days/`. That generated directory is gitignored; the canonical committed interpretation lives in [`../docs/controlled-reference-result.md`](../docs/controlled-reference-result.md).
+
+This keeps two jobs separate:
+
+```text
+365-cute-days/
+→ committed observation-only baseline
+
+controlled reference
+→ generated action-aware experiment
+→ committed result summary, not committed scratch basket
+```
+
+Useful lesson:
+
+```text
+Separate experiment != silent baseline drift
+```
+
 ## What does not belong here? 🙈
 
 ```text
@@ -96,6 +123,7 @@ If a story-specific name is useful for teaching, it should lose its costume befo
 ## Want the model-design journey instead? 📚
 
 - [`../docs/tutorial/README.md`](../docs/tutorial/README.md) — ten-step teaching path
+- [`../docs/math/README.md`](../docs/math/README.md) — choose Starter Math or Full Math
 - [`../docs/architecture.md`](../docs/architecture.md) — formal architecture `0.3` contract
 - [`../docs/README.md`](../docs/README.md) — full documentation map
 - [`../tiny_tools/`](../tiny_tools/) — runnable diagnostic labs

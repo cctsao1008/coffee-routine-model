@@ -52,8 +52,7 @@ Same model. Different depth.
 Use these when you already understand the ideas and want the current implementation contract:
 
 - [`architecture.md`](architecture.md) — architecture `0.3`
-- [`adapter-little-contract.md`](adapter-little-contract.md) — minimum adapter invariant
-- [`tiny-protocol-bridge.md`](tiny-protocol-bridge.md) — protocol / adapter semantics
+- [`tiny-protocol-bridge.md`](tiny-protocol-bridge.md) — protocol / adapter semantics and boundary promises
 - [`action-aware-dynamics.md`](action-aware-dynamics.md) — controlled transition semantics
 - [`memory-garden.md`](memory-garden.md) — Shared Context memory mechanism
 - [`transition-weather.md`](transition-weather.md) — optional context-aware mode transitions
@@ -110,17 +109,17 @@ Synthetic metric != human validation
 See [`../examples/`](../examples/):
 
 - [`../examples/cheng_linda_story.py`](../examples/cheng_linda_story.py) — synthetic persona → generic semantics
-- [`../examples/365-cute-days/`](../examples/365-cute-days/) — observation-only synthetic reference
-- [`../examples/controlled-cute-days/`](../examples/controlled-cute-days/) — separate known-action reference
+- [`../examples/365-cute-days/`](../examples/365-cute-days/) — committed observation-only synthetic reference
+- [`../tiny_tools/controlled_reference.py`](../tiny_tools/controlled_reference.py) — generate the separate known-action reference on demand
+- [`controlled-reference-result.md`](controlled-reference-result.md) — committed result summary for that controlled experiment
 
-Diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
+The generated controlled basket is scratch output rather than a second committed reference tree. Diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
 ## ⚖️ Writing / source / epistemic boundaries
 
 - [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided
-- [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract
-- [`source-notes.md`](source-notes.md) — public boundary around private design inspiration
-- [`design-principles.md`](design-principles.md) — distilled principle map
+- [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract and public/private boundary
+- [`design-principles.md`](design-principles.md) — distilled principle map and design-history provenance
 - [`../CUTE_RULES.md`](../CUTE_RULES.md) — tone and engineering rules
 - [`../COFFEELOG.md`](../COFFEELOG.md) — project history
 

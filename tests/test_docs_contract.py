@@ -66,6 +66,25 @@ def test_readme_keeps_depth_doors_visible_without_becoming_the_math_textbook():
     assert "p(x_t,m_t\\mid z_{1:T})" not in readme
 
 
+def test_redundant_doc_residue_stays_out_of_the_current_map():
+    stale_paths = (
+        ROOT / "docs" / "adapter-little-contract.md",
+        ROOT / "docs" / "source-notes.md",
+        ROOT / "examples" / "controlled-cute-days" / "README.md",
+    )
+    assert [str(path.relative_to(ROOT)) for path in stale_paths if path.exists()] == []
+
+    docs_map = (ROOT / "docs" / "README.md").read_text(encoding="utf-8")
+    examples_map = (ROOT / "examples" / "README.md").read_text(encoding="utf-8")
+
+    assert "adapter-little-contract.md" not in docs_map
+    assert "source-notes.md" not in docs_map
+    assert "../examples/controlled-cute-days/" not in docs_map
+    assert "tiny_tools/controlled_reference.py" in docs_map
+    assert "tiny_tools.controlled_reference" in examples_map
+    assert "../docs/controlled-reference-result.md" in examples_map
+
+
 def test_objective_story_contract_keeps_the_main_boundaries_explicit():
     contract = (ROOT / "docs" / "objective-story-contract.md").read_text(encoding="utf-8")
     for rule in (

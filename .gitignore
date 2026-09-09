@@ -5,6 +5,9 @@ venv/
 .env
 .DS_Store
 
+# Generated scratch baskets stay out of the committed coffee counter ☕🧺
+examples/controlled-cute-days/
+
 # Real/private data does not belong in this public repo ☕🔒
 data/private/
 data/real/
