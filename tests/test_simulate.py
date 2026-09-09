@@ -34,7 +34,14 @@ def test_every_mode_can_make_a_tiny_clue_without_falling_over():
             "tone_warmth", "response_delay_min",
         }
         assert 0.0 <= obs["tone_warmth"] <= 1.0
-        assert 0.2 <= obs["response_delay_min"] <= 360.0
+
+        # Reply delay is an observation, not a synthetic clock that must always exist.
+        # Keep this smoke test aligned with the same missing-data contract as the
+        # dedicated protocol-semantic tests. 🌱⏰
+        delay = obs["response_delay_min"]
+        assert (delay is not None) == bool(obs["text_reply"])
+        if delay is not None:
+            assert 0.2 <= float(delay) <= 360.0
 
 
 def test_every_weather_can_survive_a_small_particle_picnic():

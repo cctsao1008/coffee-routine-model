@@ -1,16 +1,17 @@
 name: 🎨 Paint 365 Cute Days
 
 on:
-  push:
-    paths:
-      - .github/workflows/paint-365-gallery.yml
-      - requirements.txt
-      - tiny_tools/visualize.py
-      - examples/365-cute-days/output.csv
   workflow_dispatch:
 
 permissions:
   contents: write
+
+# Automatic reference updates belong to pack-365-basket.yml, which regenerates data
+# and paints the gallery as one transaction. This workflow is the manual repaint door.
+# Both writers share one lock so the tiny robots cannot race each other. 🎨🧺
+concurrency:
+  group: coffee-routine-model-365-reference
+  cancel-in-progress: false
 
 jobs:
   paint-the-coffee-wall:
