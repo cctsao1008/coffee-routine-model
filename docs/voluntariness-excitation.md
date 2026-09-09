@@ -2,17 +2,15 @@
 
 ## Why this exists
 
-The observation-only 365-day reference currently gives `V = Voluntariness` relatively little truth variation and an awkward negative Pearson correlation.
+The observation-only 365-day reference gives `V = Voluntariness` relatively little truth variation and an awkward negative Pearson correlation.
 
-That result is **Observed** for that synthetic recipe. The explanation is still **Probable / Undefined** until a more focused test separates weak excitation from a genuine tracking mismatch.
+That result is **Observed** for that synthetic recipe. The explanation was still **Probable / Undefined**, so #31 created a focused test that gives synthetic `V` much more room to move without changing CSRDM architecture `0.3`.
 
 ```text
 Awkward metric != bug
 Low excitation != zero information
 Probability != fact
 ```
-
-This bench deliberately gives synthetic truth `V` a wider dynamic range while leaving the Particle Filter and architecture `0.3` unchanged.
 
 ## What is deliberately controlled 🧪
 
@@ -75,7 +73,7 @@ real relationship proven absent
 
 The diagnostic writes `channel-sensitivity.csv` directly from `DEFAULT_OBSERVATION_MODEL` so this map does not need to be maintained by hand.
 
-## Run the bench 🌱
+## Reproducible bench 🌱
 
 ```bash
 python -m tiny_tools.excite_voluntariness \
@@ -99,51 +97,88 @@ v-excitation.png
 
 `summary.csv` includes both the deliberate excitation result and, when available, the committed observation-only 365-day baseline for context.
 
-## What to inspect 🔍
+## Observed result 🔍
 
-The important numbers are:
-
-```text
-truth std / span
-estimate std
-RMSE / MAE
-Pearson r
-95% interval coverage
-mean estimate - truth bias
-```
-
-Correlation should not be interpreted without the excitation scale beside it.
-
-A useful question is:
-
-> Does V become directionally trackable when the synthetic truth actually moves enough to make tracking measurable?
-
-## Decision gate 🚪
-
-If deliberate excitation produces clear positive tracking:
+The CI reference run used the exact command above.
 
 ```text
-Observed
-→ the unchanged estimator can track a sufficiently excited synthetic V path
-
-Probable interpretation
-→ the baseline negative r is strongly influenced by weak excitation / metric context
-
-Still undefined
-→ how much excitation is sufficient in every possible regime
+truth V std               = 0.1498
+truth V span              = 0.3600
+estimate V std            = 0.0143
+V RMSE                    = 0.1699
+V MAE                     = 0.1352
+V Pearson r               = +0.1802
+V 95% interval coverage   = 55.56%
+excitation std / baseline = 6.29x
+baseline V Pearson r      = -0.1688
 ```
 
-If tracking remains poor or reversed:
+So the negative sign **did not persist** once V received much stronger excitation.
+
+But the stronger conclusion is not “V is fine.” The posterior still moved far too little:
 
 ```text
-Observed
-→ the focused synthetic stress test still shows mismatch
-
-Next step
-→ open a narrow observation-model / estimator issue
+truth std    ≈ 0.1498
+estimate std ≈ 0.0143
 ```
 
-Do not tune coefficients inside this bench.
+The estimate carried only about one tenth of the truth variation, RMSE increased substantially under the stress test, and interval coverage fell well below the nominal 95% target.
+
+## What this does and does not justify 🧭
+
+### Observed
+
+```text
+baseline r was negative under weak V excitation
+focused-excitation r became positive
+focused estimate amplitude remained strongly compressed
+focused CI coverage was poor
+```
+
+### Probable
+
+```text
+weak baseline excitation contributed to sign instability
+```
+
+This is a reasonable interpretation because the sign changed when truth excitation increased by about `6.29x`.
+
+### Still undefined
+
+The bench does **not** isolate why the estimate amplitude stayed compressed.
+
+Possible contributors include:
+
+```text
+strong V mean-reversion / narrow process dynamics
+cross-state aliasing in shared observation channels
+mode uncertainty
+limited direct V information in the likelihood
+protocol reconciliation changing effective clue information
+some combination of the above
+```
+
+Those possibilities are not equivalent and should not be collapsed into one “V coefficient bug.”
+
+## Decision gate outcome 🚪
+
+The #31 decision gate lands in the middle:
+
+```text
+negative tracking did not persist
+        +
+adequate directional tracking did not emerge either
+```
+
+Therefore:
+
+```text
+Do not tune V coefficients here.
+Do not declare the baseline negative r meaningless.
+Open a narrower diagnostic issue for posterior compression.
+```
+
+The next diagnostic should separate **observation information** from **state-dynamics prior / cross-state aliasing** before any model change is proposed.
 
 ## Epistemic boundary 🧭
 
@@ -152,16 +187,16 @@ Observed
 → metrics from one declared synthetic recipe
 
 Probable
-→ explanation for why baseline tracking looked awkward
+→ weak excitation contributed to the baseline sign instability
 
 Assumed
-→ the current observation coefficients and the deliberate V clamp
+→ current observation coefficients + deliberate V clamp
 
 Undefined
-→ broader human relationships not specified by this model
+→ exact cause of posterior compression and broader human relationships
 
 Not-yet-decided
-→ whether any core-model change is warranted after the result
+→ whether any core-model change is warranted
 ```
 
-The bench exists to reduce uncertainty before making that last decision. ☕🌿
+The bench reduced uncertainty, but it did not manufacture a final answer. That is the intended Phase 6 behavior. ☕🌿
