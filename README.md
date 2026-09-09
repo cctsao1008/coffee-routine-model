@@ -157,7 +157,7 @@ Mutuality != 50/50 symmetry
 
 ### `V` — Voluntariness
 
-A healthy model must allow `pass` to remain a valid choice.
+A voluntary model must allow `pass` to remain a valid choice.
 
 ```text
 Continuity != obligation
@@ -205,6 +205,7 @@ For example, an invitation or delivery can be represented as an action, while a 
 ```text
 Action != intention
 Observation != latent state
+Missing clue != zero
 ```
 
 The implementation details live in [`docs/action-aware-dynamics.md`](docs/action-aware-dynamics.md) and [`docs/tiny-protocol-bridge.md`](docs/tiny-protocol-bridge.md).
@@ -266,7 +267,7 @@ The intuition is simple:
 one callback              → one event
 many remembered patterns  → accumulated context
 one quiet day             → not instant forgetting
-long disconnection         → slow decay can matter
+long disconnection        → slow decay can matter
 ```
 
 ```text
@@ -351,7 +352,7 @@ The full architecture contract lives in [`docs/architecture.md`](docs/architectu
 
 ## 11. A model should be allowed to argue with itself 🔍🧪
 
-Building a model is only half the story. The next question is whether the abstractions we invented are actually useful inside the synthetic test world.
+Building a model is only half the story. The next question is whether the abstractions we invented are useful inside the synthetic test world.
 
 That is why the repo contains small diagnostic labs:
 
@@ -404,6 +405,12 @@ Synthetic World != Estimator Assumptions
 
 That mismatch is useful because a model that only succeeds against itself has not learned much about its own weaknesses.
 
+The synthetic world still obeys its observable protocol grammar: opt-in and pass cannot be the same reply, delivered-coffee maintenance requires opt-in, and an unobserved reply does not receive an invented finite delay.
+
+```text
+Protocol grammar != estimator factorization
+```
+
 ## 13. The 365-day reference basket 🗓️☕
 
 The committed synthetic reference lives at:
@@ -414,19 +421,22 @@ examples/365-cute-days/
 ├── input.csv
 ├── output.csv
 ├── metrics.csv
+├── recipe.json
+├── source-revision.txt
+├── environment.txt
 └── tiny-year-summary.png + state/mode figures
 ```
 
-Reference highlights for that committed synthetic baseline:
+The current scorecard is [`examples/365-cute-days/metrics.csv`](examples/365-cute-days/metrics.csv).
+Exact metric values are intentionally **not copied into this README**: recipe-defining code can regenerate the reference basket, so `metrics.csv` stays the single scorecard source of truth.
+
+`recipe.json`, `source-revision.txt`, and `environment.txt` record enough context to investigate reproducibility instead of pretending a seed alone freezes every future dependency version.
 
 ```text
-relationship-index RMSE : 0.0185
-relationship-index MAE  : 0.0135
-relationship-index r    : 0.805
-mode accuracy            : 82.2%
+Reference metric != universal performance
+Synthetic reference != real-human validation
+Seed != complete environment
 ```
-
-These numbers validate a **synthetic architecture exercise**. They do not prove that real people follow these equations.
 
 Paint the year again:
 
