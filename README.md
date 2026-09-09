@@ -202,7 +202,8 @@ Install the package from the repository root:
 python -m pip install .
 ```
 
-The current package snapshot is `0.3.0`; the CSRDM architecture remains `0.3`.
+The current package snapshot is `0.3.1`; the CSRDM architecture remains `0.3`.
+The earlier `v0.3.0` tag marks the architecture-complete baseline and stays fixed as historical provenance.
 A packaging patch release does not silently relabel the mathematical architecture.
 
 For repo-local tooling and CI, `requirements.txt` remains a readable mirror of the runtime dependencies declared in `pyproject.toml`:
