@@ -91,8 +91,32 @@ def generate_truth(
     return states, modes
 
 
+def _validate_protocol_clues(observation: dict) -> None:
+    """Keep the synthetic exam inside the observable protocol grammar. ☕🧭"""
+
+    invite = int(observation["invite"])
+    opt_in = int(observation["opt_in"])
+    text_reply = int(observation["text_reply"])
+    maintenance = int(observation["routine_maintenance"])
+    pass_event = int(observation["pass_event"])
+
+    if not invite and (opt_in or pass_event):
+        raise ValueError("🐾 Synthetic opt-in/pass needs an invitation opportunity.")
+    if opt_in and pass_event:
+        raise ValueError("🐾 Synthetic opt-in and pass cannot be the same reply choice.")
+    if (opt_in or pass_event) and not text_reply:
+        raise ValueError("🐾 Synthetic opt-in/pass is itself an observed reply.")
+    if maintenance and not opt_in:
+        raise ValueError("🐾 Delivered-coffee maintenance needs an explicit synthetic opt-in.")
+
+
 def observe(x, mode, rng, scenario: CoffeeScenario):
-    """Turn one hidden synthetic state into tiny behavior-level clues. 👀☕"""
+    """Turn one hidden synthetic state into tiny behavior-level clues. 👀☕
+
+    The hidden-world Bernoulli recipes are intentionally approximate, but the final
+    observable basket still obeys the public protocol grammar. The simulator may
+    disagree with the estimator; it should not contradict itself. 🧭🐣
+    """
 
     p, m, v, c, e, f = x
     invite = int(mode != RoutineMode.LEAVE and rng.random() < scenario.invite_probability)
@@ -155,6 +179,16 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
     )
     pass_event = int(invite and rng.random() < sigmoid(pass_logit))
 
+    # These clues come from separate structural Bernoulli recipes, then get reconciled
+    # into one semantically possible protocol step. The reconciliation uses no extra
+    # randomness, so a bug fix does not quietly reshuffle the rest of the RNG stream. ☕🧭
+    if opt_in:
+        pass_event = 0
+    if opt_in or pass_event:
+        text_reply = 1
+    if not opt_in:
+        routine_maintenance = 0
+
     mode_resume = {0: -0.8, 1: -0.5, 2: -1.0, 3: 0.0, 4: 2.8}[int(mode)]
     resume_logit = _wiggle(
         -3.0 + 1.0 * p + 0.6 * m + mode_resume + scenario.resume_bias,
@@ -184,7 +218,7 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
         )
     )
 
-    return {
+    observation = {
         "invite": invite,
         "opt_in": opt_in,
         "text_reply": text_reply,
@@ -197,6 +231,8 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
         "tone_warmth": tone_warmth,
         "response_delay_min": response_delay_min,
     }
+    _validate_protocol_clues(observation)
+    return observation
 
 
 def parse_args():
@@ -256,6 +292,8 @@ def main():
     ci95_high = np.asarray(ci95_high)
     ess = np.asarray(ess)
 
+    # R keeps its legacy helper/CSV name for reproducibility, but it is only a
+    # derived synthetic demo index — not a latent state or human score. ☕📏
     true_r = relationship_index(truth)
     est_r = relationship_index(estimates)
 
@@ -315,15 +353,15 @@ def main():
         writer.writerow(["relationship_index_R", r_rmse, r_mae, r_corr, ""])
         writer.writerow(["mode_classification_accuracy", "", "", mode_accuracy, ""])
 
-    print(f"{scenario.emoji} weather                  : {scenario.title}")
-    print(f"🌱 tiny world               : {scenario.description}")
-    print(f"☕ cute synthetic days      : {args.days}")
-    print(f"🐣 particles                : {args.particles}")
-    print(f"🌱 relationship-index RMSE : {r_rmse:.4f}")
-    print(f"✨ relationship-index MAE  : {r_mae:.4f}")
-    print(f"🧭 relationship-index r    : {r_corr:.3f}")
-    print(f"🎯 mode accuracy            : {mode_accuracy:.2%}")
-    print(f"🧺 output                   : {out}")
+    print(f"{scenario.emoji} weather                 : {scenario.title}")
+    print(f"🌱 tiny world              : {scenario.description}")
+    print(f"☕ cute synthetic days     : {args.days}")
+    print(f"🐣 particles               : {args.particles}")
+    print(f"🌱 synthetic demo-index RMSE : {r_rmse:.4f}")
+    print(f"✨ synthetic demo-index MAE  : {r_mae:.4f}")
+    print(f"🧭 synthetic demo-index r    : {r_corr:.3f}")
+    print(f"🎯 mode accuracy           : {mode_accuracy:.2%}")
+    print(f"🧺 output                  : {out}")
 
 
 if __name__ == "__main__":
