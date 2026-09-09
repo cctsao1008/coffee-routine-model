@@ -249,12 +249,19 @@ def mode_bias_rows(
 
 
 def quiet_memory_rows(days: int) -> list[dict[str, float | int]]:
+    """Report unclipped small-offset retention implied by the quiet memory law. 🍂📏
+
+    With zero input and the same decay rate on both nearby trajectories,
+    delta[t+1] = (1-lambda) * delta[t]. Using the closed form avoids turning a
+    deliberately huge unit offset into a clipping artifact. 🐣
+    """
+
     config = DEFAULT_SHARED_CONTEXT_MEMORY
     rows: list[dict[str, float | int]] = []
     for horizon in (1, 30, 90, 180, days):
         if horizon < 1 or horizon > days:
             continue
-        retention = quiet_bias_curve(1.0, horizon)[-1]
+        retention = (1.0 - config.decay_rate) ** (horizon - 1)
         rows.append(
             {
                 "days": horizon,

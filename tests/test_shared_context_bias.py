@@ -7,6 +7,7 @@ from tiny_tools.decompose_shared_context import (
     _centered_rmse,
     _shift_initial_c,
     quiet_bias_curve,
+    quiet_memory_rows,
 )
 from coffee_brain.particles import CoffeeParticleFilter
 
@@ -17,6 +18,13 @@ def test_quiet_bias_curve_decays_with_memory_law():
     assert abs(curve[-1]) < abs(curve[0])
     expected = -0.12 * (1.0 - 0.0015) ** 364
     assert np.isclose(curve[-1], expected, atol=1e-12)
+
+
+def test_quiet_memory_receipt_uses_unclipped_offset_retention():
+    rows = {int(row["days"]): row for row in quiet_memory_rows(365)}
+    assert np.isclose(float(rows[30]["offset_retention_ratio"]), (1.0 - 0.0015) ** 29)
+    assert np.isclose(float(rows[365]["offset_retention_ratio"]), (1.0 - 0.0015) ** 364)
+    assert 0.57 < float(rows[365]["offset_retention_ratio"]) < 0.59
 
 
 def test_centered_rmse_separates_offset_from_shape_error():
