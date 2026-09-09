@@ -44,6 +44,15 @@ def test_package_metadata_keeps_the_supported_python_boundary_explicit():
     assert project["requires-python"] == ">=3.12"
 
 
+def test_package_license_metadata_points_to_the_root_mit_license():
+    project = _pyproject()["project"]
+    license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
+
+    assert project["license"] == "MIT"
+    assert project["license-files"] == ["LICENSE"]
+    assert license_text.startswith("MIT License\n")
+
+
 def test_both_public_runtime_drawers_are_packaged():
     package_find = _pyproject()["tool"]["setuptools"]["packages"]["find"]
 
