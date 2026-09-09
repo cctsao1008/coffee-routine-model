@@ -15,6 +15,35 @@ Math still works.
 Architecture stays put. XD
 ```
 
+## Story door before the math door 📖☕
+
+A difficult model is easier to enter when the reader first sees a tiny observable story.
+The story layer is optional and deliberately outside the core:
+
+```text
+Synthetic Persona Story
+   Cheng / Linda example
+            │
+            ▼
+      Persona / Protocol Adapter
+            │
+            ├──────────────┐
+            ▼              ▼
+      Observable Actions  Observations
+            a_t              z_t
+            │                │
+            └───────┬────────┘
+                    ▼
+                CSRDM Core
+```
+
+The names are example costumes. They disappear before model semantics begin.
+
+```text
+Story != evidence
+Persona != core ontology
+```
+
 ## One tiny front door 🏛️☕
 
 Normal callers should start here:
@@ -23,75 +52,73 @@ Normal callers should start here:
 from coffee_brain import CSRDM, CSRDMConfig
 
 brain = CSRDM(CSRDMConfig())
-result = brain.step(["+1?", "+", "☕", "👍"])
+result = brain.step(["+1?", "要", "☕", "👍"])
 
 print(result.posterior.mean)
 ```
 
 The public facade owns the plumbing between protocol events, action extraction, observations, filtering, and optional smoothing.
 
-Internal modules remain inspectable for diagnostics and model development, but callers should not need their layout to perform an ordinary update.
-
 ## Full vertical stack 🧠🌱
 
 ```text
-                        ☕ Observable Events
-                                │
-                                ▼
-                    ┌──────────────────────┐
-                    │   Protocol Adapter   │
-                    └──────────┬───────────┘
-                               │
-                    ┌──────────┴──────────┐
-                    ▼                     ▼
-             Observable Actions       Observations
-                   a_t                    z_t
-                    │                     │
-                    ▼                     │
-          ┌──────────────────────┐        │
-          │      CSRDM Core      │        │
-          │                      │        │
-          │ x_t = [P M V C E F] │        │
-          │ hybrid mode m_t      │        │
-          │ action dynamics      │        │
-          │ context transitions  │        │
-          │ C memory reservoir   │        │
-          └──────────┬───────────┘        │
-                     │                    │
-                     └─────────┬──────────┘
-                               ▼
-                    ┌──────────────────────┐
-                    │   Particle Filter    │
-                    │ p(x_t,m_t | z_1:t)  │
-                    └──────────┬───────────┘
-                               │
-                     ┌─────────┴─────────┐
-                     ▼                   ▼
-                Posterior             History
-                     │                   │
-                     │                   ▼
-                     │            Particle Smoother
-                     │            p(x_t,m_t | z_1:T)
-                     │
-          ┌──────────┴────────────────────────────┐
-          ▼                                       ▼
-     Diagnostics                              Evaluation
-  observability                              model arena
-  calibration                                trade-offs
-  sensitivity
-  redundancy
-  recovery
-  change-point
-          │
-          ▼
-      Learning
- bounded observation
- parameter learning
+               Optional Story / Persona Layer
+                         │
+                         ▼
+                 ☕ Observable Events
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │   Protocol Adapter   │
+              └──────────┬───────────┘
+                         │
+              ┌──────────┴──────────┐
+              ▼                     ▼
+       Observable Actions       Observations
+             a_t                    z_t
+              │                     │
+              ▼                     │
+    ┌──────────────────────┐        │
+    │      CSRDM Core      │        │
+    │ x_t = [P M V C E F] │        │
+    │ hybrid mode m_t      │        │
+    │ action dynamics      │        │
+    │ context transitions  │        │
+    │ C memory reservoir   │        │
+    └──────────┬───────────┘        │
+               │                    │
+               └─────────┬──────────┘
+                         ▼
+              ┌──────────────────────┐
+              │   Particle Filter    │
+              │ p(x_t,m_t | z_1:t)  │
+              └──────────┬───────────┘
+                         │
+               ┌─────────┴─────────┐
+               ▼                   ▼
+          Posterior             History
+               │                   │
+               │                   ▼
+               │            Particle Smoother
+               │            p(x_t,m_t | z_1:T)
+               │
+    ┌──────────┴────────────────────────────┐
+    ▼                                       ▼
+Diagnostics                              Evaluation
+observability                            model arena
+calibration                              trade-offs
+sensitivity
+redundancy
+recovery
+change-point
+    │
+    ▼
+Learning
+bounded observation
+parameter learning
 ```
 
 ## State contract 🧺🧠
-
-The core soft-state vector remains:
 
 ```text
 x_t = [P, M, V, C, E, F]
@@ -113,12 +140,11 @@ Normal · Busy · Leave · Special · Recovery
 ```
 
 `C` is structurally special: it has a slow accumulation / decay / saturation memory law instead of ordinary daily-state drift.
+That means ordinary target pull, mode drift, and generic process noise deliberately leave `C` alone.
 
-The six-state definition is the architecture baseline, not an ontological claim. Redundancy diagnostics are allowed to challenge it later.
+The six-state definition is the architecture baseline, not an ontological claim.
 
 ## Controlled state-space contract 🎮👀
-
-The intended model boundary is:
 
 \[
 x_{t+1} \sim p(x_{t+1}\mid x_t,m_t,a_t,d_t)
@@ -128,8 +154,6 @@ x_{t+1} \sim p(x_{t+1}\mid x_t,m_t,a_t,d_t)
 z_t \sim p(z_t\mid x_t,m_t)
 \]
 
-where:
-
 ```text
 a_t = observable actions
 z_t = observable clues
@@ -138,11 +162,22 @@ x_t = latent continuous state
 m_t = latent discrete mode
 ```
 
-Actions and observations live in separate baskets on purpose.
+Temporal alignment matters: the action basket supplied with update `t` drives the transition from the previous hidden state into the current hidden state. The first update has no preceding transition.
+
+Actions and observations stay in separate baskets on purpose.
+
+## One transition baseline, many synthetic worlds 🎲🌦️
+
+The fixed estimator transition table has one structural source of truth in the core model.
+Synthetic scenarios may copy or perturb that baseline, but the estimator does not import scenario definitions.
+
+```text
+Synthetic World != Estimator Assumptions
+```
+
+This keeps synthetic validation from becoming an exam where the estimator secretly owns the answer key.
 
 ## Unified configuration tree 🧺🎛️
-
-`CSRDMConfig` is the architecture-level model definition surface:
 
 ```text
 CSRDMConfig
@@ -170,17 +205,9 @@ CSRDMConfig
 └── architecture_version
 ```
 
-Default transition behavior remains the original fixed stochastic matrix.
+Architecture-defining numpy config tables are made physically read-only where practical; `frozen=True` alone is not enough to freeze array storage.
 
-Context-aware mode transitions stay **opt-in** so architecture cleanup does not silently change baseline results.
-
-A complete JSON-shaped snapshot is available through:
-
-```python
-from coffee_brain import CSRDMConfig, config_snapshot
-
-snapshot = config_snapshot(CSRDMConfig())
-```
+Default transition behavior remains the fixed stochastic matrix. Context-aware transitions stay **opt-in**.
 
 ```text
 Model definition = code + config.
@@ -202,24 +229,12 @@ ExperimentSpec
 ```
 
 The spec generates a deterministic recipe fingerprint.
-
 Display names, timestamps, and output filenames do **not** enter that fingerprint.
 
 ```text
 Same recipe -> same fingerprint.
 Metric without recipe -> mystery bean. XD
 ```
-
-`ExperimentResult` keeps four things separate:
-
-```text
-recipe
-metrics
-diagnostics
-artifacts / notes
-```
-
-This contract is intentionally generic enough for simulation, diagnostics, parameter learning, and model-arena runs.
 
 ## Public boundary vs internal drawers 🚪🧺
 
@@ -231,6 +246,12 @@ coffee_brain.CSRDMConfig
 coffee_brain.CSRDMResult
 coffee_brain.ExperimentSpec
 coffee_brain.ExperimentResult
+```
+
+### Optional story surface
+
+```text
+examples/cheng_linda_story.py
 ```
 
 ### Internal / specialist surfaces
@@ -245,15 +266,13 @@ model arena runners
 synthetic scenario generators
 ```
 
-Those internal surfaces may evolve faster.
-
 `CSRDM.particle_filter` exists as an explicit diagnostic escape hatch, not as the preferred application interface.
 
 ## Architecture invariants 🧠✨
 
-These rules are more important than one coefficient or benchmark:
-
 ```text
+Story != Evidence
+Persona != Core Ontology
 Observation != Latent State
 Action != Intention
 Missing clue != zero
@@ -271,9 +290,8 @@ Model != Human
 
 ## What is deliberately outside the core 🙈☕
 
-Architecture `0.3` does **not** require:
-
 ```text
+persona-specific field names
 deep neural networks
 transformers
 end-to-end learned latent semantics
@@ -286,7 +304,7 @@ real-person ground-truth labels
 Any future addition needs evidence that an existing layer cannot answer the problem cleanly.
 
 ```text
-New algorithm because it exists        -> no thanks 🐾
+New algorithm because it exists                     -> no thanks 🐾
 New algorithm because a measured limit requires it -> maybe ☕
 ```
 
@@ -299,8 +317,9 @@ From here:
 1. fix bugs,
 2. improve tests,
 3. improve calibration and validation,
-4. add adapters or experiments when useful,
-5. change the core shape only when evidence justifies it.
+4. improve story / documentation clarity,
+5. add adapters or experiments when useful,
+6. change the core shape only when evidence justifies it.
 
 The tiny coffee brain is allowed to learn.
 

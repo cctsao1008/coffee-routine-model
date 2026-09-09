@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+import coffee_brain.protocol_adapter as adapter
 from coffee_brain.particles import CoffeeParticleFilter
 from coffee_brain.protocol_adapter import CoffeeEvent, coffee_to_observation
 
@@ -78,3 +79,19 @@ def test_adapter_basket_can_go_directly_to_the_tiny_particle_friends():
     posterior = pf.update(coffee_to_observation(["+1?", "+", "☕", "👍"]))
     assert np.all(np.isfinite(posterior.mean))
     assert np.isclose(posterior.mode_probabilities.sum(), 1.0)
+
+
+def test_coffee_to_step_parses_the_story_only_once(monkeypatch):
+    original = adapter._parse_events
+    calls = 0
+
+    def counted(events):
+        nonlocal calls
+        calls += 1
+        return original(events)
+
+    monkeypatch.setattr(adapter, "_parse_events", counted)
+    step = adapter.coffee_to_step(["+1?", "要", "☕", "👍"])
+    assert calls == 1
+    assert step.actions.a_invite == 1.0
+    assert step.observation["reaction"] == 1

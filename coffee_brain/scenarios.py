@@ -4,32 +4,30 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from .model import DEFAULT_MODE_TRANSITION
 
-BASE_TRANSITION = np.array(
-    [
-        [0.78, 0.12, 0.03, 0.04, 0.03],
-        [0.35, 0.45, 0.08, 0.02, 0.10],
-        [0.10, 0.03, 0.65, 0.01, 0.21],
-        [0.55, 0.10, 0.02, 0.25, 0.08],
-        [0.65, 0.08, 0.02, 0.03, 0.22],
-    ],
-    dtype=float,
-)
 
-BASE_TARGET = np.array([0.80, 0.72, 0.90, 0.76, 0.42, 0.10], dtype=float)
+# Backwards-compatible public alias, but not a second table. The estimator baseline
+# lives in model.py; synthetic worlds copy or perturb it from here. 🎲🧺
+BASE_TRANSITION = DEFAULT_MODE_TRANSITION
+
+# C slots in daily-drift tables are intentionally zero. Shared Context owns a
+# dedicated memory reservoir, so ordinary target pull / mode drift / generic noise
+# must not quietly move C behind that memory law. 🧠🌱
+BASE_TARGET = np.array([0.80, 0.72, 0.90, 0.0, 0.42, 0.10], dtype=float)
 
 BASE_MODE_EFFECTS = np.array(
     [
         [0.000, 0.000, 0.000, 0.000, 0.000, 0.000],  # Normal ☕
-        [-0.005, -0.008, 0.000, -0.002, -0.002, 0.008],  # Busy 🌧️
-        [-0.008, -0.010, 0.000, -0.005, -0.005, 0.005],  # Leave 💤
-        [0.010, 0.012, 0.005, 0.015, 0.020, -0.004],  # Special 🎂
-        [0.006, 0.006, 0.003, 0.008, 0.005, -0.005],  # Recovery 🌱
+        [-0.005, -0.008, 0.000, 0.000, -0.002, 0.008],  # Busy 🌧️
+        [-0.008, -0.010, 0.000, 0.000, -0.005, 0.005],  # Leave 💤
+        [0.010, 0.012, 0.005, 0.000, 0.020, -0.004],  # Special 🎂
+        [0.006, 0.006, 0.003, 0.000, 0.005, -0.005],  # Recovery 🌱
     ],
     dtype=float,
 )
 
-BASE_PROCESS_NOISE = np.array([0.012, 0.014, 0.009, 0.012, 0.018, 0.009], dtype=float)
+BASE_PROCESS_NOISE = np.array([0.012, 0.014, 0.009, 0.0, 0.018, 0.009], dtype=float)
 
 
 @dataclass(frozen=True)
@@ -60,6 +58,15 @@ class CoffeeScenario:
     pass_bias: float = 0.0
     resume_bias: float = 0.0
 
+    def __post_init__(self) -> None:
+        # Frozen dataclasses still contain mutable numpy arrays unless we freeze the
+        # storage explicitly. A scenario is an experiment recipe, not a shared scratchpad. 🧊
+        for name in ("transition", "target", "mode_effects", "process_noise"):
+            tiny = np.array(getattr(self, name), dtype=float, copy=True)
+            tiny.setflags(write=False)
+            object.__setattr__(self, name, tiny)
+        self.validate()
+
     def validate(self) -> None:
         """Make sure this tiny universe does not have broken probability gravity. 🪐🐾"""
 
@@ -75,6 +82,12 @@ class CoffeeScenario:
             raise ValueError(f"🐾 {self.slug}: process noise must contain six values")
         if not 0.0 <= self.invite_probability <= 1.0:
             raise ValueError(f"🐾 {self.slug}: invite probability must live between 0 and 1")
+        if not np.allclose(self.mode_effects[:, 3], 0.0):
+            raise ValueError(f"🧠 {self.slug}: Shared Context mode drift must stay zero")
+        if not np.isclose(self.process_noise[3], 0.0):
+            raise ValueError(f"🧠 {self.slug}: Shared Context generic process noise must stay zero")
+        if not np.isclose(self.target[3], 0.0):
+            raise ValueError(f"🧠 {self.slug}: Shared Context ordinary target pull must stay zero")
 
 
 def _scenario(
@@ -89,19 +102,17 @@ def _scenario(
     process_noise: np.ndarray = BASE_PROCESS_NOISE,
     **kwargs,
 ) -> CoffeeScenario:
-    tiny_world = CoffeeScenario(
+    return CoffeeScenario(
         slug=slug,
         emoji=emoji,
         title=title,
         description=description,
-        transition=np.array(transition, dtype=float, copy=True),
-        target=np.array(target, dtype=float, copy=True),
-        mode_effects=np.array(mode_effects, dtype=float, copy=True),
-        process_noise=np.array(process_noise, dtype=float, copy=True),
+        transition=transition,
+        target=target,
+        mode_effects=mode_effects,
+        process_noise=process_noise,
         **kwargs,
     )
-    tiny_world.validate()
-    return tiny_world
 
 
 SCENARIOS = {
@@ -125,8 +136,8 @@ SCENARIOS = {
                 [0.52, 0.20, 0.03, 0.03, 0.22],
             ]
         ),
-        target=np.array([0.76, 0.69, 0.90, 0.74, 0.40, 0.14]),
-        process_noise=np.array([0.014, 0.017, 0.009, 0.013, 0.019, 0.011]),
+        target=np.array([0.76, 0.69, 0.90, 0.0, 0.40, 0.14]),
+        process_noise=np.array([0.014, 0.017, 0.009, 0.0, 0.019, 0.011]),
         text_reply_bias=-0.12,
         delay_multiplier=1.25,
     ),
@@ -191,7 +202,7 @@ SCENARIOS = {
                 [0.44, 0.14, 0.06, 0.08, 0.28],
             ]
         ),
-        process_noise=np.array([0.024, 0.027, 0.017, 0.024, 0.032, 0.018]),
+        process_noise=np.array([0.024, 0.027, 0.017, 0.0, 0.032, 0.018]),
         logit_noise_sigma=0.42,
         warmth_sigma=0.13,
         delay_sigma=0.80,
@@ -214,10 +225,10 @@ SCENARIOS = {
         mode_effects=np.array(
             [
                 [0.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-                [-0.005, -0.008, 0.000, -0.002, -0.002, 0.008],
-                [-0.008, -0.010, 0.000, -0.005, -0.005, 0.005],
-                [0.010, 0.012, 0.005, 0.015, 0.020, -0.004],
-                [0.0025, 0.0025, 0.0015, 0.0035, 0.0020, -0.0020],
+                [-0.005, -0.008, 0.000, 0.000, -0.002, 0.008],
+                [-0.008, -0.010, 0.000, 0.000, -0.005, 0.005],
+                [0.010, 0.012, 0.005, 0.000, 0.020, -0.004],
+                [0.0025, 0.0025, 0.0015, 0.0000, 0.0020, -0.0020],
             ]
         ),
         mean_reversion=0.022,

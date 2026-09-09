@@ -1,9 +1,0 @@
-metric_scope,RMSE,MAE,Pearson_r,CI95_coverage
-P_predictability,0.028817,0.024788,0.692993,1.0
-M_mutuality,0.051479,0.040727,0.722814,1.0
-V_voluntariness,0.035381,0.028603,0.61912,1.0
-C_shared_context,0.039768,0.030613,0.319883,1.0
-E_state_sharing,0.061821,0.053195,0.337639,1.0
-F_friction,0.035489,0.029575,0.105743,1.0
-relationship_index_R,0.021254,0.016363,0.600801,
-mode_classification_accuracy,,,0.82,

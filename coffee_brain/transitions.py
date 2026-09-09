@@ -6,10 +6,9 @@ from typing import Mapping
 import numpy as np
 
 from .actions import RoutineActions
-from .scenarios import BASE_TRANSITION
+from .model import DEFAULT_MODE_TRANSITION
 
 
-TARGET_MODE_NAMES = ("Normal", "Busy", "Leave", "Special", "Recovery")
 CONTEXT_FEATURE_NAMES = (
     "friction",
     "unpredictability",
@@ -65,8 +64,8 @@ class ContextTransitionConfig:
     provenance: str = "hand-set structural transition baseline; not learned from real humans"
 
     def __post_init__(self) -> None:
-        base = np.asarray(self.base_transition, dtype=float)
-        effects = np.asarray(self.feature_effects, dtype=float)
+        base = np.array(self.base_transition, dtype=float, copy=True)
+        effects = np.array(self.feature_effects, dtype=float, copy=True)
         if base.shape != (5, 5):
             raise ValueError("🐾 Base transition matrix must be 5x5.")
         if effects.shape != (len(CONTEXT_FEATURE_NAMES), 5):
@@ -76,9 +75,16 @@ class ContextTransitionConfig:
         if self.max_logit_shift <= 0.0:
             raise ValueError("🐾 max_logit_shift must be positive.")
 
+        # frozen=True does not freeze numpy storage by itself. These arrays define
+        # model identity, so make the little tables physically read-only too. 🧊🐣
+        base.setflags(write=False)
+        effects.setflags(write=False)
+        object.__setattr__(self, "base_transition", base)
+        object.__setattr__(self, "feature_effects", effects)
+
 
 DEFAULT_CONTEXT_TRANSITIONS = ContextTransitionConfig(
-    base_transition=np.array(BASE_TRANSITION, dtype=float, copy=True),
+    base_transition=DEFAULT_MODE_TRANSITION,
     feature_effects=np.array(
         [
             [-0.35, 0.80, 0.25, 0.00, 0.20],  # friction
@@ -122,7 +128,7 @@ def transition_features(
     p, m, _, _, _, f = tiny_states.T
 
     # Exception sync is explicit coordination; a voluntary pass alone is not secretly
-    # reinterpreted as leave. 🌿
+    # reinterpreted as leave. Pass is a choice, not automatic failure evidence. 🌿
     coordinated_exception = basket.b_exception_sync
     recovery_evidence = max(
         basket.b_closure,
@@ -147,9 +153,9 @@ def transition_features(
 def fixed_transition_probabilities(
     previous_modes: np.ndarray | int,
     *,
-    base_transition: np.ndarray = BASE_TRANSITION,
+    base_transition: np.ndarray = DEFAULT_MODE_TRANSITION,
 ) -> np.ndarray:
-    """The old fixed matrix, preserved as a reproducible little baseline. 🎲🧺"""
+    """The fixed matrix, preserved as a reproducible little baseline. 🎲🧺"""
 
     previous = np.asarray(previous_modes, dtype=int)
     scalar = previous.ndim == 0

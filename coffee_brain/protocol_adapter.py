@@ -114,7 +114,7 @@ def _event_from_token(token: str, *, invited: bool, delivered: bool) -> CoffeeEv
 
 
 def _parse_events(events: Iterable[str | CoffeeEvent]) -> list[CoffeeEvent]:
-    """Parse once so action and observation baskets see the same tiny facts. ☕👀"""
+    """Parse raw tokens once into observable little facts. ☕👀"""
 
     parsed: list[CoffeeEvent] = []
     invited = False
@@ -134,11 +134,9 @@ def _parse_events(events: Iterable[str | CoffeeEvent]) -> list[CoffeeEvent]:
     return parsed
 
 
-def coffee_to_actions(events: Iterable[str | CoffeeEvent]) -> RoutineActions:
-    """Put observable actions into their own controlled-dynamics basket. ☕🎮🧺"""
-
+def _actions_from_events(events: Iterable[CoffeeEvent]) -> RoutineActions:
     values = {name: 0.0 for name in RoutineActions.__dataclass_fields__}
-    for event in _parse_events(events):
+    for event in events:
         kind = event.kind.strip().lower()
         if kind == "invite":
             values["a_invite"] = 1.0
@@ -153,6 +151,7 @@ def coffee_to_actions(events: Iterable[str | CoffeeEvent]) -> RoutineActions:
         elif kind == "opt_in":
             values["b_opt_in"] = 1.0
         elif kind == "pass":
+            # A pass is an observed voluntary choice, not evidence that the routine failed. 🌿
             values["b_pass_choice"] = 1.0
         elif kind in {"reaction", "acknowledge"}:
             values["b_acknowledge"] = 1.0
@@ -164,23 +163,16 @@ def coffee_to_actions(events: Iterable[str | CoffeeEvent]) -> RoutineActions:
     return RoutineActions(**values)
 
 
-def coffee_to_observation(
-    events: Iterable[str | CoffeeEvent],
+def _observation_from_events(
+    events: Iterable[CoffeeEvent],
     *,
     tone_warmth: float | None = None,
     response_delay_min: float | None = None,
 ) -> dict:
-    """Convert protocol-level events into a PF-ready observation basket. ☕➡️🐣
-
-    Only observable facts are encoded. Missing facts stay ``None`` so the
-    estimator can remain uncertain instead of receiving made-up neutral data.
-    """
-
     obs = _empty_observation()
     invited = False
-    delivered = False
 
-    for event in _parse_events(events):
+    for event in events:
         kind = event.kind.strip().lower()
 
         if kind == "invite":
@@ -198,7 +190,6 @@ def coffee_to_observation(
                 obs["text_reply"] = 1
         elif kind == "delivered":
             obs["routine_maintenance"] = 1
-            delivered = True
         elif kind in {"reaction", "acknowledge"}:
             obs["reaction"] = 1
         elif kind == "text_reply":
@@ -219,9 +210,7 @@ def coffee_to_observation(
         else:
             obs["unknown_events"].append(event.token or event.kind)
 
-    if obs["invite"] == 1 and obs["opt_in"] is None and obs["pass_event"] is None:
-        # Silence is not automatically yes or no. 🌱
-        pass
+    # Silence after an invitation is not secretly yes or no. Missing stays missing. 🌱
 
     if tone_warmth is not None:
         if not 0.0 <= tone_warmth <= 1.0:
@@ -236,18 +225,43 @@ def coffee_to_observation(
     return obs
 
 
+def coffee_to_actions(events: Iterable[str | CoffeeEvent]) -> RoutineActions:
+    """Put observable actions into their own controlled-dynamics basket. ☕🎮🧺"""
+
+    return _actions_from_events(_parse_events(events))
+
+
+def coffee_to_observation(
+    events: Iterable[str | CoffeeEvent],
+    *,
+    tone_warmth: float | None = None,
+    response_delay_min: float | None = None,
+) -> dict:
+    """Convert protocol-level events into a PF-ready observation basket. ☕➡️🐣
+
+    Only observable facts are encoded. Missing facts stay ``None`` so the
+    estimator can remain uncertain instead of receiving made-up neutral data.
+    """
+
+    return _observation_from_events(
+        _parse_events(events),
+        tone_warmth=tone_warmth,
+        response_delay_min=response_delay_min,
+    )
+
+
 def coffee_to_step(
     events: Iterable[str | CoffeeEvent],
     *,
     tone_warmth: float | None = None,
     response_delay_min: float | None = None,
 ) -> CoffeeStep:
-    """Split one protocol moment into controlled actions and observed clues. ☕🎮👀"""
+    """Parse once, then split one protocol moment into actions and clues. ☕🎮👀"""
 
     parsed = _parse_events(events)
     return CoffeeStep(
-        actions=coffee_to_actions(parsed),
-        observation=coffee_to_observation(
+        actions=_actions_from_events(parsed),
+        observation=_observation_from_events(
             parsed,
             tone_warmth=tone_warmth,
             response_delay_min=response_delay_min,

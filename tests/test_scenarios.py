@@ -25,12 +25,23 @@ def test_every_tiny_world_has_valid_probability_gravity():
         assert scenario.target.shape == (6,)
         assert scenario.mode_effects.shape == (5, 6)
         assert scenario.process_noise.shape == (6,)
+        assert np.allclose(scenario.mode_effects[:, 3], 0.0)
+        assert scenario.process_noise[3] == pytest.approx(0.0)
+        assert scenario.target[3] == pytest.approx(0.0)
 
 
 def test_some_worlds_really_hide_the_estimators_answer_key():
     mismatched_worlds = [scenario for name, scenario in SCENARIOS.items()
                          if name != DEFAULT_SCENARIO and not np.allclose(scenario.transition, CoffeeParticleFilter.transition)]
     assert mismatched_worlds
+
+
+def test_scenario_recipe_arrays_are_frozen_little_receipts():
+    scenario = get_scenario("cozy-normal-year")
+    with pytest.raises(ValueError):
+        scenario.transition[0, 0] = 0.5
+    with pytest.raises(ValueError):
+        scenario.process_noise[0] = 99.0
 
 
 def test_get_scenario_returns_the_requested_little_weather_card():

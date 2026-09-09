@@ -10,6 +10,19 @@ This little book remembers meaningful changes so nobody has to excavate every co
 
 ## ☕ Fresh Brew
 
+### Story-first hygiene brew — 2026-09-09
+
+- gave the README a real story-first path: synthetic Cheng / Linda coffee beats → intuition → generic model → math 📖☕
+- added `examples/cheng_linda_story.py` as an optional persona costume that comes off before events enter CSRDM 🎭➡️🧠
+- added the repo rule **Hard math should still tell a little story.** 🐣📖
+- moved person-shaped compatibility vocabulary out of Particle Filter inference while preserving named story flavor at the example edge 🧺
+- gave the fixed transition baseline one structural source of truth instead of keeping matching tables in several drawers 🎲
+- zeroed dead synthetic `C` drift/noise/target slots now that Shared Context owns dedicated memory dynamics 🧠🌱
+- made context-transition and synthetic-scenario numpy recipe tables actually read-only instead of merely living inside frozen dataclasses 🧊
+- taught `coffee_to_step(...)` to parse one story moment exactly once before splitting actions and clues ☕🎮👀
+- removed the incomplete historical `100-cute-days` metrics-only basket; short runs now belong in scratch output while 365 days stays the committed reference 🧹🗓️
+- added WHY-comments around action timing, Shared Context dynamics, relative Gaussian likelihoods, state clipping, and synthetic-world / estimator separation 🛡️🧠
+
 ### Tiny first brew — 2026-09-08
 
 - created the six-soft-state coffee routine model: `P / M / V / C / E / F` 🧠☕

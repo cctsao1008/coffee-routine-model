@@ -83,6 +83,13 @@ def test_one_context_nudge_is_clipped_before_the_tiny_dice_fly_away():
     assert np.isclose(probability.sum(), 1.0)
 
 
+def test_context_transition_config_arrays_really_are_frozen():
+    with pytest.raises(ValueError):
+        DEFAULT_CONTEXT_TRANSITIONS.base_transition[0, 0] = 0.5
+    with pytest.raises(ValueError):
+        DEFAULT_CONTEXT_TRANSITIONS.feature_effects[0, 0] = 99.0
+
+
 def test_context_model_has_lower_expected_log_loss_when_it_is_the_synthetic_truth():
     actions = RoutineActions(a_boundary_preserving=1.0, b_exception_sync=1.0)
     context = TransitionContext(disturbance=0.75)

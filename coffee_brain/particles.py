@@ -13,7 +13,7 @@ from .memory import (
     shared_context_input,
     shared_context_step,
 )
-from .model import MODE_NAMES, RoutineMode, clip_state
+from .model import DEFAULT_MODE_TRANSITION, MODE_NAMES, RoutineMode, clip_state
 from .observation_model import (
     DEFAULT_OBSERVATION_MODEL,
     ObservationModelConfig,
@@ -33,20 +33,17 @@ def _bern_loglik(y: int, p: np.ndarray) -> np.ndarray:
     return y * np.log(p) + (1 - y) * np.log(1 - p)
 
 
-def _little_clue(obs: dict, key: str, legacy_key: str | None = None):
-    """Fetch one observable clue, while politely supporting old baskets. 🧺"""
+def _little_clue(obs: dict, key: str):
+    """Fetch one generic observable clue. Persona costumes stay outside the core. 🧺"""
 
-    value = obs.get(key)
-    if value is None and legacy_key is not None:
-        value = obs.get(legacy_key)
-    return value
+    return obs.get(key)
 
 
 def _validated_fixed_transition(matrix: np.ndarray | None) -> np.ndarray:
     """Keep optional fixed-dice perturbations honest and row-normalized. 🎲🐾"""
 
     if matrix is None:
-        return CoffeeParticleFilter.transition.copy()
+        return np.array(DEFAULT_MODE_TRANSITION, dtype=float, copy=True)
     tiny = np.asarray(matrix, dtype=float)
     if tiny.shape != (5, 5):
         raise ValueError("🐾 Fixed transition matrix must be 5x5.")
@@ -81,17 +78,13 @@ class ParticleHistoryStep:
 class CoffeeParticleFilter:
     """A small Sequential Monte Carlo estimator with many tiny guesses. 🐣"""
 
-    transition = np.array(
-        [
-            [0.78, 0.12, 0.03, 0.04, 0.03],
-            [0.35, 0.45, 0.08, 0.02, 0.10],
-            [0.10, 0.03, 0.65, 0.01, 0.21],
-            [0.55, 0.10, 0.02, 0.25, 0.08],
-            [0.65, 0.08, 0.02, 0.03, 0.22],
-        ],
-        dtype=float,
-    )
+    # Kept as a class alias for existing diagnostics/tests, but the table itself has
+    # one source of truth in model.DEFAULT_MODE_TRANSITION. 🎲
+    transition = DEFAULT_MODE_TRANSITION
 
+    # These are estimator-side structural assumptions. They intentionally do not
+    # import the synthetic world's target/noise tables: the simulator is allowed to
+    # disagree with the estimator so it cannot write its own answer key. 🧠🧪
     target = np.array([0.80, 0.72, 0.90, 0.76, 0.42, 0.10], dtype=float)
     process_noise_sigma = np.array([0.015, 0.017, 0.011, 0.000, 0.021, 0.011], dtype=float)
 
@@ -177,6 +170,10 @@ class CoffeeParticleFilter:
             size=(self.n, 6),
         )
 
+        # C remembers accumulated shared context. It deliberately skips ordinary
+        # mean reversion, mode drift, and generic process noise; context-building
+        # actions reach it only through shared_context_input(). 🧠🌱
+        process_noise[:, 3] = 0.0
         proposal = self.particles + mean_reversion + mode_effect + controlled_effect + process_noise
         proposal[:, 3] = shared_context_step(
             previous_c,
@@ -220,16 +217,17 @@ class CoffeeParticleFilter:
         ``transition_context`` carries explicit disturbance / regime information; it
         never gets inferred by telepathy. XD
 
-        On the first update there is no previous transition, so both baskets wait
-        politely outside. ☕🎮
+        Temporal contract: the action basket supplied with update(t) drives the
+        previous hidden state into the current hidden state. On the very first update
+        no previous transition exists, so actions/context wait politely outside. ☕🎮
         """
 
         if self.started:
             self._predict(actions, transition_context)
         self.started = True
 
-        invite = _little_clue(obs, "invite", "cheng_invite")
-        opt_in = _little_clue(obs, "opt_in", "linda_opt_in")
+        invite = _little_clue(obs, "invite")
+        opt_in = _little_clue(obs, "opt_in")
         text_reply = _little_clue(obs, "text_reply")
         reaction = _little_clue(obs, "reaction")
         state_share = _little_clue(obs, "state_share")
@@ -266,6 +264,9 @@ class CoffeeParticleFilter:
         if resume_signal is not None:
             ll += _bern_loglik(int(resume_signal), probabilities["resume_signal"])
 
+        # Gaussian normalization constants are particle-independent here because
+        # sigma is shared by every particle. Relative particle weights therefore do
+        # not need the -log(sigma)-0.5*log(2π) terms. 📏🐣
         if tone_warmth is not None:
             mu_warmth = predict_warmth_mean(
                 self.particles,
