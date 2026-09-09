@@ -43,12 +43,39 @@ def test_objective_story_contract_keeps_the_main_boundaries_explicit():
         assert rule in contract
 
 
+def test_epistemic_status_contract_keeps_probability_and_future_choice_distinct():
+    contract = (ROOT / "docs" / "epistemic-status.md").read_text(encoding="utf-8")
+    for status in (
+        "Observed",
+        "Probable",
+        "Assumed",
+        "Undefined",
+        "Not-yet-decided",
+    ):
+        assert status in contract
+    for rule in (
+        "Probability != fact",
+        "Assumption != evidence",
+        "Undefined relationship != zero relationship",
+        "High historical probability != future commitment",
+    ):
+        assert rule in contract
+
+    story_contract = (ROOT / "docs" / "objective-story-contract.md").read_text(encoding="utf-8")
+    pass_tutorial = (TUTORIAL / "03-pass-is-not-failure.md").read_text(encoding="utf-8")
+    particle_tutorial = (TUTORIAL / "08-why-particles.md").read_text(encoding="utf-8")
+    assert "epistemic-status.md" in story_contract
+    assert "epistemic-status.md" in pass_tutorial
+    assert "epistemic-status.md" in particle_tutorial
+
+
 def test_key_markdown_uses_github_friendly_display_math():
     # GitHub rendered legacy \[ ... \] blocks as plain text in the README once.
     # Keep the main equation-bearing docs on fenced `math` blocks instead. ☕🛡️
     paths = (
         ROOT / "README.md",
         ROOT / "docs" / "architecture.md",
+        ROOT / "docs" / "epistemic-status.md",
         ROOT / "docs" / "memory-garden.md",
         ROOT / "docs" / "recovery-garden.md",
         ROOT / "docs" / "smoothing-garden.md",

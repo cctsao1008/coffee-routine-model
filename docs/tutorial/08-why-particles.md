@@ -70,6 +70,40 @@ Posterior certainty != model correctness
 
 A narrow posterior can still be confidently wrong if the model is misspecified.
 
+## Probable is not a softer version of observed 🧭
+
+The posterior belongs to a different epistemic category from the input events.
+
+For example:
+
+```text
+Observed
+→ a pass token occurred
+
+Probable
+→ the posterior currently favors one mode / state region
+
+Assumed
+→ the transition and likelihood structure used to produce that posterior
+```
+
+These should not be collapsed into one sentence such as “the model observed that the routine was Busy.”
+
+The model observed clues and **inferred a probability distribution** over hidden explanations.
+
+```text
+Probability != fact
+Assumption != evidence
+```
+
+And if a relation is not specified by the model, that does not automatically make it zero:
+
+```text
+Undefined relationship != zero relationship
+```
+
+The repo-wide status vocabulary lives in [`../epistemic-status.md`](../epistemic-status.md).
+
 ## Why not just use one deterministic state estimate?
 
 A deterministic estimate can be useful, but it tends to hide multimodal uncertainty.

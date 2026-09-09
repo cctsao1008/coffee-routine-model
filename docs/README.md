@@ -80,12 +80,22 @@ Useful starting points:
 
 Runnable diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
-## ⚖️ Writing and evidence boundaries
+## ⚖️ Writing and epistemic boundaries
 
 - [`../CUTE_RULES.md`](../CUTE_RULES.md) — repository tone and engineering rules
+- [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided contract
 - [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract
 - [`source-notes.md`](source-notes.md) — public boundary around design inspiration
 - [`../COFFEELOG.md`](../COFFEELOG.md) — project history
+
+These documents keep several distinctions explicit:
+
+```text
+Probability != fact
+Assumption != evidence
+Undefined relationship != zero relationship
+High historical probability != future commitment
+```
 
 ## The short version 🌱
 
@@ -93,6 +103,7 @@ Runnable diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 First visit      → README.md
 Want to learn    → docs/tutorial/
 Want the spec    → docs/architecture.md
+Want claim status→ docs/epistemic-status.md
 Want experiments → docs/*garden.md / *bench.md / *test.md / model-arena.md
 Want to run      → examples/ and tiny_tools/
 Want history     → COFFEELOG.md

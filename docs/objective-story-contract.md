@@ -6,7 +6,9 @@ That creates one responsibility:
 
 > **Readable like a story. Reviewable like engineering.**
 
-The story may be warm, playful, and concrete. The claims still need clear evidence boundaries.
+The story may be warm, playful, and concrete. The claims still need clear epistemic boundaries.
+
+For the repo-wide status vocabulary, see [`epistemic-status.md`](epistemic-status.md).
 
 ## 1. Observable event first
 
@@ -102,34 +104,54 @@ Design inspiration != public dataset
 Story != evidence
 ```
 
-## 5. Distinguish four layers
+## 5. Keep epistemic status visible 🧭
 
-When useful, keep these layers explicit:
+When useful, label a claim by what kind of thing it is:
 
 ```text
-1. Observable fact
-2. Model representation
-3. Inference / hypothesis
-4. Unknown
+Observed
+Probable
+Assumed
+Undefined
+Not-yet-decided
 ```
 
 Example:
 
 ```text
-Observable fact:
+Observed:
   a pass token occurred
 
 Model representation:
   pass_event=1; pass action is available
 
-Inference:
-  under CSRDM, this may help preserve Voluntariness rather than count as failure
+Probable:
+  under CSRDM, the posterior over latent routine state may change
 
-Unknown:
-  private motive for the pass
+Assumed:
+  the current action model treats a clean voluntary pass as boundary-preserving
+
+Undefined:
+  the private motive for the pass is not specified
+
+Not-yet-decided:
+  tomorrow's choice remains open even if historical opt-in probability is high
 ```
 
-That structure prevents the narrative layer from becoming mind reading.
+This prevents two different mistakes:
+
+```text
+probability → fact
+undefined   → zero
+```
+
+and it protects a third boundary that matters for voluntary routines:
+
+```text
+high historical probability != future commitment
+```
+
+See [`epistemic-status.md`](epistemic-status.md) for the full contract.
 
 ## 6. One anomaly is not a pattern
 
@@ -168,6 +190,10 @@ Also good:
 
 > The posterior is narrow in this synthetic run, but narrow uncertainty does not prove the model is correct.
 
+Also good:
+
+> The current prototype leaves that relationship undefined rather than forcing a zero or nonzero claim.
+
 Avoid decorative certainty.
 
 ## 9. `XD` is seasoning, not punctuation
@@ -188,18 +214,25 @@ Before merging a story-driven document, ask:
 - [ ] Is the example clearly synthetic or illustrative?
 - [ ] Are observable events separated from latent-state claims?
 - [ ] Are names confined to the story / persona layer?
-- [ ] Does every psychological-sounding statement have an evidence-safe rewrite?
+- [ ] Can each important claim be recognized as Observed, Probable, Assumed, Undefined, or Not-yet-decided?
+- [ ] Does every psychological-sounding statement have an epistemically honest rewrite?
 - [ ] Are uncertainty and unknowns visible where needed?
+- [ ] Did a probability accidentally become a fact claim?
+- [ ] Did an undefined relationship accidentally become zero / false?
+- [ ] Did historical likelihood accidentally become future commitment?
 - [ ] Did one anomaly accidentally become a pattern claim?
 - [ ] Did the prose invent significance for an ordinary event?
 - [ ] Is the story teaching a modeling decision rather than decorating the page?
-- [ ] Could a skeptical engineer tell which statements are facts, model assumptions, and inferences?
+- [ ] Could a skeptical engineer tell which statements are facts, model assumptions, probabilities, and undefined relations?
 - [ ] Is `XD` present only where it genuinely helps?
 
 The target is simple:
 
 ```text
 Narrative richness != interpretive overreach
+Probability != fact
+Undefined relationship != zero relationship
+High historical probability != future commitment
 Cute != sloppy
 Story != evidence
 Model != human

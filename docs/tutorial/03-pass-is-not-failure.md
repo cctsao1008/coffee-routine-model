@@ -31,7 +31,7 @@ Continuity != obligation
 Pass != failure
 ```
 
-A clean `pass` is observable evidence that a choice was expressed. It is not automatically evidence that the routine broke.
+A clean `pass` is an observed choice. It is not automatically evidence that the routine broke.
 
 ## Voluntariness appears because counting is insufficient
 
@@ -74,6 +74,34 @@ instead of:
 ```text
 continuity at any cost
 ```
+
+## Tomorrow is still not decided 🌱
+
+A stable history can make tomorrow's opt-in highly probable.
+
+That still does not make tomorrow's choice already decided.
+
+```math
+P(a_{t+1}=\text{opt-in}\mid H_t) \text{ can be high}
+```
+
+while:
+
+```text
+a[t+1] remains not-yet-decided
+until the next observable choice occurs
+```
+
+This is an important distinction for a voluntary routine:
+
+```text
+high historical probability != future commitment
+stable routine != default entitlement
+```
+
+The next `+1?` is not redundant just because the past makes one answer likely. It preserves the difference between **prediction** and **decision**.
+
+The repo-wide vocabulary for this distinction is defined in [`../epistemic-status.md`](../epistemic-status.md).
 
 ## A useful correction
 
