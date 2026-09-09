@@ -1,39 +1,55 @@
 # Documentation Map 🗺️☕
 
-The repository has several kinds of documents. They answer different questions on purpose.
+Different documents answer different questions on purpose.
 
-> **Tutorial teaches the path. Reference defines the contract. Labs challenge assumptions. Results record one recipe.**
+> **Story welcomes. Tutorial teaches. Starter Math bridges. Full Math formalizes. Architecture defines. Labs challenge. Results record.**
 
-## 📖 Learn the model-design story
+## ☕ Story / gentle explanation
 
-Start here if you want to understand **why the model gradually became this shape**:
+Start here when you want the idea before the machinery:
 
-- [`tutorial/README.md`](tutorial/README.md) — guided ten-step tutorial
-- [`design-principles.md`](design-principles.md) — compact public-safe map from recurring design problems to engineering responses
-- [`how-the-coffee-works.md`](how-the-coffee-works.md) — shorter gentle explanation
+- [`how-the-coffee-works.md`](how-the-coffee-works.md) — short gentle explanation
+- [`design-principles.md`](design-principles.md) — compact map of recurring design lessons
 
-The tutorial follows:
+## 📖 Tutorial path
+
+Use [`tutorial/README.md`](tutorial/README.md) when you want to learn **why the model gradually became this shape**.
+
+The tutorial moves through:
 
 ```text
 story
 → observable events
-→ modeling problems
+→ modeling questions
 → abstractions
 → uncertainty
 → diagnostics
 ```
 
-`design-principles.md` sits beside that path and keeps an important provenance split visible:
+## 🧮 Math path
+
+Use [`math/README.md`](math/README.md) when the main question is **how much math do I want right now?**
 
 ```text
-history-supported pattern class
-!= modeling interpretation
-!= epistemic guardrail
+🌱 Starter Math
+→ math/starter-math.md
+→ first mathematical view
+→ fewer symbols, same CSRDM
+
+📐 Full Math
+→ math/full-math.md
+→ complete architecture 0.3 mathematical view
 ```
 
-## 🏛️ Look up the current architecture
+```text
+Starter Math != Lite model
+Full Math != separate model
+Same model. Different depth.
+```
 
-Use these when you already know the ideas and want the present design contract:
+## 🏛️ Architecture / mechanism reference
+
+Use these when you already understand the ideas and want the current implementation contract:
 
 - [`architecture.md`](architecture.md) — architecture `0.3`
 - [`adapter-little-contract.md`](adapter-little-contract.md) — minimum adapter invariant
@@ -43,27 +59,27 @@ Use these when you already know the ideas and want the present design contract:
 - [`transition-weather.md`](transition-weather.md) — optional context-aware mode transitions
 - [`smoothing-garden.md`](smoothing-garden.md) — fixed-lag smoothing
 
-These documents describe the current mechanism. Development-era roadmap language does not belong here once the feature already exists.
+Math pages explain equations. Architecture pages define software behavior and boundaries.
 
-## 🧪 Challenge one modeling assumption
+## 🧪 Labs — challenge one assumption
 
-These are labs, not required reading for the first journey:
+These are focused experiments, not required reading for the first journey:
 
 - [`observability-garden.md`](observability-garden.md) — can the clues distinguish the states?
-- [`voluntariness-excitation.md`](voluntariness-excitation.md) — does V still look awkward when truth V is deliberately excited?
-- [`v-compression-result.md`](v-compression-result.md) — why did the excited V posterior still stay compressed?
-- [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md) — does a more permissive V prior help without harming the ordinary baseline?
-- [`shared-context-bias-result.md`](shared-context-bias-result.md) — is C error mostly shape error or a slow prior offset?
-- [`controlled-reference-result.md`](controlled-reference-result.md) — does the declared known-action path run end-to-end without changing the observation-only baseline?
-- [`calibration-bench.md`](calibration-bench.md) — do predicted probabilities behave as promised?
+- [`voluntariness-excitation.md`](voluntariness-excitation.md) — what happens when V gets enough room to move?
+- [`v-compression-result.md`](v-compression-result.md) — why did the V posterior stay compressed?
+- [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md) — responsiveness vs ordinary-baseline trade-off
+- [`shared-context-bias-result.md`](shared-context-bias-result.md) — shape error vs slow offset in C
+- [`controlled-reference-result.md`](controlled-reference-result.md) — known-action path end-to-end
+- [`calibration-bench.md`](calibration-bench.md) — do predicted probabilities keep their promises?
 - [`sensitivity-map.md`](sensitivity-map.md) — which assumptions matter most?
 - [`state-chair-test.md`](state-chair-test.md) — does every latent state earn a separate chair?
 - [`change-point-garden.md`](change-point-garden.md) — anomaly vs persistent generating change
-- [`recovery-garden.md`](recovery-garden.md) — interruption and return toward the nominal set
+- [`recovery-garden.md`](recovery-garden.md) — interruption and return
 - [`learning-spoon.md`](learning-spoon.md) — bounded observation-parameter learning
-- [`model-arena.md`](model-arena.md) — compare variants without one combined winner score
+- [`model-arena.md`](model-arena.md) — compare variants without one winner score
 
-The common lab pattern is:
+Common lab rhythm:
 
 ```text
 one modeling doubt
@@ -74,37 +90,41 @@ one modeling doubt
 
 ## 📏 Result snapshots
 
-Small result documents such as [`change-point-result.md`](change-point-result.md), [`v-compression-result.md`](v-compression-result.md), [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md), [`shared-context-bias-result.md`](shared-context-bias-result.md), and [`controlled-reference-result.md`](controlled-reference-result.md) record a particular reproducible synthetic recipe or diagnostic result.
+Result files such as:
 
-They are **not** architecture definitions and should not be read as universal model performance.
+- [`change-point-result.md`](change-point-result.md)
+- [`v-compression-result.md`](v-compression-result.md)
+- [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md)
+- [`shared-context-bias-result.md`](shared-context-bias-result.md)
+- [`controlled-reference-result.md`](controlled-reference-result.md)
+
+record one reproducible synthetic recipe or diagnostic result.
 
 ```text
 Result snapshot != design contract
 Synthetic metric != human validation
 ```
 
-## ☕ Run examples
+## ☕ Runnable examples
 
-The runnable story and synthetic baskets live in [`../examples/`](../examples/).
+See [`../examples/`](../examples/):
 
-Useful starting points:
+- [`../examples/cheng_linda_story.py`](../examples/cheng_linda_story.py) — synthetic persona → generic semantics
+- [`../examples/365-cute-days/`](../examples/365-cute-days/) — observation-only synthetic reference
+- [`../examples/controlled-cute-days/`](../examples/controlled-cute-days/) — separate known-action reference
 
-- [`../examples/cheng_linda_story.py`](../examples/cheng_linda_story.py) — synthetic persona → generic model semantics
-- [`../examples/365-cute-days/`](../examples/365-cute-days/) — committed observation-only synthetic reference basket
-- [`../examples/controlled-cute-days/`](../examples/controlled-cute-days/) — declared home for the separate controlled action-aware reference
+Diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
-Runnable diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
+## ⚖️ Writing / source / epistemic boundaries
 
-## ⚖️ Writing, source, and epistemic boundaries
-
-- [`../CUTE_RULES.md`](../CUTE_RULES.md) — repository tone and engineering rules
-- [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided contract
+- [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided
 - [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract
 - [`source-notes.md`](source-notes.md) — public boundary around private design inspiration
-- [`design-principles.md`](design-principles.md) — distilled principles with provenance labels and tutorial links
+- [`design-principles.md`](design-principles.md) — distilled principle map
+- [`../CUTE_RULES.md`](../CUTE_RULES.md) — tone and engineering rules
 - [`../COFFEELOG.md`](../COFFEELOG.md) — project history
 
-These documents keep several distinctions explicit:
+Keep these distinctions visible:
 
 ```text
 Probability != fact
@@ -117,14 +137,16 @@ Design inspiration != public dataset
 ## The short version 🌱
 
 ```text
-First visit       → README.md
-Want to learn     → docs/tutorial/
-Want principles  → docs/design-principles.md
-Want the spec     → docs/architecture.md
-Want claim status → docs/epistemic-status.md
-Want experiments  → docs/*garden.md / *bench.md / *test.md / model-arena.md
-Want to run       → examples/ and tiny_tools/
-Want history      → COFFEELOG.md
+First visit        → README.md
+Want the story     → docs/how-the-coffee-works.md
+Want to learn      → docs/tutorial/
+Want Starter Math  → docs/math/starter-math.md
+Want Full Math     → docs/math/full-math.md
+Want the spec      → docs/architecture.md
+Want claim status  → docs/epistemic-status.md
+Want experiments   → labs / result docs
+Want to run        → examples/ and tiny_tools/
+Want history       → COFFEELOG.md
 ```
 
-Same model. Different questions. Different doors. ☕
+Same model. Different questions. Different depth. Different doors. ☕🌱📐🐣
