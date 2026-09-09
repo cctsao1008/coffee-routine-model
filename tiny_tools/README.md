@@ -39,6 +39,7 @@ python -m tiny_tools.visualize examples/365-cute-days/output.csv
 | Question | Helper | Deeper note |
 |---|---|---|
 | Can the clues distinguish the states? | `diagnose_observability.py` | [`../docs/observability-garden.md`](../docs/observability-garden.md) |
+| Does V track when the synthetic truth is deliberately excited? | `excite_voluntariness.py` | [`../docs/voluntariness-excitation.md`](../docs/voluntariness-excitation.md) |
 | Do observation probabilities keep their promises? | `calibrate_observations.py` | [`../docs/calibration-bench.md`](../docs/calibration-bench.md) |
 | Which assumptions move the answer most? | `map_sensitivity.py` | [`../docs/sensitivity-map.md`](../docs/sensitivity-map.md) |
 | Does Shared Context accumulate and decay slowly? | `inspect_memory.py` | [`../docs/memory-garden.md`](../docs/memory-garden.md) |
@@ -57,7 +58,7 @@ simulate
    ↓
 visualize
    ↓
-observability + calibration
+observability + focused excitation + calibration
    ↓
 sensitivity
    ↓
@@ -80,6 +81,14 @@ Sensitivity != causality
 Better fit != better ontology
 Winner != truth
 Model != human
+```
+
+Focused excitation benches add another boundary:
+
+```text
+Deliberately excited synthetic truth
+!=
+ordinary real-world trajectory
 ```
 
 ## Where the stable API lives 🏛️
