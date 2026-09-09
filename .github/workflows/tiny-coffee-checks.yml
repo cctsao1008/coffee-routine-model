@@ -28,6 +28,15 @@ jobs:
           --particles 120
           --seed 20260908
           --out .tiny-observability
+      - name: 🌿 Give Voluntariness enough room to move
+        run: >-
+          python -m tiny_tools.excite_voluntariness
+          --days 180
+          --particles 1200
+          --low-v 0.58
+          --high-v 0.94
+          --seed 20260908
+          --out .tiny-v-excitation
       - name: 🧪 Poke clues and assumptions one tiny bit at a time
         run: >-
           python -m tiny_tools.map_sensitivity
@@ -106,6 +115,11 @@ jobs:
           test -f .tiny-observability/scorecard.csv
           test -f .tiny-observability/clue-visibility.csv
           test -f .tiny-observability/state-identifiability.csv
+          test -f .tiny-v-excitation/summary.csv
+          test -f .tiny-v-excitation/v-track.csv
+          test -f .tiny-v-excitation/channel-sensitivity.csv
+          test -f .tiny-v-excitation/recipe.json
+          test -f .tiny-v-excitation/v-excitation.png
           test -f .tiny-sensitivity/sensitivity.csv
           test -f .tiny-sensitivity/summary.csv
           test -f .tiny-sensitivity/sensitivity-map.png
