@@ -67,11 +67,27 @@ def test_calibration_bench_makes_binary_reliability_and_continuous_residuals():
         bin_total = sum(item.n for item in result.reliability if item.channel == row.channel)
         assert bin_total == row.n
 
-    for row in result.continuous:
-        assert row.n == 800
+    warmth = next(row for row in result.continuous if row.channel == "tone_warmth")
+    delay = next(row for row in result.continuous if row.channel == "log_response_delay")
+    assert warmth.n == 800
+    assert 0 < delay.n < 800
+    for row in (warmth, delay):
         assert np.isfinite(row.normalized_mean)
         assert np.isfinite(row.normalized_std)
         assert 0.25 < row.normalized_std < 1.75
+
+
+def test_missing_delay_is_missing_evidence_not_a_fake_zero():
+    truth, modes, observations = _baseline_dataset(120)
+    for obs in observations:
+        obs["response_delay_min"] = None
+
+    result = calibrate_dataset(truth, modes, observations, bins=6)
+    delay = next(row for row in result.continuous if row.channel == "log_response_delay")
+
+    assert delay.n == 0
+    assert np.isnan(delay.rmse)
+    assert np.isnan(delay.normalized_std)
 
 
 def test_a_bad_opt_in_knob_gets_a_worse_brier_score_on_the_same_world():

@@ -88,6 +88,15 @@ def _finite_binary_pairs(predicted: np.ndarray, observed: Sequence[object]) -> t
     return p, y
 
 
+def _optional_float_array(values: Sequence[object]) -> np.ndarray:
+    """Turn missing continuous clues into NaN so residual diagnostics can ignore them. 🌱📏"""
+
+    return np.array(
+        [np.nan if value is None else float(value) for value in values],
+        dtype=float,
+    )
+
+
 def calibrate_binary_channel(
     channel: str,
     predicted: np.ndarray,
@@ -220,7 +229,7 @@ def calibrate_dataset(
         binary_rows.append(summary)
         reliability_rows.extend(bins_rows)
 
-    warmth_obs = np.array([float(obs["tone_warmth"]) for obs in observations], dtype=float)
+    warmth_obs = _optional_float_array([obs.get("tone_warmth") for obs in observations])
     warmth_expected = predict_warmth_mean(tiny_states, tiny_modes, config)
     warmth = _continuous_summary(
         "tone_warmth",
@@ -229,12 +238,10 @@ def calibrate_dataset(
         config.tone_warmth.sigma,
     )
 
-    delay_obs = np.log(
-        np.maximum(
-            0.2,
-            np.array([float(obs["response_delay_min"]) for obs in observations], dtype=float),
-        )
-    )
+    delay_minutes = _optional_float_array([obs.get("response_delay_min") for obs in observations])
+    delay_obs = np.full_like(delay_minutes, np.nan, dtype=float)
+    finite_delay = np.isfinite(delay_minutes)
+    delay_obs[finite_delay] = np.log(np.maximum(0.2, delay_minutes[finite_delay]))
     delay_expected = predict_delay_log_mean(tiny_states, tiny_modes, config)
     delay = _continuous_summary(
         "log_response_delay",

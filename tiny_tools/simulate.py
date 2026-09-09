@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import math
+import sys
 from pathlib import Path
 from typing import Sequence
 
 import numpy as np
 
 from coffee_brain.actions import RoutineActions, action_effect
+from coffee_brain.config import ARCHITECTURE_VERSION
 from coffee_brain.memory import (
     DEFAULT_SHARED_CONTEXT_MEMORY,
     SharedContextMemoryConfig,
@@ -99,6 +102,7 @@ def _validate_protocol_clues(observation: dict) -> None:
     text_reply = int(observation["text_reply"])
     maintenance = int(observation["routine_maintenance"])
     pass_event = int(observation["pass_event"])
+    response_delay = observation["response_delay_min"]
 
     if not invite and (opt_in or pass_event):
         raise ValueError("🐾 Synthetic opt-in/pass needs an invitation opportunity.")
@@ -108,6 +112,8 @@ def _validate_protocol_clues(observation: dict) -> None:
         raise ValueError("🐾 Synthetic opt-in/pass is itself an observed reply.")
     if maintenance and not opt_in:
         raise ValueError("🐾 Delivered-coffee maintenance needs an explicit synthetic opt-in.")
+    if not text_reply and response_delay is not None:
+        raise ValueError("🐾 No observed reply means no invented finite reply delay.")
 
 
 def observe(x, mode, rng, scenario: CoffeeScenario):
@@ -210,13 +216,16 @@ def observe(x, mode, rng, scenario: CoffeeScenario):
         8 + 45 * (1 - p) + 30 * (1 - m)
         + 75 * (mode == RoutineMode.BUSY) + 110 * (mode == RoutineMode.LEAVE)
     )
-    response_delay_min = float(
+    sampled_delay_min = float(
         np.clip(
             rng.lognormal(math.log(max(1.0, delay_base)), scenario.delay_sigma),
             0.2,
             360,
         )
     )
+    # Draw the latent sample every time so the RNG stream stays comparable, but only
+    # expose a delay when a reply was actually observed. Missing clue != fake number. 🌱⏰
+    response_delay_min = sampled_delay_min if text_reply else None
 
     observation = {
         "invite": invite,
@@ -312,6 +321,20 @@ def main():
 
     out.mkdir(parents=True, exist_ok=True)
 
+    recipe = {
+        "architecture_version": ARCHITECTURE_VERSION,
+        "days": args.days,
+        "numpy_version": np.__version__,
+        "particle_count": args.particles,
+        "python_version": sys.version.split()[0],
+        "scenario": scenario.slug,
+        "seed": args.seed,
+    }
+    (out / "recipe.json").write_text(
+        json.dumps(recipe, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
     with (out / "input.csv").open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["sample_id", "scenario", *observations[0].keys()])
         writer.writeheader()
@@ -353,15 +376,15 @@ def main():
         writer.writerow(["relationship_index_R", r_rmse, r_mae, r_corr, ""])
         writer.writerow(["mode_classification_accuracy", "", "", mode_accuracy, ""])
 
-    print(f"{scenario.emoji} weather                 : {scenario.title}")
-    print(f"🌱 tiny world              : {scenario.description}")
-    print(f"☕ cute synthetic days     : {args.days}")
-    print(f"🐣 particles               : {args.particles}")
+    print(f"{scenario.emoji} weather                   : {scenario.title}")
+    print(f"🌱 tiny world                : {scenario.description}")
+    print(f"☕ cute synthetic days       : {args.days}")
+    print(f"🐣 particles                 : {args.particles}")
     print(f"🌱 synthetic demo-index RMSE : {r_rmse:.4f}")
     print(f"✨ synthetic demo-index MAE  : {r_mae:.4f}")
     print(f"🧭 synthetic demo-index r    : {r_corr:.3f}")
-    print(f"🎯 mode accuracy           : {mode_accuracy:.2%}")
-    print(f"🧺 output                  : {out}")
+    print(f"🎯 mode accuracy             : {mode_accuracy:.2%}")
+    print(f"🧺 output                    : {out}")
 
 
 if __name__ == "__main__":

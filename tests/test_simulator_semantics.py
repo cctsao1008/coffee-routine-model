@@ -21,8 +21,12 @@ def test_synthetic_observations_respect_protocol_grammar_across_weather():
             text_reply = int(obs["text_reply"])
             maintenance = int(obs["routine_maintenance"])
             pass_event = int(obs["pass_event"])
+            delay = obs["response_delay_min"]
 
             assert not (opt_in and pass_event)
             assert invite or not (opt_in or pass_event)
             assert text_reply or not (opt_in or pass_event)
             assert opt_in or not maintenance
+            assert (delay is not None) == bool(text_reply)
+            if delay is not None:
+                assert float(delay) > 0.0

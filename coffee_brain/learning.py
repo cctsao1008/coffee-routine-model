@@ -46,6 +46,15 @@ def _sigmoid(x: np.ndarray) -> np.ndarray:
     return 1.0 / (1.0 + np.exp(-np.clip(x, -40.0, 40.0)))
 
 
+def _optional_float_array(values: Sequence[object]) -> np.ndarray:
+    """Keep missing continuous clues missing while the learner gathers finite residuals. 🌱📏"""
+
+    return np.array(
+        [np.nan if value is None else float(value) for value in values],
+        dtype=float,
+    )
+
+
 def _channel_training_pairs(
     states: np.ndarray,
     modes: np.ndarray,
@@ -165,10 +174,12 @@ def fit_observation_parameters(
         )
 
     if learn_warmth_sigma:
-        observed = np.array([float(obs["tone_warmth"]) for obs in observations], dtype=float)
+        observed = _optional_float_array([obs.get("tone_warmth") for obs in observations])
         expected = predict_warmth_mean(states, modes, baseline_config)
         sigma, se = _bounded_sigma(observed - expected, lower=0.02, upper=0.50)
         before = float(baseline_config.tone_warmth.sigma)
+        if not np.isfinite(sigma):
+            sigma = before
         learned = replace(learned, tone_warmth=replace(learned.tone_warmth, sigma=sigma))
         estimates.append(
             ParameterEstimate(
@@ -176,20 +187,23 @@ def fit_observation_parameters(
                 before=before,
                 after=sigma,
                 standard_error=se,
-                ci95_low=float(max(0.02, sigma - 1.96 * se)),
-                ci95_high=float(min(0.50, sigma + 1.96 * se)),
+                ci95_low=float(max(0.02, sigma - 1.96 * se)) if np.isfinite(se) else float("nan"),
+                ci95_high=float(min(0.50, sigma + 1.96 * se)) if np.isfinite(se) else float("nan"),
                 lower_bound=0.02,
                 upper_bound=0.50,
             )
         )
 
     if learn_delay_sigma:
-        observed = np.log(
-            np.maximum(0.2, np.array([float(obs["response_delay_min"]) for obs in observations], dtype=float))
-        )
+        delay_minutes = _optional_float_array([obs.get("response_delay_min") for obs in observations])
+        observed = np.full_like(delay_minutes, np.nan, dtype=float)
+        finite_delay = np.isfinite(delay_minutes)
+        observed[finite_delay] = np.log(np.maximum(0.2, delay_minutes[finite_delay]))
         expected = predict_delay_log_mean(states, modes, baseline_config)
         sigma, se = _bounded_sigma(observed - expected, lower=0.10, upper=1.50)
         before = float(baseline_config.response_delay.sigma_log)
+        if not np.isfinite(sigma):
+            sigma = before
         learned = replace(learned, response_delay=replace(learned.response_delay, sigma_log=sigma))
         estimates.append(
             ParameterEstimate(
@@ -197,8 +211,8 @@ def fit_observation_parameters(
                 before=before,
                 after=sigma,
                 standard_error=se,
-                ci95_low=float(max(0.10, sigma - 1.96 * se)),
-                ci95_high=float(min(1.50, sigma + 1.96 * se)),
+                ci95_low=float(max(0.10, sigma - 1.96 * se)) if np.isfinite(se) else float("nan"),
+                ci95_high=float(min(1.50, sigma + 1.96 * se)) if np.isfinite(se) else float("nan"),
                 lower_bound=0.10,
                 upper_bound=1.50,
             )

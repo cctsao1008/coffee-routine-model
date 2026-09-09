@@ -39,6 +39,18 @@ def test_train_validation_learning_keeps_held_out_metrics_inspectable():
     assert after["mean_binary_log_loss"] <= before["mean_binary_log_loss"] + 0.03
 
 
+def test_learning_ignores_missing_delay_instead_of_inventing_a_number():
+    truth, modes, observations = _world(days=120)
+    for obs in observations:
+        obs["response_delay_min"] = None
+
+    learned, estimates = fit_observation_parameters(truth, modes, observations)
+    delay = next(row for row in estimates if row.name == "response_delay.sigma_log")
+
+    assert learned.response_delay.sigma_log == pytest.approx(DEFAULT_OBSERVATION_MODEL.response_delay.sigma_log)
+    assert np.isnan(delay.standard_error)
+
+
 def test_too_short_learning_basket_gets_a_cute_nope():
     truth, modes, observations = _world(days=18)
     with pytest.raises(ValueError, match="at least 20 synthetic days"):
