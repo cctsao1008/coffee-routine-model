@@ -61,14 +61,15 @@ def _binary_scores(
     invite = np.array([int(obs.get("invite", 0) or 0) for obs in observations], dtype=int)
 
     for name in BINARY_CHANNEL_NAMES:
-        y = np.array([int(obs[name]) for obs in observations], dtype=int)
-        p = np.clip(probabilities[name], 1e-6, 1.0 - 1e-6)
-        mask = np.ones(len(y), dtype=bool)
+        raw = np.array([obs.get(name) for obs in observations], dtype=object)
+        mask = np.array([value is not None for value in raw], dtype=bool)
         if name in {"opt_in", "pass_event"}:
-            mask = invite == 1
+            mask &= invite == 1
         if np.any(mask):
-            nll_losses.extend((-y[mask] * np.log(p[mask]) - (1 - y[mask]) * np.log(1 - p[mask])).tolist())
-            brier_losses.extend(((p[mask] - y[mask]) ** 2).tolist())
+            y = np.asarray(raw[mask], dtype=float)
+            p = np.clip(probabilities[name][mask], 1e-6, 1.0 - 1e-6)
+            nll_losses.extend((-y * np.log(p) - (1 - y) * np.log(1 - p)).tolist())
+            brier_losses.extend(((p - y) ** 2).tolist())
     return float(np.mean(nll_losses)), float(np.mean(brier_losses))
 
 
@@ -77,12 +78,38 @@ def _continuous_errors(
     modes: np.ndarray,
     observations: Sequence[Mapping[str, object]],
 ) -> tuple[float, float]:
-    warmth = np.array([float(obs["tone_warmth"]) for obs in observations], dtype=float)
-    delay = np.log(np.maximum(0.2, np.array([float(obs["response_delay_min"]) for obs in observations])))
+    """Score only continuous clues that were actually observed. Missing stays missing. 🌱📏"""
+
+    warmth = np.array(
+        [np.nan if obs.get("tone_warmth") is None else float(obs["tone_warmth"]) for obs in observations],
+        dtype=float,
+    )
+    delay_minutes = np.array(
+        [
+            np.nan if obs.get("response_delay_min") is None else float(obs["response_delay_min"])
+            for obs in observations
+        ],
+        dtype=float,
+    )
+    delay = np.full_like(delay_minutes, np.nan, dtype=float)
+    finite_delay = np.isfinite(delay_minutes)
+    delay[finite_delay] = np.log(np.maximum(0.2, delay_minutes[finite_delay]))
+
     warmth_hat = predict_warmth_mean(states, modes, DEFAULT_OBSERVATION_MODEL)
     delay_hat = predict_delay_log_mean(states, modes, DEFAULT_OBSERVATION_MODEL)
-    warmth_rmse = float(np.sqrt(np.mean((warmth_hat - warmth) ** 2)))
-    delay_log_rmse = float(np.sqrt(np.mean((delay_hat - delay) ** 2)))
+
+    warmth_mask = np.isfinite(warmth)
+    delay_mask = np.isfinite(delay)
+    warmth_rmse = (
+        float(np.sqrt(np.mean((warmth_hat[warmth_mask] - warmth[warmth_mask]) ** 2)))
+        if np.any(warmth_mask)
+        else float("nan")
+    )
+    delay_log_rmse = (
+        float(np.sqrt(np.mean((delay_hat[delay_mask] - delay[delay_mask]) ** 2)))
+        if np.any(delay_mask)
+        else float("nan")
+    )
     return warmth_rmse, delay_log_rmse
 
 
