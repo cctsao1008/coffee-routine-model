@@ -51,6 +51,28 @@ state update       -> proactive_update
 resume             -> resume_signal
 ```
 
+## So... what is CSRDM? ☕🧠
+
+**CSRDM** stands for **Coupled Shared Routine Dynamics Model**.
+
+It is a stochastic model for a repeated voluntary routine maintained through interaction between two sides.
+The object being modeled is the **shared routine and how it changes over time** — not either person's hidden mind.
+
+```text
+Coupled        -> actions from both sides can affect how the routine evolves
+Shared Routine -> the routine itself is the modeling object
+Dynamics       -> the routine can change over time
+Model          -> an uncertain mathematical abstraction, not a human state machine
+```
+
+So the tiny brain is really asking:
+
+```text
+What can we actually observe?
+What hidden routine state could explain those observations?
+How uncertain should the model remain?
+```
+
 Then the names come off.
 
 ```text
