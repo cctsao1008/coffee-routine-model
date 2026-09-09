@@ -43,6 +43,7 @@ These are labs, not required reading for the first journey:
 - [`observability-garden.md`](observability-garden.md) — can the clues distinguish the states?
 - [`voluntariness-excitation.md`](voluntariness-excitation.md) — does V still look awkward when truth V is deliberately excited?
 - [`v-compression-result.md`](v-compression-result.md) — why did the excited V posterior still stay compressed?
+- [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md) — does any bounded V prior improve stress tracking without an ambiguous baseline trade-off?
 - [`calibration-bench.md`](calibration-bench.md) — do predicted probabilities behave as promised?
 - [`sensitivity-map.md`](sensitivity-map.md) — which assumptions matter most?
 - [`state-chair-test.md`](state-chair-test.md) — does every latent state earn a separate chair?
@@ -62,7 +63,7 @@ one modeling doubt
 
 ## 📏 Result snapshots
 
-Small result documents such as [`change-point-result.md`](change-point-result.md) and [`v-compression-result.md`](v-compression-result.md) record a particular reproducible synthetic recipe or diagnostic result.
+Small result documents such as [`change-point-result.md`](change-point-result.md), [`v-compression-result.md`](v-compression-result.md), and [`v-dynamics-prior-result.md`](v-dynamics-prior-result.md) record a particular reproducible synthetic recipe or diagnostic result.
 
 They are **not** architecture definitions and should not be read as universal model performance.
 
