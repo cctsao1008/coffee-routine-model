@@ -123,6 +123,17 @@ Result snapshot != design contract
 Synthetic metric != human validation
 ```
 
+## 📦 Release / packaging snapshot
+
+Use [`release-notes-0.3.0.md`](release-notes-0.3.0.md) when the question is **what belongs in the v0.3.0 release candidate, and what is still gated?**
+
+It keeps package version, architecture version, installation, reproducibility, API fixes, and the explicit license gate in one place.
+
+```text
+Package 0.3.0 != new architecture
+Release hygiene != model growth
+```
+
 ## ☕ Runnable examples
 
 See [`../examples/`](../examples/):
@@ -174,6 +185,7 @@ Want the spec        → docs/architecture.md
 Want claim status    → docs/epistemic-status.md
 Want clue provenance → docs/observation-provenance.md
 Want experiments     → labs / result docs
+Want release status  → docs/release-notes-0.3.0.md
 Want to run          → examples/ and tiny_tools/
 Want history         → COFFEELOG.md
 ```
