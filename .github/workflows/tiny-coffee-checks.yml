@@ -56,6 +56,13 @@ jobs:
           --high-v 0.94
           --baseline-dir examples/365-cute-days
           --out .tiny-v-dynamics
+      - name: 🧠🌱 Separate Shared Context shape from offset
+        run: >-
+          python -m tiny_tools.decompose_shared_context
+          --baseline-dir examples/365-cute-days
+          --particles 6000
+          --seed 20260908
+          --out .tiny-c-bias
       - name: 🧪 Poke clues and assumptions one tiny bit at a time
         run: >-
           python -m tiny_tools.map_sensitivity
@@ -149,6 +156,13 @@ jobs:
           test -f .tiny-v-dynamics/stress-runs.csv
           test -f .tiny-v-dynamics/baseline-guard.csv
           test -f .tiny-v-dynamics/recipe.json
+          test -f .tiny-c-bias/prior-summary.csv
+          test -f .tiny-c-bias/error-track.csv
+          test -f .tiny-c-bias/time-bias.csv
+          test -f .tiny-c-bias/mode-bias.csv
+          test -f .tiny-c-bias/quiet-memory.csv
+          test -f .tiny-c-bias/recipe.json
+          test -f .tiny-c-bias/shared-context-bias.png
           test -f .tiny-sensitivity/sensitivity.csv
           test -f .tiny-sensitivity/summary.csv
           test -f .tiny-sensitivity/sensitivity-map.png
