@@ -37,6 +37,15 @@ jobs:
           --high-v 0.94
           --seed 20260908
           --out .tiny-v-excitation
+      - name: 🌿🔬 Ask why the V posterior stays compressed
+        run: >-
+          python -m tiny_tools.diagnose_v_compression
+          --days 180
+          --particles 1200
+          --low-v 0.58
+          --high-v 0.94
+          --seed 20260908
+          --out .tiny-v-compression
       - name: 🧪 Poke clues and assumptions one tiny bit at a time
         run: >-
           python -m tiny_tools.map_sensitivity
@@ -120,6 +129,12 @@ jobs:
           test -f .tiny-v-excitation/channel-sensitivity.csv
           test -f .tiny-v-excitation/recipe.json
           test -f .tiny-v-excitation/v-excitation.png
+          test -f .tiny-v-compression/filter-comparison.csv
+          test -f .tiny-v-compression/likelihood-slice.csv
+          test -f .tiny-v-compression/likelihood-summary.csv
+          test -f .tiny-v-compression/dynamics-pressure.csv
+          test -f .tiny-v-compression/recipe.json
+          test -f .tiny-v-compression/v-compression.png
           test -f .tiny-sensitivity/sensitivity.csv
           test -f .tiny-sensitivity/summary.csv
           test -f .tiny-sensitivity/sensitivity-map.png
