@@ -12,6 +12,8 @@ The learning spoon asks one narrow question:
 
 This is one of the final labs linked from [`tutorial/10-let-the-model-lose.md`](tutorial/10-let-the-model-lose.md).
 
+The structural provenance of the observation edges is documented separately in [`observation-provenance.md`](observation-provenance.md). A learned knob may improve probability calibration; it does not change an edge from **Assumed** into **Observed**.
+
 ```text
 Explicit parameters
     ↓
@@ -134,6 +136,8 @@ Can an optimizer invent a new ontology for us?
 ## Epistemic boundary
 
 ```text
+Learned knob != observed relation
+Learned knob != discovered ontology
 Better train fit != better model
 Better validation likelihood != better ontology
 Synthetic adaptation != real-human truth

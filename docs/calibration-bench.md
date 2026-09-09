@@ -10,6 +10,8 @@ This bench asks:
 
 This is the lab behind tutorial chapter [`tutorial/09-challenge-the-model.md`](tutorial/09-challenge-the-model.md).
 
+Before calibration, the observation relationship provenance is documented separately in [`observation-provenance.md`](observation-provenance.md). Calibration can challenge an assumed probability family; it does not upgrade an assumed edge into a discovered law.
+
 ```text
 Calibration first
 Optimization later
@@ -144,6 +146,8 @@ The hand-set default remains preserved for reproducibility and comparison.
 ## Epistemic boundary 🧠✨
 
 ```text
+Assumed coefficient != discovered law
+Zero coefficient != proven independence
 well optimized != well specified
 well calibrated != causally true
 synthetic calibration != real-human validation

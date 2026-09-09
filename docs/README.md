@@ -52,13 +52,14 @@ Same model. Different depth.
 Use these when you already understand the ideas and want the current implementation contract:
 
 - [`architecture.md`](architecture.md) — architecture `0.3`
-- [`tiny-protocol-bridge.md`](tiny-protocol-bridge.md) — protocol / adapter semantics and boundary promises
+- [`tiny-protocol-bridge.md`](tiny-protocol-bridge.md) — protocol / adapter semantics
 - [`action-aware-dynamics.md`](action-aware-dynamics.md) — controlled transition semantics
 - [`memory-garden.md`](memory-garden.md) — Shared Context memory mechanism
 - [`transition-weather.md`](transition-weather.md) — optional context-aware mode transitions
 - [`smoothing-garden.md`](smoothing-garden.md) — fixed-lag smoothing
+- [`observation-provenance.md`](observation-provenance.md) — which clue relationships are observed, probable, assumed, or still undefined
 
-Math pages explain equations. Architecture pages define software behavior and boundaries.
+Math pages explain equations. Architecture pages define software behavior and boundaries. Provenance pages explain what kind of claim a relationship is.
 
 ## 🧪 Labs — challenge one assumption
 
@@ -109,17 +110,24 @@ Synthetic metric != human validation
 See [`../examples/`](../examples/):
 
 - [`../examples/cheng_linda_story.py`](../examples/cheng_linda_story.py) — synthetic persona → generic semantics
-- [`../examples/365-cute-days/`](../examples/365-cute-days/) — committed observation-only synthetic reference
-- [`../tiny_tools/controlled_reference.py`](../tiny_tools/controlled_reference.py) — generate the separate known-action reference on demand
-- [`controlled-reference-result.md`](controlled-reference-result.md) — committed result summary for that controlled experiment
+- [`../examples/365-cute-days/`](../examples/365-cute-days/) — observation-only synthetic reference
 
-The generated controlled basket is scratch output rather than a second committed reference tree. Diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
+The separate action-aware reference is generated on demand with:
+
+```bash
+python -m tiny_tools.controlled_reference
+```
+
+Its committed result summary lives in [`controlled-reference-result.md`](controlled-reference-result.md).
+
+Diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
 ## ⚖️ Writing / source / epistemic boundaries
 
 - [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided
-- [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract and public/private boundary
-- [`design-principles.md`](design-principles.md) — distilled principle map and design-history provenance
+- [`observation-provenance.md`](observation-provenance.md) — provenance map for clue→state / mode relationships
+- [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract
+- [`design-principles.md`](design-principles.md) — distilled principle map and public boundary around private design inspiration
 - [`../CUTE_RULES.md`](../CUTE_RULES.md) — tone and engineering rules
 - [`../COFFEELOG.md`](../COFFEELOG.md) — project history
 
@@ -128,6 +136,8 @@ Keep these distinctions visible:
 ```text
 Probability != fact
 Assumption != evidence
+Assumed coefficient != discovered law
+Zero coefficient != proven independence
 Undefined relationship != zero relationship
 High historical probability != future commitment
 Design inspiration != public dataset
@@ -143,6 +153,7 @@ Want Starter Math  → docs/math/starter-math.md
 Want Full Math     → docs/math/full-math.md
 Want the spec      → docs/architecture.md
 Want claim status  → docs/epistemic-status.md
+Want clue provenance → docs/observation-provenance.md
 Want experiments   → labs / result docs
 Want to run        → examples/ and tiny_tools/
 Want history       → COFFEELOG.md

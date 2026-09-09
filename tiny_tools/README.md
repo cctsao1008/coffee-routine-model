@@ -38,6 +38,7 @@ python -m tiny_tools.visualize examples/365-cute-days/output.csv
 
 | Question | Helper | Deeper note |
 |---|---|---|
+| What observation coefficients and mode offsets does the runtime model actually contain, and what status do those edges have? | `inspect_observation_provenance.py` | [`../docs/observation-provenance.md`](../docs/observation-provenance.md) |
 | Can the clues distinguish the states? | `diagnose_observability.py` | [`../docs/observability-garden.md`](../docs/observability-garden.md) |
 | Does V track when the synthetic truth is deliberately excited? | `excite_voluntariness.py` | [`../docs/voluntariness-excitation.md`](../docs/voluntariness-excitation.md) |
 | Why does the excited V posterior stay compressed? | `diagnose_v_compression.py` | [`../docs/v-compression-result.md`](../docs/v-compression-result.md) |
@@ -57,6 +58,8 @@ python -m tiny_tools.visualize examples/365-cute-days/output.csv
 ## A useful order for experimenting 🧭
 
 ```text
+inspect provenance
+   ↓
 simulate
    ↓
 visualize
@@ -84,6 +87,18 @@ Sensitivity != causality
 Better fit != better ontology
 Winner != truth
 Model != human
+```
+
+Observation provenance adds another boundary:
+
+```text
+Assumed direct edge
+!=
+discovered law
+
+No direct edge in this specification
+!=
+proven independence
 ```
 
 Focused excitation and diagnostic perturbations add two more boundaries:
