@@ -88,9 +88,9 @@ A useful example is `C`.
 
 One callback is just one callback. A long stream of remembered little patterns can become accumulated context, so `C` has its own slow memory law:
 
-\[
+```math
 C_{t+1}=C_t+\eta I_t(1-C_t)-\lambda C_t+w_t^C
-\]
+```
 
 Memory is not mood. One quiet day does not erase history. 🧠🌱
 
@@ -116,9 +116,9 @@ The model does **not** see one Leave day and declare the universe broken. XD
 
 Mode transitions remain stochastic:
 
-\[
+```math
 p(m_{t+1}\mid m_t,x_t,a_t,d_t)
-\]
+```
 
 Context may nudge the dice. It does not deterministically choose the answer.
 
@@ -141,15 +141,15 @@ Some hypotheses become more plausible. Others lose weight.
 
 That is the intuition behind the Particle Filter:
 
-\[
+```math
 p(x_t,m_t\mid z_{1:t})
-\]
+```
 
 Later evidence may also help historical uncertainty through smoothing:
 
-\[
+```math
 p(x_t,m_t\mid z_{1:T})
-\]
+```
 
 Later evidence can update uncertainty. It does not rewrite observed facts. 🔭🐣
 
@@ -168,13 +168,13 @@ print(result.posterior.mean)
 
 The controlled stochastic model is conceptually:
 
-\[
+```math
 x_{t+1}\sim p(x_{t+1}\mid x_t,m_t,a_t,d_t)
-\]
+```
 
-\[
+```math
 z_t\sim p(z_t\mid x_t,m_t)
-\]
+```
 
 where:
 
