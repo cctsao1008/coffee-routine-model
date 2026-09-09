@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coffee-routine-model"
+version = "0.3.0"
+description = "A tiny coffee routine with suspiciously serious math."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.0",
+    "matplotlib>=3.10",
+]
+
+[tool.setuptools.packages.find]
+include = ["coffee_brain*", "tiny_tools*"]
+exclude = ["tests*", "examples*", "docs*"]
