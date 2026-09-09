@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/pack-365-basket.yml
       - requirements.txt
+      - tiny_tools/audit_reference.py
       - tiny_tools/simulate.py
       - tiny_tools/visualize.py
       - coffee_brain/actions.py
@@ -46,6 +47,27 @@ jobs:
             --days 365 \
             --particles 6000 \
             --seed 20260908
+      - name: 🔍 Measure what the reference actually excites
+        run: |
+          python -m tiny_tools.audit_reference examples/365-cute-days/output.csv
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("examples/365-cute-days/recipe.json")
+          recipe = json.loads(path.read_text(encoding="utf-8"))
+          recipe.update(
+              {
+                  "reference_scope": "observation-only baseline",
+                  "action_schedule": "none",
+                  "particle_filter_actions_supplied": False,
+                  "controlled_transition_path_exercised": False,
+                  "shared_context_action_accumulation_exercised": False,
+              }
+          )
+          path.write_text(json.dumps(recipe, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print("🔍☕ Reference scope recorded without changing the model behavior.")
+          PY
       - name: 🎨 Paint the gallery from the same output
         run: python -m tiny_tools.visualize examples/365-cute-days/output.csv
       - name: 🧾 Save the exact little kitchen receipt
@@ -60,6 +82,7 @@ jobs:
           test -f examples/365-cute-days/input.csv
           test -f examples/365-cute-days/output.csv
           test -f examples/365-cute-days/metrics.csv
+          test -f examples/365-cute-days/state-excitation.csv
           test -f examples/365-cute-days/recipe.json
           test -f examples/365-cute-days/source-revision.txt
           test -f examples/365-cute-days/environment.txt
@@ -71,8 +94,10 @@ jobs:
           test -f examples/365-cute-days/ess.png
           test "$(($(wc -l < examples/365-cute-days/input.csv) - 1))" -eq 365
           test "$(($(wc -l < examples/365-cute-days/output.csv) - 1))" -eq 365
+          test "$(($(wc -l < examples/365-cute-days/state-excitation.csv) - 1))" -eq 6
           python - <<'PY'
           import csv
+          import json
           from pathlib import Path
 
           rows = list(csv.DictReader(Path("examples/365-cute-days/input.csv").open(encoding="utf-8")))
@@ -90,7 +115,19 @@ jobs:
               assert opt_in or not maintenance, row["sample_id"]
               assert bool(delay) == bool(text_reply), row["sample_id"]
 
+          audit = list(csv.DictReader(Path("examples/365-cute-days/state-excitation.csv").open(encoding="utf-8")))
+          assert [row["state"] for row in audit] == ["P", "M", "V", "C", "E", "F"]
+          assert all(float(row["truth_span"]) >= 0.0 for row in audit)
+
+          recipe = json.loads(Path("examples/365-cute-days/recipe.json").read_text(encoding="utf-8"))
+          assert recipe["reference_scope"] == "observation-only baseline"
+          assert recipe["action_schedule"] == "none"
+          assert recipe["particle_filter_actions_supplied"] is False
+          assert recipe["controlled_transition_path_exercised"] is False
+          assert recipe["shared_context_action_accumulation_exercised"] is False
+
           print("☕🧭 The synthetic protocol grammar is coherent across all 365 days.")
+          print("🔍🌱 The reference scope and state excitation receipt are explicit.")
           PY
           echo "☕✨ 365 tiny days and their gallery are sitting nicely in one basket."
       - name: 🐾 Put the basket back on main
@@ -101,6 +138,7 @@ jobs:
             examples/365-cute-days/input.csv \
             examples/365-cute-days/output.csv \
             examples/365-cute-days/metrics.csv \
+            examples/365-cute-days/state-excitation.csv \
             examples/365-cute-days/recipe.json \
             examples/365-cute-days/source-revision.txt \
             examples/365-cute-days/environment.txt \
@@ -108,6 +146,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "🌱 The basket and gallery already match perfectly. Nothing to repack."
           else
-            git commit -m "🗓️☕ repack and repaint the reproducible 365-day reference"
+            git commit -m "🗓️☕ repack the reference with an excitation receipt"
             git push
           fi
