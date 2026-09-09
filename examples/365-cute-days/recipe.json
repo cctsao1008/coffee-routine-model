@@ -1,9 +1,14 @@
 {
+  "action_schedule": "none",
   "architecture_version": "0.3",
+  "controlled_transition_path_exercised": false,
   "days": 365,
   "numpy_version": "2.5.3",
   "particle_count": 6000,
+  "particle_filter_actions_supplied": false,
   "python_version": "3.12.14",
+  "reference_scope": "observation-only baseline",
   "scenario": "cozy-normal-year",
-  "seed": 20260908
+  "seed": 20260908,
+  "shared_context_action_accumulation_exercised": false
 }
