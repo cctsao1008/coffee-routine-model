@@ -9,6 +9,7 @@ The repository has several kinds of documents. They answer different questions o
 Start here if you want to understand **why the model gradually became this shape**:
 
 - [`tutorial/README.md`](tutorial/README.md) — guided ten-step tutorial
+- [`design-principles.md`](design-principles.md) — compact public-safe map from recurring design problems to engineering responses
 - [`how-the-coffee-works.md`](how-the-coffee-works.md) — shorter gentle explanation
 
 The tutorial follows:
@@ -20,6 +21,14 @@ story
 → abstractions
 → uncertainty
 → diagnostics
+```
+
+`design-principles.md` sits beside that path and keeps an important provenance split visible:
+
+```text
+history-supported pattern class
+!= modeling interpretation
+!= epistemic guardrail
 ```
 
 ## 🏛️ Look up the current architecture
@@ -86,12 +95,13 @@ Useful starting points:
 
 Runnable diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
-## ⚖️ Writing and epistemic boundaries
+## ⚖️ Writing, source, and epistemic boundaries
 
 - [`../CUTE_RULES.md`](../CUTE_RULES.md) — repository tone and engineering rules
 - [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided contract
 - [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract
-- [`source-notes.md`](source-notes.md) — public boundary around design inspiration
+- [`source-notes.md`](source-notes.md) — public boundary around private design inspiration
+- [`design-principles.md`](design-principles.md) — distilled principles with provenance labels and tutorial links
 - [`../COFFEELOG.md`](../COFFEELOG.md) — project history
 
 These documents keep several distinctions explicit:
@@ -101,18 +111,20 @@ Probability != fact
 Assumption != evidence
 Undefined relationship != zero relationship
 High historical probability != future commitment
+Design inspiration != public dataset
 ```
 
 ## The short version 🌱
 
 ```text
-First visit      → README.md
-Want to learn    → docs/tutorial/
-Want the spec    → docs/architecture.md
-Want claim status→ docs/epistemic-status.md
-Want experiments → docs/*garden.md / *bench.md / *test.md / model-arena.md
-Want to run      → examples/ and tiny_tools/
-Want history     → COFFEELOG.md
+First visit       → README.md
+Want to learn     → docs/tutorial/
+Want principles  → docs/design-principles.md
+Want the spec     → docs/architecture.md
+Want claim status → docs/epistemic-status.md
+Want experiments  → docs/*garden.md / *bench.md / *test.md / model-arena.md
+Want to run       → examples/ and tiny_tools/
+Want history      → COFFEELOG.md
 ```
 
 Same model. Different questions. Different doors. ☕
