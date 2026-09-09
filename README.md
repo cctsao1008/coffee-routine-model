@@ -3,14 +3,23 @@
 A tiny coffee routine with suspiciously serious math.
 
 > **Humans are not state machines.**  
-> The model is allowed to be uncertain. Humans are allowed to surprise it. XD
+> This model works with observable clues, keeps uncertainty visible, and describes the routine rather than claiming access to anyone's hidden mind.
 
-## Start with the story 📖☕
+This README is the **first guided walk** through the project:
 
-Meet **Cheng** and **Linda** — synthetic story personas used only to make the model readable.
-They are example characters here, not a published private transcript or ground-truth psychology dataset.
+```text
+story → observation → modeling problem → abstraction → uncertainty → code → self-checks
+```
 
-A tiny week might look like this:
+If you only want the formal contract, jump to [`docs/architecture.md`](docs/architecture.md).  
+If you want the gentler explanation, see [`docs/how-the-coffee-works.md`](docs/how-the-coffee-works.md).
+
+## 1. Start with one tiny routine 📖☕
+
+Meet **Cheng** and **Linda** — synthetic story personas used only to make the model easier to read.
+They are illustrative characters here, not a published private transcript or a ground-truth psychology dataset.
+
+A small week might look like this:
 
 ```text
 Monday
@@ -36,22 +45,62 @@ Next Monday
 ordinary coffee again ☕
 ```
 
-Nothing in that story tells us somebody's hidden internal truth.
-It only gives us observable little events.
+The story feels simple. The modeling problem begins when we ask what we can actually know from it.
 
-So the first translation is:
+## 2. What can we actually observe? 👀
+
+The model starts from behavior-level events:
 
 ```text
-Cheng asks +1?     -> invite
-Linda says 要      -> opt_in
-coffee arrives     -> routine_maintenance
-Linda reacts 👍    -> reaction
-pass               -> pass_event
-state update       -> proactive_update
-resume             -> resume_signal
+Cheng asks +1?     → invite
+Linda says 要      → opt_in
+coffee arrives     → routine_maintenance
+Linda reacts 👍    → reaction
+pass               → pass_event
+state update       → proactive_update
+resume             → resume_signal
 ```
 
-## So... what is CSRDM? ☕🧠
+Those are observations and actions. They are **not** direct measurements of intention, emotion, or private meaning.
+
+```text
+Observed event != internal truth
+Story != evidence
+```
+
+The companion [`coffee-routine-protocol`](https://github.com/cctsao1008/coffee-routine-protocol) provides the tiny interaction vocabulary. `coffee_brain/protocol_adapter.py` translates that vocabulary into generic model fields.
+
+Even a familiar token can be contextual:
+
+```text
+after +1?  → 👍 may be an opt-in
+after ☕   → 👍 may be a reaction
+alone      → 👍 may stay ambiguous
+```
+
+Missing facts stay missing. Ambiguous clues do not get forced into a story.
+
+## 3. Is counting coffee enough? 🧩
+
+Not really.
+
+A simple counter can tell us whether coffee happened, but it cannot represent several recurring questions:
+
+```text
+If coffee usually follows a clear opt-in, is the routine becoming predictable?
+
+If both sides contribute in different ways, is 50/50 symmetry really the right idea?
+
+If someone says pass, should that count as failure?
+
+If a busy day or leave interrupts the pattern, did the routine actually break?
+
+If familiar callbacks and little conventions accumulate, should one quiet day erase them?
+```
+
+These questions are what gradually create the model. The model is not the starting point; it is the abstraction that comes after the problems appear.
+
+## 4. So... what is CSRDM? ☕🧠
 
 **CSRDM** stands for **Coupled Shared Routine Dynamics Model**.
 
@@ -59,21 +108,21 @@ It is a stochastic model for a repeated voluntary routine maintained through int
 The object being modeled is the **shared routine and how it changes over time** — not either person's hidden mind.
 
 ```text
-Coupled        -> actions from both sides can affect how the routine evolves
-Shared Routine -> the routine itself is the modeling object
-Dynamics       -> the routine can change over time
-Model          -> an uncertain mathematical abstraction, not a human state machine
+Coupled        → actions from both sides can affect how the routine evolves
+Shared Routine → the routine itself is the modeling object
+Dynamics       → the routine can change over time
+Model          → an uncertain mathematical abstraction
 ```
 
-So the tiny brain is really asking:
+So CSRDM asks three modest questions:
 
 ```text
-What can we actually observe?
+What can we observe?
 What hidden routine state could explain those observations?
 How uncertain should the model remain?
 ```
 
-Then the names come off.
+The story names stop at the edge:
 
 ```text
 Cheng / Linda story
@@ -87,38 +136,83 @@ CSRDM Core
 
 **Story at the edge. Generic math in the center.** ☕🧠
 
-The runnable synthetic persona example lives in [`examples/cheng_linda_story.py`](examples/cheng_linda_story.py).
+The runnable persona example lives in [`examples/cheng_linda_story.py`](examples/cheng_linda_story.py).
 
-## Six soft questions, not six mind-reading meters 🧠🌱
+## 5. Six modeling questions become six soft states 🌱
 
-The hidden state is:
+Instead of declaring six variables first, start with the problems that require them.
+
+### `P` — Predictability
+
+If invitations, replies, delivery, and resumption usually follow familiar patterns, the routine becomes easier to anticipate.
+
+### `M` — Mutuality
+
+Two sides do not need to contribute in identical ways. One may initiate more often while the other maintains the loop through opt-in, acknowledgment, updates, or closure.
+
+```text
+Mutuality != 50/50 symmetry
+```
+
+### `V` — Voluntariness
+
+A healthy model must allow `pass` to remain a valid choice.
+
+```text
+Continuity != obligation
+Pass != failure
+```
+
+### `C` — Shared Context
+
+Callbacks, recurring conventions, familiar shorthand, and repeated coordination can accumulate over time.
+
+### `E` — Everyday State Sharing
+
+Observable everyday states such as busy / tired / okay can enter the interaction without becoming mind-reading labels.
+
+### `F` — Friction
+
+Some routines become easier to coordinate; others become more costly, awkward, or difficult to maintain.
+
+Only now do the six names come together:
 
 ```text
 x(t) = [P, M, V, C, E, F]
 ```
 
-| State | Story intuition | Model meaning |
-|---|---|---|
-| `P` | Does the little routine usually behave in ways that are easy to anticipate? | Predictability |
-| `M` | Are both sides still helping the loop exist, even if their contributions are different? | Mutuality |
-| `V` | Can somebody freely say `pass` without the model treating it as failure? | Voluntariness |
-| `C` | Do callbacks, little rules, repeated coordination, and shared language accumulate over time? | Shared Context |
-| `E` | Do ordinary states like busy / tired / okay enter the observable interaction? | Everyday State Sharing |
-| `F` | Is coordination becoming costly, awkward, or difficult? | Friction |
+These are **soft latent properties of the routine model**, not six meters attached to a person.
 
-A useful example is `C`.
+## 6. Actions and observations are different 🎮👀
 
-One callback is just one callback. A long stream of remembered little patterns can become accumulated context, so `C` has its own slow memory law:
+Another modeling problem appears quickly:
 
-```math
-C_{t+1}=C_t+\eta I_t(1-C_t)-\lambda C_t+w_t^C
+> An observable action can help move the routine forward, while an observation gives evidence about the state we cannot see directly.
+
+CSRDM therefore keeps known actions and observation clues separate.
+
+```text
+known actions a[t]
+      ↓
+previous hidden state → current hidden state
+                              ↑
+                       observed clues z[t]
 ```
 
-Memory is not mood. One quiet day does not erase history. 🧠🌱
+For example, an invitation or delivery can be represented as an action, while a reaction or response delay can be used as an observation clue.
 
-## Five kinds of tiny weather 🌦️🎲
+```text
+Action != intention
+Observation != latent state
+```
 
-The routine also has a discrete mode:
+The implementation details live in [`docs/action-aware-dynamics.md`](docs/action-aware-dynamics.md) and [`docs/tiny-protocol-bridge.md`](docs/tiny-protocol-bridge.md).
+
+## 7. One kind of day is not enough 🌦️
+
+A single continuous state vector still misses an obvious fact: ordinary days, busy days, leave, special days, and recovery do not all behave the same way.
+
+So CSRDM also carries a discrete routine mode:
 
 ```text
 ☕ Normal
@@ -128,13 +222,20 @@ The routine also has a discrete mode:
 🌱 Recovery
 ```
 
-A timeline might be:
+A small sequence might be:
 
 ```text
 Normal → Busy → Leave → Leave → Recovery → Normal
 ```
 
-The model does **not** see one Leave day and declare the universe broken. XD
+The important distinction is:
+
+```text
+Disturbance != rupture
+Mode != regime
+```
+
+A temporary Leave mode does not automatically mean the generating process has permanently changed.
 
 Mode transitions remain stochastic:
 
@@ -142,50 +243,86 @@ Mode transitions remain stochastic:
 p(m_{t+1}\mid m_t,x_t,a_t,d_t)
 ```
 
-Context may nudge the dice. It does not deterministically choose the answer.
+Context can nudge the probabilities. It does not deterministically choose the answer.
 
-## Tiny particle friends 🐣🐣🐣
+Recovery is treated separately rather than being smuggled into a generic failure score. See [`docs/recovery-garden.md`](docs/recovery-garden.md).
 
-Suppose the model sees one quiet day.
+## 8. Some things should remember slowly 🧠🌱
 
-Different particles can tell different little hypotheses:
+Now `C = Shared Context` creates its own design problem.
 
-```text
-🐣 #1  "Probably ordinary noise."
-🐣 #2  "Maybe today is Busy."
-🐣 #3  "Maybe friction is a bit higher."
-🐣 #4  "Maybe nothing structural changed at all."
+If `C` moved like an ordinary daily variable, one quiet day could erase too much accumulated history. So `C` uses a dedicated slow memory law:
+
+```math
+C_{t+1}=C_t+\eta I_t(1-C_t)-\lambda C_t+w_t^C
 ```
 
-Then another clue arrives — perhaps a normal `resume` and ordinary coffee.
+where `I_t` is bounded shared-context input from observable coordination.
 
-Some hypotheses become more plausible. Others lose weight.
+The intuition is simple:
 
-That is the intuition behind the Particle Filter:
+```text
+one callback              → one event
+many remembered patterns  → accumulated context
+one quiet day             → not instant forgetting
+long disconnection         → slow decay can matter
+```
+
+```text
+Memory != mood
+No event today != no shared history
+```
+
+The deeper version lives in [`docs/memory-garden.md`](docs/memory-garden.md).
+
+## 9. But we still cannot see the hidden state 🐣🐣🐣
+
+At this point the model has six latent states and five possible modes.
+
+Tiny problem: **none of them is directly observable.**
+
+Suppose one quiet day arrives. Several explanations may still fit:
+
+```text
+🐣 #1  probably ordinary noise
+🐣 #2  maybe today is Busy
+🐣 #3  maybe friction is a bit higher
+🐣 #4  maybe nothing structural changed at all
+```
+
+Instead of forcing one explanation too early, the Particle Filter keeps many candidate hidden states alive and reweights them when new evidence arrives.
+
+Filtering asks:
 
 ```math
 p(x_t,m_t\mid z_{1:t})
 ```
 
-Later evidence may also help historical uncertainty through smoothing:
+Later evidence can also help reinterpret **uncertainty** about an earlier hidden state through smoothing:
 
 ```math
 p(x_t,m_t\mid z_{1:T})
 ```
 
-Later evidence can update uncertainty. It does not rewrite observed facts. 🔭🐣
+But the observed event itself never changes.
 
-## Now the engineering shape 🏛️☕
+```text
+Later evidence may update uncertainty.
+Later evidence does not rewrite observed facts.
+```
 
-Architecture **`0.3`** keeps one stable public door:
+See [`docs/smoothing-garden.md`](docs/smoothing-garden.md) for the fixed-lag smoother.
 
-```python
-from coffee_brain import CSRDM, CSRDMConfig
+## 10. Now the full engineering shape makes sense 🏛️☕
 
-brain = CSRDM(CSRDMConfig())
-result = brain.step(["+1?", "要", "☕", "👍"])
+Architecture **`0.3`** uses the following symbols:
 
-print(result.posterior.mean)
+```text
+x_t = latent continuous routine state [P M V C E F]
+m_t = latent routine mode
+a_t = known observable action basket
+d_t = explicit known disturbance / context when available
+z_t = observable clue basket
 ```
 
 The controlled stochastic model is conceptually:
@@ -198,117 +335,55 @@ x_{t+1}\sim p(x_{t+1}\mid x_t,m_t,a_t,d_t)
 z_t\sim p(z_t\mid x_t,m_t)
 ```
 
-where:
+And the stable public API stays small:
 
-```text
-x_t = latent continuous state [P M V C E F]
-m_t = latent routine mode
-a_t = observable action basket
-d_t = explicit known disturbance / regime context
-z_t = observable clue basket
+```python
+from coffee_brain import CSRDM, CSRDMConfig
+
+brain = CSRDM(CSRDMConfig())
+result = brain.step(["+1?", "要", "☕", "👍"])
+
+print(result.posterior.mean)
 ```
 
 The full architecture contract lives in [`docs/architecture.md`](docs/architecture.md).
 
-## Tiny protocol bridge ☕➡️🧠
+## 11. A model should be allowed to argue with itself 🔍🧪
 
-The companion [`coffee-routine-protocol`](https://github.com/cctsao1008/coffee-routine-protocol) speaks tiny coffee language:
+Building a model is only half the story. The next question is whether the abstractions we invented are actually useful inside the synthetic test world.
 
-```text
-+1?
-+
-要
-對
-👍
-pass
-☕
-resume
-```
+That is why the repo contains small diagnostic labs:
 
-`coffee_brain/protocol_adapter.py` keeps observable actions and observation clues separate.
-Missing facts stay `None`; ambiguous tokens stay ambiguous.
+| Modeling doubt | Lab |
+|---|---|
+| We invented six states — can the clues distinguish them? | [`observability-garden.md`](docs/observability-garden.md) |
+| Our observation probabilities are hand-set — are they calibrated? | [`calibration-bench.md`](docs/calibration-bench.md) |
+| Which assumptions matter most? | [`sensitivity-map.md`](docs/sensitivity-map.md) |
+| Does one strange day imply a new generating regime? | [`change-point-garden.md`](docs/change-point-garden.md) |
+| Does hindsight help without rewriting history? | [`smoothing-garden.md`](docs/smoothing-garden.md) |
+| Can accumulated context recover after interruption? | [`recovery-garden.md`](docs/recovery-garden.md) |
+| Can a simpler model compete? | [`model-arena.md`](docs/model-arena.md) |
+| Can a few bounded probability knobs learn without rewriting the ontology? | [`learning-spoon.md`](docs/learning-spoon.md) |
 
-Even `👍` is contextual:
-
-```text
-after +1?  -> may be opt-in
-after ☕   -> may be reaction
-alone      -> may stay ambiguous
-```
+The repeated rule is:
 
 ```text
-Protocol event != latent state
-Action != intention
-Observation != internal truth
+Better fit != better ontology
+Estimable != identifiable
+Synthetic success != real-human truth
+Winner != truth
 ```
 
-Bridge details live in [`docs/tiny-protocol-bridge.md`](docs/tiny-protocol-bridge.md).
+## 12. Try the little brain yourself ☕➡️🐣
 
-## Persona layer: cute costume, removable math 🎭☕
+Install and run a synthetic world:
 
-The story layer deliberately lives in `examples/`, not `coffee_brain/`.
-
-```python
-from examples.cheng_linda_story import ChengLindaBeat, to_generic_step
-
-step = to_generic_step(
-    ChengLindaBeat(
-        cheng_invite=True,
-        linda_choice="要",
-        cheng_delivery=True,
-        linda_reaction="👍",
-    )
-)
-
-print(step.actions)
-print(step.observation)
+```bash
+python -m pip install -r requirements.txt
+python -m tiny_tools.simulate --scenario slow-recovery --days 365
 ```
 
-The output uses only generic fields such as:
-
-```text
-invite
-opt_in
-reaction
-routine_maintenance
-```
-
-So the repo gets a story without hard-coding a specific pair of people into the mathematical core. XD
-
-## What the tiny brain can do 🧠🧰
-
-The architecture now includes:
-
-```text
-protocol / persona adaptation
-controlled six-state dynamics
-hybrid modes
-Shared Context memory
-Particle Filtering
-Particle Smoothing
-recovery / resilience measurement
-observability diagnostics
-calibration
-change-point detection
-context-aware transitions
-sensitivity mapping
-state-redundancy tests
-bounded parameter learning
-model-comparison arena
-experiment fingerprints
-```
-
-That is enough machinery. New algorithms are not the default anymore.
-
-## Synthetic coffee weather 🌦️☕
-
-The simulator intentionally does not always use the estimator's assumptions:
-
-```text
-Synthetic World != Estimator Assumptions
-```
-
-Available worlds:
+Available synthetic weather includes:
 
 ```text
 🌤️ cozy-normal-year
@@ -320,15 +395,17 @@ Available worlds:
 🌱 slow-recovery
 ```
 
-Run one:
+The simulator deliberately does not always match the estimator assumptions:
 
-```bash
-python -m tiny_tools.simulate --scenario slow-recovery --days 365
+```text
+Synthetic World != Estimator Assumptions
 ```
 
-## 365 cute days 🗓️☕
+That mismatch is useful because a model that only succeeds against itself has not learned much about its own weaknesses.
 
-The committed reference basket is:
+## 13. The 365-day reference basket 🗓️☕
+
+The committed synthetic reference lives at:
 
 ```text
 examples/365-cute-days/
@@ -339,7 +416,7 @@ examples/365-cute-days/
 └── tiny-year-summary.png + state/mode figures
 ```
 
-Reference highlights for the committed synthetic baseline:
+Reference highlights for that committed synthetic baseline:
 
 ```text
 relationship-index RMSE : 0.0185
@@ -348,7 +425,7 @@ relationship-index r    : 0.805
 mode accuracy            : 82.2%
 ```
 
-These numbers validate a synthetic architecture exercise. They do **not** prove that real people follow these equations.
+These numbers validate a **synthetic architecture exercise**. They do not prove that real people follow these equations.
 
 Paint the year again:
 
@@ -358,54 +435,63 @@ python -m tiny_tools.visualize examples/365-cute-days/output.csv
 
 ![One tiny coffee routine across one synthetic year](examples/365-cute-days/tiny-year-summary.png)
 
-## Run the little brain ☕➡️🐣
-
-```bash
-python -m pip install -r requirements.txt
-python -m tiny_tools.simulate
-python -m tiny_tools.visualize examples/365-cute-days/output.csv
-```
-
-Want a short scratch run without committing a historical demo basket?
+Want a short scratch run instead?
 
 ```bash
 python -m tiny_tools.simulate --days 100 --out .tiny-100-day-scratch
 ```
 
-## Test nest 🐣✅
+## 14. Pick the next door 📚✨
+
+The README is the guided first journey. After that, choose the kind of question you have:
+
+```text
+☕ Curious human
+   README
+   ↓
+   docs/how-the-coffee-works.md
+
+🛠️ Software engineer
+   public CSRDM API
+   ↓
+   docs/tiny-protocol-bridge.md
+   ↓
+   docs/architecture.md
+
+🧠 Math / control reader
+   docs/architecture.md
+   ↓
+   action-aware dynamics / memory / smoothing
+   ↓
+   diagnostics and model arena
+
+🧪 Experiment reader
+   observability / calibration / sensitivity
+   ↓
+   change points / recovery / learning / arena
+```
+
+Same model. Different doors.
+
+## 15. Test nest 🐣✅
 
 ```bash
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-CI also exercises observability, sensitivity, redundancy, recovery, smoothing, memory, calibration, change points, transitions, and a small chaos simulation.
+CI also exercises the model, adapters, diagnostics, smoothing, memory, calibration, change points, transitions, and a small chaos simulation.
 
 ```text
-Cute CI != weak CI.
+Cute CI != weak CI
 ```
-
-## Pick your reading path 📚✨
-
-```text
-☕ Curious human
-   README story → six states → five modes → tiny particles
-
-🛠️ Software engineer
-   public CSRDM API → config → protocol adapter → experiment contract
-
-🧠 Math / control reader
-   docs/architecture.md → dynamics → observation model → PF / smoothing → diagnostics
-```
-
-Same model. Different doors.
 
 ## House rules ☕🌸
 
-The full tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).
+The full tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).  
 The history book lives in [`COFFEELOG.md`](COFFEELOG.md).
 
-Two especially important rules:
+Two useful rules:
 
 > **Cute != sloppy.**
 
@@ -417,6 +503,7 @@ And the guardrails:
 Story != evidence
 Persona != core ontology
 Observed behavior != internal truth
+Action != intention
 Continuity != obligation
 Pass != failure
 Disturbance != rupture
