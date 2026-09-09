@@ -1,18 +1,22 @@
 # Tiny Change-Point Garden ✂️🐣☕
 
+## Why this exists
+
 Sometimes one day is unusual.
 
-Sometimes the little process that generates the routine really changes.
+Sometimes the process generating the observable routine really changes in a more persistent way.
 
-Those are **not** the same thing.
+Those are **not** the same modeling question.
 
 ```text
-Mode != regime.
-Anomaly != change point.
-Change point != story conclusion.
+Mode != regime
+Anomaly != change point
+Change point != story conclusion
 ```
 
-## What the tiny scissors currently do 🧠
+This lab answers the tutorial question: **when should a persistent shift be treated differently from one strange day?**
+
+## What the tiny scissors do 🧠
 
 `coffee_brain/change_points.py` implements a conservative **offline single-change-point detector** over observable clues.
 
@@ -32,7 +36,7 @@ tone_warmth
 log(response_delay_min)
 ```
 
-Missing values are temporarily imputed with the full-timeline feature mean during standardization, which makes a missing clue neutral in standardized space instead of secretly becoming zero.
+Missing values are temporarily imputed with the full-timeline feature mean during standardization, making a missing clue neutral in standardized space instead of silently turning it into zero.
 
 ## Candidate boundary score ✂️
 
@@ -43,7 +47,7 @@ H0: one mean regime for the whole timeline
 H1: one mean before tau + another mean after tau
 ```
 
-The evidence score is deliberately simple and inspectable. Each active clue first gets its own BIC-like gain:
+Each active clue receives a BIC-like gain:
 
 ```text
 gain_j(tau)
@@ -58,24 +62,24 @@ Then:
 score(tau) = sum of positive gain_j(tau)
 ```
 
-If no clue earns a positive gain, the least-negative clue carries the score so `no change` still receives stronger evidence.
+If no clue earns a positive gain, the least-negative clue carries the score so `no change` can still retain stronger evidence.
 
-This makes the detector **sparse across clue channels**:
+The detector is sparse across clue channels:
 
 ```text
 one persistent delay shift
-    -> pays one complexity penalty
+    → pays one complexity penalty
 
 one persistent delay shift
-    -> does NOT pay eleven penalties
-       for ten clues that stayed ordinary XD
+    → does not pay eleven penalties
+      for ten clues that stayed ordinary
 ```
 
-The score is **not** treated as exact physical truth. It is an approximate log-evidence score for this detector family.
+The score is **not** exact physical truth. It is an approximate log-evidence score for this detector family.
 
 ## Approximate boundary posterior 🐣
 
-The model carries an explicit prior mass for:
+The model carries explicit prior mass for:
 
 ```text
 no change
@@ -84,7 +88,7 @@ one change somewhere
 
 The one-change prior is divided across all admissible candidate boundaries before scores are normalized.
 
-That matters because searching 300 possible days should not get 300 free lottery tickets. XD
+That prevents a long search window from receiving many free chances to declare a change.
 
 Outputs include:
 
@@ -98,22 +102,22 @@ plus a 90% conditional boundary interval.
 
 ## Why one weird day usually does not win 🌧️
 
-A one-day spike may improve one split a little, but it usually cannot overcome:
+A one-day spike may improve one split slightly, but it usually cannot overcome:
 
 ```text
 minimum segment length
 + per-clue complexity penalty
-+ prior spread across many candidate days
++ prior spread across candidate days
 ```
 
-A persistent before/after shift has much more accumulated evidence.
-
-So:
+A persistent before/after shift accumulates more evidence.
 
 ```text
 one weird day != new world
-persistent generating shift -> maybe new regime
+persistent generating shift → maybe a new regime
 ```
+
+The word `maybe` matters: the detector identifies statistical structure, not a narrative explanation for why the structure changed.
 
 ## Synthetic known-boundary garden 🌱
 
@@ -127,7 +131,7 @@ python -m tiny_tools.detect_change_points \
   --after sleepy-reply-season
 ```
 
-The helper grows one continuous hidden synthetic timeline and switches the **observation-generating weather** at the known boundary. It also grows a stable control timeline with no switch.
+The helper grows one continuous hidden synthetic timeline and switches the **observation-generating weather** at the known boundary. It also creates a stable control timeline with no switch.
 
 It writes:
 
@@ -137,19 +141,23 @@ summary.csv
 change-point.png
 ```
 
-The changed basket and stable control are both reported because a detector that finds a boundary everywhere is just a dramatic little pair of scissors. XD
+Both changed and stable controls are reported because a useful detector should not announce a boundary everywhere.
 
 ## Current scope 🧺
 
-This first detector is intentionally narrow:
+The detector is intentionally narrow:
 
-- offline, not online
-- one persistent change point at a time
-- mainly sensitive to persistent mean shifts in observable features
-- sparse across clue channels
-- does not explain *why* the generating process changed
-- does not yet make mode-transition dynamics regime-dependent
+- offline, not online;
+- one persistent change point at a time;
+- mainly sensitive to persistent mean shifts in observable features;
+- sparse across clue channels;
+- does not explain *why* the generating process changed.
 
-Later P2 work can extend this into multiple boundaries, richer likelihoods, and context-aware transition regimes.
+Context-aware mode-transition dynamics already live elsewhere in the architecture. This detector remains a separate observable-regime diagnostic rather than silently becoming the controller for hybrid modes.
 
-Tiny scissors first. Chainsaw later. ✂️🐣
+That separation preserves the current contract:
+
+```text
+Mode != regime
+Detector != story generator
+```

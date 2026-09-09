@@ -1,66 +1,50 @@
 # The Cute Rules ☕🐾✨
 
-This repository has one extremely serious rule:
+This repository has one very serious rule:
 
-> **Everything must be cute.**
+> **Everything should feel like it belongs in the same tiny coffee universe.**
 
-Yes. Everything. XD
-
-But there is a second rule hiding inside the first one:
+But the rule underneath it matters more:
 
 > **Cute != sloppy.**
 
-The coffee can wear tiny paws.  
-The math still has to work. 🧠✨
+The coffee can wear tiny paws. The math still has to work. 🧠✨
 
 ---
 
-## 1. The whole repo lives in the same tiny coffee universe ☕🌱
+## 1. Cute is repo-wide ☕🌱
 
-Cute is not just a README decoration.
-
-It applies to the whole project:
+The tone applies to:
 
 - `README.md` ☕
 - docs 📖
 - commit messages 🐾
-- code comments and docstrings 🧠✨
+- code comments and docstrings 🧠
 - CLI output 🐣
 - error messages 🙈
 - tests ✅
 - plots 🎨
 - examples 🧺
-- issues 🌸
-- pull requests 🐾
-- release notes 🎁
-- changelogs 📖
+- issues and pull requests 🌸
+- release notes and changelogs 🎁
 - workflow names 🤖☕
 
-If humans can see it, it should feel like it belongs here.
+If humans can see it, it should feel coherent with the rest of the repo.
 
 ---
 
 ## 2. Cute outside. Cute inside. Math still works. 🧠☕
 
-The tone may be silly.
+Keep these precise:
 
-The implementation may not be silly.
-
-```text
-Cute wording      = yes ✨
-Cute variable bug = no  🙈
-```
-
-Keep these things precise:
-
-- equations
-- state definitions
-- probability calculations
-- reproducibility
-- tests
-- uncertainty
-- file formats
-- numerical results
+- equations;
+- state definitions;
+- probability calculations;
+- reproducibility;
+- tests;
+- uncertainty;
+- file formats;
+- numerical results.
 
 A tiny particle is still a particle. 🐣
 
@@ -68,49 +52,37 @@ A tiny particle is still a particle. 🐣
 
 ## 3. Hard math should still tell a little story 📖☕🐣
 
-This model contains stochastic dynamics, latent states, hybrid modes, memory,
-Particle Filtering, smoothing, calibration, and a suspicious number of matrices.
+This project contains stochastic dynamics, latent states, hybrid modes, memory, Particle Filtering, smoothing, calibration, and a suspicious number of matrices.
 
-That is not permission to make the reader suffer. XD
+That is not permission to make the reader suffer.
 
-Prefer this reading order:
-
-```text
-Story → Intuition → Model → Math
-```
-
-A story may explain **why a concept exists** before an equation explains **how it works**.
-
-Good:
+Prefer:
 
 ```text
-A voluntary pass happens.
-The routine returns normally.
-Now explain why Pass != Failure and how Recovery is modeled.
+Concrete event
+→ Modeling question
+→ Intuition
+→ Abstraction
+→ Math / code
 ```
 
-Less helpful:
-
-```text
-Here is a 6x6-ish pile of symbols. Good luck. 🙈
-```
-
-Story is an interface for understanding, not evidence for the model.
+A story should explain **why a concept exists** before an equation explains **how it works**.
 
 ```text
 Story != evidence
-Persona != core ontology
 ```
+
+The full model-design learning path lives in [`docs/tutorial/`](docs/tutorial/).
 
 ---
 
 ## 4. Persona at the edge, generic math in the center 🎭🧠
 
-Synthetic story personas are welcome in examples because names make difficult models easier to follow.
+Synthetic teaching personas are welcome where names make difficult ideas easier to follow.
 
-For example, `Cheng` and `Linda` may appear as clearly synthetic story characters in `examples/` and README explanations.
+For example, `Cheng` and `Linda` may appear as clearly synthetic story characters in README, tutorials, and `examples/`.
 
-They must translate into generic model semantics before entering the core:
+They must translate into generic semantics before entering architecture-defining code:
 
 ```text
 Cheng / Linda story
@@ -122,25 +94,28 @@ invite / opt_in / reaction / ...
 CSRDM Core
 ```
 
-Do **not** hard-code persona names into Particle Filter likelihoods, latent states,
-transition logic, config keys, or architecture-defining mathematics.
-
-And do not publish private source material just because the story layer has names.
+Do **not** hard-code persona names into Particle Filter likelihoods, latent states, transition logic, config keys, or core mathematics.
 
 ```text
-Synthetic persona label != private transcript
-Public story            != private data
+Persona != core ontology
 ```
 
 ---
 
-## 5. Humans are not state machines 🌿
+## 5. Story-driven does not mean interpretive overreach ⚖️📖
 
-This project models **observable routine dynamics**.
+The repo may be warm and playful, but statements must remain auditable.
 
-It does not claim direct access to anybody's internal truth.
+Prefer:
 
-Keep these little guardrails nearby:
+```text
+observable event
+→ model representation
+→ possible inference
+→ uncertainty / unknowns
+```
+
+Keep these boundaries visible:
 
 ```text
 Observed behavior != internal truth
@@ -151,18 +126,40 @@ Disturbance != rupture
 Model != human
 ```
 
-Uncertainty is allowed.
-
-Surprises are allowed too. XD
+The detailed writing contract lives in [`docs/objective-story-contract.md`](docs/objective-story-contract.md).
 
 ---
 
-## 6. Comments should protect meaning, not narrate syntax 🧠🛡️
+## 6. Synthetic coffee stays synthetic 🧪☕
 
-Useful comments explain a design reason, invariant, or surprising choice:
+Do not publish private source material in this public repository.
+
+That includes:
+
+- private conversations or exports;
+- screenshots;
+- private timestamps;
+- company-identifying context;
+- private files;
+- claims that teaching personas are ground-truth psychological datasets.
+
+A private design history may inspire an abstract pattern. The public story must remain synthetic, generalized, and self-contained.
+
+```text
+Design inspiration != public dataset
+Public story != private data
+```
+
+---
+
+## 7. Comments should protect meaning, not narrate syntax 🧠🛡️
+
+Useful comments explain a design reason, invariant, temporal alignment, or intentionally surprising choice.
+
+Good:
 
 ```python
-# C remembers accumulated shared context, so it deliberately skips
+# C owns dedicated slow memory, so it deliberately skips
 # ordinary daily-state drift used by the other five states. 🧠🌱
 ```
 
@@ -175,18 +172,31 @@ probability = ...
 
 Comments are especially valuable around:
 
-- temporal alignment
-- state-space invariants
-- intentionally omitted terms
-- synthetic-world vs estimator assumptions
-- numerical guards
-- boundaries between story and core semantics
+- temporal alignment;
+- state-space invariants;
+- intentionally omitted terms;
+- synthetic-world vs estimator assumptions;
+- numerical guards;
+- story/core boundaries.
 
 ---
 
-## 7. Commit messages must also drink coffee ☕🐾
+## 8. `XD` is seasoning, not punctuation ☕
 
-Please do not suddenly become a corporate robot in the Git history.
+`XD` can still appear when it adds a real punchline or makes a deliberately light example easier to read.
+
+Do not attach it automatically to headings, conclusions, commits, or every cute paragraph.
+
+```text
+cute != noisy
+playful != repetitive
+```
+
+Emoji can carry much of the personality without turning every sentence into a punchline.
+
+---
+
+## 9. Commit messages must still say what changed ☕🐾
 
 Good little commits:
 
@@ -198,20 +208,11 @@ Good little commits:
 📖 give the scary math a tiny story to walk in with
 ```
 
-Less cozy:
-
-```text
-Update simulator
-Refactor code
-Fix bug
-Implement feature
-```
-
-The message should still say what changed. Cute does not mean mysterious. 🐾
+Cute does not mean mysterious. A commit message should still communicate the change.
 
 ---
 
-## 8. Errors may be adorable, but they must still help 🙈🛠️
+## 10. Errors may be adorable, but they must help 🙈🛠️
 
 Bad:
 
@@ -222,32 +223,28 @@ Oopsie! Something happened! ✨
 Better:
 
 ```text
-🐾 Oops... --days must be at least 1. The tiny calendar cannot have zero days.
+🐾 --days must be at least 1. The tiny calendar cannot have zero days.
 ```
 
-A useful error should tell us what went wrong and, when practical, how to fix it.
-Then it may wear a tiny hat. 🎩
+A useful error tells us what went wrong and, when practical, how to fix it.
 
 ---
 
-## 9. Tests live in a tiny nest 🐣✅
+## 11. Tests live in a tiny nest 🐣✅
 
-Tests should be precise and reproducible.
-
-Ideal ending:
+Tests should remain precise, reproducible, and behavior-focused.
 
 ```text
-☕✨ All tiny tests are happy.
+Cute CI != weak CI
 ```
 
-But only print that when the tests are actually happy. XD
+Never claim a check is happy unless it actually passed.
 
 ---
 
-## 10. Plots should be cute, not confusing 🎨☕
+## 12. Plots should be cute, not confusing 🎨☕
 
-A plot belongs here when it is readable, honest about uncertainty, visually friendly,
-and technically useful.
+A plot belongs here when it is readable, honest about uncertainty, visually friendly, and technically useful.
 
 ```text
 Cute plot != confusing plot
@@ -257,22 +254,7 @@ The data gets the front seat. The sparkles sit politely in the back. ✨
 
 ---
 
-## 11. Synthetic coffee stays synthetic 🧪☕
-
-Synthetic examples are welcome.
-
-Real private conversations, company data, exports, screenshots, timestamps, or sensitive source material are **not** part of this public repo.
-
-```text
-Synthetic reference != real human truth
-Public demo         != private data
-```
-
-Keep the little coffee basket clean. 🧺
-
----
-
-## 12. The final tiny rule 🌸
+## 13. The final tiny rule 🌸
 
 When choosing between:
 
@@ -281,7 +263,7 @@ boring + correct
 cute   + correct
 ```
 
-choose:
+prefer:
 
 ```text
 cute + correct ☕🐾✨
@@ -294,7 +276,7 @@ cute + wrong
 boring + correct
 ```
 
-choose correctness first, then come back and make it cute. XD
+choose correctness first, then make it cute.
 
 ---
 
@@ -302,4 +284,5 @@ choose correctness first, then come back and make it cute. XD
 🐣 Cute inside.  
 🧠 Math still works.  
 📖 Hard math still tells a little story.  
+⚖️ Story remains objective.  
 🌱 Humans may still surprise the model.

@@ -1,86 +1,78 @@
 # How the Coffee Works ☕✨
 
-This project started with a very small question:
+This is the short, gentle explanation of the project.
 
-> What happens when two people keep a tiny voluntary routine going for a long time?
+For the full step-by-step model-design story, start at [`tutorial/README.md`](tutorial/README.md).
 
-No grand theory required. Just coffee. XD
+## 1. Begin with observable events 👀
 
-## 1. The observable layer 👀
-
-The model only gets behavior-level observations, for example:
+A tiny synthetic routine may contain:
 
 ```text
 +1?
-+
+要
 pass
+☕
 👍
-late reply
+busy
+leave
 resume
 ```
 
-It does **not** get direct access to anyone's internal state.
+The model starts from events like these.
 
-That distinction matters:
+It does **not** get direct access to intention, private emotion, or hidden meaning.
 
 ```text
 Observed behavior != internal truth
 ```
 
-## 2. The six soft states ☕🧠
+## 2. Simple counting is not enough 🧩
 
-We keep six slowly changing variables:
+A coffee counter cannot distinguish:
+
+```text
+voluntary pass
+busy interruption
+leave
+ordinary resume
+broken coordination
+```
+
+So the project asks a different question:
+
+> How might the **shared routine itself** be changing over time, given only observable clues and explicit known actions?
+
+That is the purpose of **CSRDM — Coupled Shared Routine Dynamics Model**.
+
+## 3. Six soft states describe the routine 🌱
 
 ```text
 P = Predictability
 M = Mutuality
 V = Voluntariness
 C = Shared Context
-E = State Sharing
+E = Everyday State Sharing
 F = Friction
 ```
 
-They are not labels for a person.
-
-They are just a compact way to describe how the **routine itself** appears to be behaving over time.
-
-## 3. Why `pass` is important 🌿
-
-A routine is more interesting when it remains voluntary.
-
-If either side can still say:
+They are latent model variables, not labels attached to a person.
 
 ```text
-pass
+x(t) = [P, M, V, C, E, F]
 ```
 
-and the routine can later return naturally, that tells us something different from a routine that continues only because it became an obligation.
-
-So this project keeps this little rule close:
+A few important boundaries:
 
 ```text
+Mutuality != 50/50 symmetry
 Continuity != obligation
+Pass != failure
 ```
 
-## 4. Disturbance is allowed 🌧️➡️🌱
+## 4. Some days are different kinds of weather 🌦️
 
-People get busy.
-
-People take leave.
-
-People reply late.
-
-Plans fail.
-
-The model therefore does not treat every interruption as a collapse.
-
-Instead, it watches whether the routine can recover:
-
-```text
-Disturbance != rupture
-```
-
-The current modes are:
+The model also carries a discrete routine mode:
 
 ```text
 Normal
@@ -90,60 +82,87 @@ Special
 Recovery
 ```
 
-## 5. Why particles? 🐣🐣🐣
-
-Because uncertainty is the honest answer.
-
-Instead of keeping exactly one hidden-state guess, the model keeps thousands of little guesses.
-
-Each particle carries a possible:
+This lets a temporary interruption remain different from permanent structural failure.
 
 ```text
-[P, M, V, C, E, F]
+Disturbance != rupture
+Mode != regime
 ```
 
-New observations change the weights of those guesses.
+## 5. Shared Context remembers slowly 🧠🌱
 
-Plausible ones survive.
+Accumulated conventions and recurring context should not disappear because one day is quiet.
 
-Unlikely ones fade away.
-
-That is the basic idea behind the Particle Filter used here.
-
-## 6. What this project is *not* 🚫🔮
-
-It is not a mind reader.
-
-It is not a relationship-score machine.
-
-It is not a deterministic predictor of human behavior.
-
-It is not allowed to say:
+So `C = Shared Context` uses a dedicated slow memory path rather than ordinary daily drift.
 
 ```text
-"This number proves what somebody truly feels."
+one quiet day != no shared history
 ```
 
-The model is a structured way to track uncertainty in a repeated interaction.
+The detailed mechanism lives in [`memory-garden.md`](memory-garden.md).
 
-That's all. ☕
+## 6. Why particles? 🐣🐣🐣
 
-## 7. The first reference protocol 🐾
+The six states and five modes are hidden.
 
-The companion project [`coffee-routine-protocol`](https://github.com/cctsao1008/coffee-routine-protocol) describes the tiny interaction protocol itself.
-
-This repo starts one layer later:
+One quiet day may fit several explanations:
 
 ```text
-Coffee Routine Protocol
-        ↓
-Observable events
-        ↓
-Coffee Routine Model
-        ↓
-Particle Filter
-        ↓
-Soft state distribution
+ordinary noise
+Busy mode
+slightly higher Friction
+missing clues with little state change
 ```
 
-Tiny protocol. Tiny model. Suspiciously serious math. XD
+Instead of forcing one answer too early, the Particle Filter keeps many candidate hidden states and reweights them when new observations arrive.
+
+```text
+posterior = uncertainty under the current model
+```
+
+A narrow posterior is not proof that the model is correct.
+
+## 7. The model also challenges itself 🔍🧪
+
+The repository includes small labs for questions such as:
+
+```text
+Can the clues distinguish the six states?
+Are the observation probabilities calibrated?
+Which assumptions matter most?
+Is one weird day really a change point?
+Can a simpler model compete?
+```
+
+That is why observability, calibration, sensitivity, change-point, recovery, learning, and model-arena documents exist.
+
+## 8. What this project is not 🚫🔮
+
+It is not:
+
+```text
+a mind reader
+a relationship-score machine
+a deterministic human predictor
+a ground-truth psychology dataset
+```
+
+It is a small teaching project about how a repeated observable routine can be turned into a stochastic model while keeping uncertainty and design boundaries visible.
+
+## 9. Where to go next 📚
+
+```text
+Want the full learning path?
+→ tutorial/README.md
+
+Want the formal contract?
+→ architecture.md
+
+Want the documentation map?
+→ README.md inside docs/
+
+Want runnable examples?
+→ ../examples/
+```
+
+Tiny story. Explicit assumptions. Serious enough math. ☕🐣🧠

@@ -1,6 +1,8 @@
 # Action-Aware Tiny Coffee Dynamics ☕🎮🧠
 
-The first version of the coffee brain mostly did this:
+## Why this exists
+
+The first simple estimator mostly looked like:
 
 ```text
 hidden state
@@ -10,31 +12,36 @@ observed clues
 Particle Filter
 ```
 
-That is useful, but it leaves out one important thing:
+That is useful, but it leaves out one important modeling role:
 
-> Observable actions can also move the next hidden state.
+> **Observable actions can help move the next hidden state, while observations provide evidence about the state we cannot see directly.**
 
-So the controlled version keeps three little layers apart:
+So the controlled model keeps those roles separate.
 
 ```text
 actions
    ↓
 hidden state ──→ next hidden state
-   ↓
-observations
+                     ↑
+                observations
 ```
 
-## Tiny controlled equation ✨
+This is the deeper version of tutorial chapter [`tutorial/05-actions-vs-observations.md`](tutorial/05-actions-vs-observations.md).
 
-```text
-x[t+1] ~ p(x[t+1] | x[t], m[t], a[t], d[t])
-z[t]   ~ p(z[t]   | x[t], m[t])
+## Tiny controlled equations ✨
+
+```math
+x_{t+1}\sim p(x_{t+1}\mid x_t,m_t,a_t,d_t)
+```
+
+```math
+z_t\sim p(z_t\mid x_t,m_t)
 ```
 
 The current implementation uses small structural prototype action effects inside the state transition.
 
 They are **not learned human coefficients**.
-They are inspectable assumptions that can later be calibrated or replaced.
+They are inspectable model assumptions.
 
 ## The two little action baskets 🧺
 
@@ -58,24 +65,30 @@ b_exception_sync
 b_closure
 ```
 
-These are generic roles.
-No real names belong in the public model. ☕🐾
+These are generic action roles.
+
+Synthetic persona names may appear in README/tutorial/examples for readability, but they are translated into generic semantics before entering the core.
+
+```text
+Persona at the edge
+Generic actions in the center
+```
 
 ## Pass is not a failure 🌿
 
 One deliberate modeling choice is:
 
 ```text
-b_pass_choice -> may preserve Voluntariness
+b_pass_choice → may preserve Voluntariness
 ```
 
 A voluntary pass does not secretly subtract Mutuality just because nothing was delivered that day.
 
-That keeps this rule alive inside the transition model:
+That keeps these rules alive inside the transition model:
 
 ```text
 Continuity != obligation
-Pass != rupture
+Pass != failure
 ```
 
 ## Coupled little moments ☕🤝
@@ -93,11 +106,11 @@ notify + exception sync
 The current prototype includes small interaction terms for those combinations.
 
 The point is not that the coefficients are universal.
-The point is that the model can represent **coupled action effects explicitly** instead of smuggling them into observation likelihoods.
+The point is that the model can represent **coupled action effects explicitly** instead of hiding them inside observation likelihoods.
 
 ## Protocol bridge 🎮➡️👀
 
-`coffee_brain.protocol_adapter` now exposes:
+`coffee_brain.protocol_adapter` exposes one combined step:
 
 ```python
 from coffee_brain.protocol_adapter import coffee_to_step
@@ -110,13 +123,11 @@ step.observation
 
 The action basket and observation basket are separate objects.
 
-The older observation fields remain available for backward compatibility while the controlled model grows up one tiny step at a time. 🌱
+Missing clues remain missing, and contextual ambiguity is handled by the adapter rather than by person-specific compatibility keys inside the Particle Filter.
 
 ## Particle Filter timing 🐣
 
-`CoffeeParticleFilter.update(obs, actions=...)` treats the supplied action basket as the known controls that moved the system from the **previous** step toward the current observation.
-
-So:
+`CoffeeParticleFilter.update(obs, actions=...)` treats the supplied action basket as the known controls associated with the transition from the **previous** step toward the current observation.
 
 ```text
 previous posterior
@@ -130,15 +141,18 @@ current observations
 current posterior
 ```
 
-On the very first update there is no previous transition yet, so the action basket is ignored for that first step.
+On the very first update there is no previous transition yet, so there is no earlier state for that action basket to move forward from.
+
+This temporal alignment is an architecture invariant. A mathematically valid off-by-one implementation would still represent the wrong model semantics.
 
 ## Important tiny boundaries 🧠✨
 
 ```text
-Action != intention.
-Observation != internal truth.
-Structural coefficient != learned fact.
+Action != intention
+Observation != latent state
+Structural coefficient != learned fact
+Persona != core ontology
 ```
 
-The model is allowed to know that an observable action happened.
-It is still not allowed to invent why somebody did it. XD
+The model may know that an observable action happened.
+It is still not allowed to invent why somebody did it.
