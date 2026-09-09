@@ -1,2 +1,4 @@
+# Runtime dependency mirror for repo-local tools and CI. ☕
+# Package installers use [project.dependencies] in pyproject.toml.
 numpy>=2.0
 matplotlib>=3.10
