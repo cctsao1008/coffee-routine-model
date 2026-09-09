@@ -109,7 +109,7 @@ def main():
     print(f"🧺 reliability bins           : {args.bins}")
     print(f"🐣 observation config         : {DEFAULT_OBSERVATION_MODEL.provenance}")
     print(f"✨ calibration basket         : {out}")
-    print("🧠 Calibration first. Optimization later. XD")
+    print("🧠 Calibration checks probability promises; learning stays a separate experiment.")
 
 
 if __name__ == "__main__":

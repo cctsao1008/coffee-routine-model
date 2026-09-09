@@ -90,7 +90,7 @@ def main():
     print(f"🐣 validation Brier          : {before['mean_binary_brier']:.4f} -> {after['mean_binary_brier']:.4f}")
     print(f"📏 delay normalized std      : {before['delay_normalized_std']:.3f} -> {after['delay_normalized_std']:.3f}")
     print(f"🧺 learning basket           : {args.out}")
-    print("🧠 Better fit is not better ontology. Synthetic learning is still synthetic. XD")
+    print("🧠 Better fit is not better ontology. Synthetic learning remains synthetic.")
 
 
 if __name__ == "__main__":

@@ -43,7 +43,7 @@ MODE_LABELS = tuple(MODE_NAMES[mode] for mode in RoutineMode)
 
 @dataclass(frozen=True)
 class RoutineState:
-    """Six soft states used by the coffee routine model. ☕"""
+    """Six soft latent states used by the shared-routine model. ☕"""
 
     predictability: float
     mutuality: float
@@ -77,9 +77,11 @@ STATE_NAMES = (
 
 
 def relationship_index(x: np.ndarray) -> np.ndarray:
-    """A tiny synthetic summary metric used only for demo evaluation.
+    """Derived synthetic demo index used only for compact evaluation.
 
-    This is not a validated psychological scale.
+    The legacy function name is preserved for reproducible examples. ``R`` is a
+    weighted convenience summary of the six model states; it is not a public latent
+    state, a validated psychological scale, or a universal relationship score. ☕📏
     """
 
     x = np.asarray(x, dtype=float)

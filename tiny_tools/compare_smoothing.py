@@ -62,6 +62,8 @@ def main():
     filtered_mode_accuracy = float(np.mean(np.asarray(filtered_modes) == np.asarray(true_mode_names)))
     smoothed_mode_accuracy = float(np.mean(np.asarray(smoothed_modes) == np.asarray(true_mode_names)))
 
+    # R is a derived synthetic demo index, not a latent state or human score. The
+    # legacy helper/CSV name stays stable so committed reference baskets remain reproducible. ☕📏
     true_r = relationship_index(truth)
     filtered_r = relationship_index(filtered)
     smoothed_r = relationship_index(smoothed)
@@ -104,7 +106,7 @@ def main():
     ax.plot(day_axis, filtered_r, label="filtered: what the tiny brain knew then")
     ax.plot(day_axis, smoothed_r, label="smoothed: tiny hindsight")
     ax.set_xlabel("tiny day")
-    ax.set_ylabel("synthetic relationship index R")
+    ax.set_ylabel("synthetic demo index R")
     ax.set_title("🔭 One coffee timeline wearing a tiny hindsight hat")
     ax.legend()
     fig.tight_layout()
@@ -113,8 +115,8 @@ def main():
 
     horizon = "full history" if args.full_history else f"fixed lag = {args.lag}"
     print(f"🔭 hindsight horizon          : {horizon}")
-    print(f"☕ filtered R RMSE           : {filtered_r_rmse:.4f}")
-    print(f"🎩 smoothed R RMSE           : {smoothed_r_rmse:.4f}")
+    print(f"☕ filtered demo-index RMSE  : {filtered_r_rmse:.4f}")
+    print(f"🎩 smoothed demo-index RMSE  : {smoothed_r_rmse:.4f}")
     print(f"🐣 filtered mode accuracy    : {filtered_mode_accuracy:.2%}")
     print(f"✨ smoothed mode accuracy    : {smoothed_mode_accuracy:.2%}")
     print(f"🧺 hindsight basket          : {args.out}")

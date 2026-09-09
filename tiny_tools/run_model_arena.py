@@ -117,7 +117,7 @@ def main():
             f"runtime={float(row['runtime_seconds']):.3f}s"
         )
     print(f"🧺 arena basket             : {args.out}")
-    print("🧠 No crown awarded. Tiny models keep their trade-offs visible. XD")
+    print("🧠 No crown awarded. Tiny models keep their trade-offs visible.")
 
 
 if __name__ == "__main__":
