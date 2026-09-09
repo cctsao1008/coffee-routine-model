@@ -63,6 +63,16 @@ jobs:
           --particles 6000
           --seed 20260908
           --out .tiny-c-bias
+      - name: 🧾🧠 Read the Shared Context receipts
+        run: |
+          echo "--- prior summary ---"
+          cat .tiny-c-bias/prior-summary.csv
+          echo "--- time bias ---"
+          cat .tiny-c-bias/time-bias.csv
+          echo "--- mode bias ---"
+          cat .tiny-c-bias/mode-bias.csv
+          echo "--- quiet memory ---"
+          cat .tiny-c-bias/quiet-memory.csv
       - name: 🧪 Poke clues and assumptions one tiny bit at a time
         run: >-
           python -m tiny_tools.map_sensitivity
