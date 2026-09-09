@@ -11,8 +11,9 @@ This README is the **first guided walk** through the project:
 story → observation → modeling problem → abstraction → uncertainty → code → self-checks
 ```
 
+For the full step-by-step model-design tutorial, start at [`docs/tutorial/README.md`](docs/tutorial/README.md).  
 If you only want the formal contract, jump to [`docs/architecture.md`](docs/architecture.md).  
-If you want the gentler explanation, see [`docs/how-the-coffee-works.md`](docs/how-the-coffee-works.md).
+If you want the shorter gentle explanation, see [`docs/how-the-coffee-works.md`](docs/how-the-coffee-works.md).
 
 ## 1. Start with one tiny routine 📖☕
 
@@ -446,9 +447,12 @@ python -m tiny_tools.simulate --days 100 --out .tiny-100-day-scratch
 The README is the guided first journey. After that, choose the kind of question you have:
 
 ```text
-☕ Curious human
-   README
+📖 Model-design learner
+   docs/tutorial/README.md
    ↓
+   ten progressive chapters
+
+☕ Curious human
    docs/how-the-coffee-works.md
 
 🛠️ Software engineer
@@ -471,6 +475,8 @@ The README is the guided first journey. After that, choose the kind of question 
    change points / recovery / learning / arena
 ```
 
+The full documentation map lives in [`docs/README.md`](docs/README.md).
+
 Same model. Different doors.
 
 ## 15. Test nest 🐣✅
@@ -489,6 +495,7 @@ Cute CI != weak CI
 ## House rules ☕🌸
 
 The full tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).  
+The objective story contract lives in [`docs/objective-story-contract.md`](docs/objective-story-contract.md).  
 The history book lives in [`COFFEELOG.md`](COFFEELOG.md).
 
 Two useful rules:
