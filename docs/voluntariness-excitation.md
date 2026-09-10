@@ -99,7 +99,16 @@ v-excitation.png
 
 ## Observed result 🔍
 
-The CI reference run used the exact command above.
+The continuous-integration (CI) reference run used the exact command above.
+
+The scorecard uses these short names:
+
+```text
+std  = standard deviation
+RMSE = root mean squared error
+MAE  = mean absolute error
+r    = Pearson correlation
+```
 
 ```text
 truth V std               = 0.1498
@@ -132,7 +141,7 @@ The estimate carried only about one tenth of the truth variation, RMSE increased
 baseline r was negative under weak V excitation
 focused-excitation r became positive
 focused estimate amplitude remained strongly compressed
-focused CI coverage was poor
+focused 95% interval coverage was poor
 ```
 
 ### Probable
