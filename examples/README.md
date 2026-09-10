@@ -11,7 +11,8 @@ generic observable events
         ↓
 action + observation baskets
         ↓
-CSRDM or a reproducible synthetic basket
+Coupled Shared Routine Dynamics Model (CSRDM)
+or a reproducible synthetic basket
 ```
 
 > **Readable first. Generic before the core. Synthetic when truth is needed.**
