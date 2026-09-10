@@ -2,7 +2,7 @@
 
 `tiny_tools/` contains runnable helpers for generating synthetic worlds, painting outputs, and challenging model assumptions.
 
-These scripts are **diagnostic doors**, not extra ontology hiding beside CSRDM.
+These scripts are **diagnostic doors**, not extra ontology hiding beside the **Coupled Shared Routine Dynamics Model (CSRDM)**.
 
 ```text
 model question
@@ -32,7 +32,7 @@ python -m tiny_tools.simulate --scenario slow-recovery --days 365
 python -m tiny_tools.visualize examples/365-cute-days/output.csv
 ```
 
-`visualize.py` turns the CSV output into state, mode, ESS, and synthetic summary plots.
+`visualize.py` turns the CSV output into state, mode, **effective sample size (ESS)**, and synthetic summary plots.
 
 ## Pick the modeling doubt you want to test 🧪
 
