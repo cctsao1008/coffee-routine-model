@@ -149,8 +149,10 @@ A low-friction routine is not automatically “better” in every human sense. I
 Only after the six questions are clear do we compress them into:
 
 ```text
-x(t) = [P, M, V, C, E, F]
+x_t = [P, M, V, C, E, F]
 ```
+
+Read `x_t` as the hidden routine-state vector at time `t`.
 
 These are **latent properties of the routine model**.
 
@@ -178,12 +180,3 @@ Different state combinations can tell different model stories, so CSRDM keeps th
 ## The next question
 
 We now have a hidden state vector.
-
-But events play two different roles:
-
-- some observable events can **move** the routine forward;
-- other observable clues provide **evidence** about the hidden state.
-
-Treating both as the same thing creates a structural mistake.
-
-Continue to [`05-actions-vs-observations.md`](05-actions-vs-observations.md).
