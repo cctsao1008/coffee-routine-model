@@ -27,7 +27,7 @@ README.md
 - `environment.txt` — exact Python package environment used by the packing workflow
 - `*.png` — gallery rendered from the committed `output.csv`
 
-`state-excitation.csv` is intentionally **not** a second scorecard. RMSE, correlation, and interval coverage remain owned by `metrics.csv`.
+`state-excitation.csv` is intentionally **not** a second scorecard. Root mean squared error (RMSE), correlation, and interval coverage remain owned by `metrics.csv`.
 
 ## Tiny recipe ☕
 
