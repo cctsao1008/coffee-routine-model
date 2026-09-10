@@ -124,6 +124,7 @@ where:
 ```text
 T_r = post-disturbance recovery time
 C_r = repair-cost proxy
+λ   = weight applied to the repair-cost proxy
 ```
 
 If the routine never returns inside the nominal set during the available timeline:
