@@ -58,9 +58,21 @@ def _finite_number(name: str, value: object) -> float:
 
 
 def _normalize_public_observation(observation: Mapping[str, object]) -> dict:
-    """Validate one public observation basket before specialist internals see it. ☕🧺"""
+    """Validate one public observation basket before specialist internals see it. ☕🧺
+
+    This boundary keeps three ideas separate:
+
+    1. schema validity — known field names and valid numeric domains,
+    2. directly implied evidence — e.g. a measured reply delay implies a reply existed,
+    3. protocol consistency — mutually incompatible observations are rejected.
+
+    The function normalizes observations; it does not infer hidden states or intent.
+    """
 
     obs = dict(observation)
+
+    # 1. Schema guard: unknown keys should fail loudly rather than silently becoming
+    # accidental missing evidence inside the particle filter.
     unknown = [key for key in obs if key not in _ALLOWED_OBSERVATION_FIELDS]
     if unknown:
         pretty = ", ".join(repr(key) for key in unknown)
@@ -69,6 +81,8 @@ def _normalize_public_observation(observation: Mapping[str, object]) -> dict:
             f"🙈 Unknown observation field(s): {pretty}. Known public fields are: {known}."
         )
 
+    # 2. Primitive value normalization: binary clues become {0,1,None}; continuous
+    # clues remain finite numbers with their public-domain constraints enforced.
     for name in _BINARY_OBSERVATION_FIELDS:
         if name in obs:
             obs[name] = _binary_value(name, obs[name])
@@ -85,12 +99,13 @@ def _normalize_public_observation(observation: Mapping[str, object]) -> dict:
             raise ValueError("⏰ Observation 'response_delay_min' cannot be negative.")
         obs["response_delay_min"] = delay
 
+        # 3. Direct implication, not hidden inference: measuring a reply delay already
+        # proves that a reply occurred on this protocol step.
         if obs.get("text_reply") == 0:
             raise ValueError(
                 "⏰ response_delay_min records a reply, so it cannot be combined with text_reply=0."
             )
         if obs.get("text_reply") is None:
-            # A measured reply delay is already evidence that a reply existed. 🌱
             obs["text_reply"] = 1
 
     opt_in = obs.get("opt_in")
@@ -99,6 +114,8 @@ def _normalize_public_observation(observation: Mapping[str, object]) -> dict:
     maintenance = obs.get("routine_maintenance")
     invite = obs.get("invite")
 
+    # 4. Protocol consistency constraints. These are logical contradictions among
+    # observable event labels, not psychological judgments about the participants.
     if opt_in == 1 and pass_event == 1:
         raise ValueError("🌿 opt_in=1 and pass_event=1 cannot describe the same protocol step.")
     if pass_event == 1 and maintenance == 1:
@@ -110,6 +127,7 @@ def _normalize_public_observation(observation: Mapping[str, object]) -> dict:
             "☕ invite=0 closes the response opportunity; leave invite missing if the invite itself was not observed."
         )
 
+    # Explicit opt-in/pass is itself a textual response in this event vocabulary.
     if opt_in == 1 or pass_event == 1:
         if text_reply == 0:
             raise ValueError("💬 An explicit opt-in or pass cannot be combined with text_reply=0.")
