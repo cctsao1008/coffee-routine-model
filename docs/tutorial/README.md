@@ -1,6 +1,6 @@
 # Tiny Routine → Model 📖☕🧠
 
-> **Document role:** Guided tutorial · **Authority:** Explanatory · **Audience:** Readers learning why CSRDM has this shape
+> **Document role:** Guided tutorial · **Authority:** Explanatory · **Audience:** Readers learning why the Coupled Shared Routine Dynamics Model (CSRDM) has this shape
 
 This is the guided model-design tutorial for **Coffee Routine Model**.
 
