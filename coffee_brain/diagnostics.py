@@ -94,7 +94,13 @@ class ObservabilityReport:
         return rows
 
     def clue_visibility_rows(self) -> list[dict[str, object]]:
-        """Show how much each hidden clue family makes every state wobble. 🌱🔍"""
+        """Show how much each hidden clue family makes every state wobble. 🌱🔍
+
+        Positive RMSE_penalty / CI95_width_increase means removing the clue made the
+        estimate worse or less precise. Positive correlation_loss means the estimate
+        tracked synthetic truth less faithfully after ablation. These are comparative
+        diagnostics, not causal effect estimates.
+        """
 
         rows: list[dict[str, object]] = []
         base = self.baseline
@@ -124,6 +130,18 @@ def _run_filter(
     label: str,
     removed_family: str,
 ) -> ExperimentMetrics:
+    """Run one synthetic estimation experiment and compute state-wise diagnostics.
+
+    For each state coordinate j over T synthetic steps:
+
+        RMSE_j = sqrt(mean_t((xhat[t,j] - xtrue[t,j])^2))
+        MAE_j  = mean_t(|xhat[t,j] - xtrue[t,j]|)
+
+    CI coverage is the fraction of synthetic truth values lying inside the reported
+    marginal 95% intervals. Mode accuracy compares the MAP mode label with synthetic
+    mode truth. All of these rely on simulated truth unavailable in ordinary use.
+    """
+
     if len(truth) != len(true_modes) or len(truth) != len(observations):
         raise ValueError("🐾 Truth, modes, and clue baskets must have the same tiny length.")
 
@@ -146,12 +164,17 @@ def _run_filter(
     truth = np.asarray(truth, dtype=float)
     true_modes = np.asarray(true_modes, dtype=int)
 
+    # Point-estimate accuracy: squared-error, absolute-error, and temporal correlation
+    # answer different questions, so the diagnostics deliberately keep all three.
     rmse = np.sqrt(np.mean((estimate_array - truth) ** 2, axis=0))
     mae = np.mean(np.abs(estimate_array - truth), axis=0)
     correlation = np.array(
         [_safe_pearson(estimate_array[:, i], truth[:, i]) for i in range(len(STATE_KEYS))],
         dtype=float,
     )
+
+    # Interval diagnostics separate sharpness (mean width) from empirical coverage.
+    # A narrow interval is not useful if it routinely misses known synthetic truth.
     ci95_mean_width = np.mean(high_array - low_array, axis=0)
     ci95_coverage = np.mean((truth >= low_array) & (truth <= high_array), axis=0)
     mode_accuracy = float(
@@ -180,7 +203,17 @@ def _state_identifiability_rows(
     estimates: np.ndarray,
     truth: np.ndarray,
 ) -> tuple[dict[str, object], ...]:
-    """Compare each estimated state with every synthetic truth state for cross-talk clues. 🐾"""
+    """Compare each estimated state with every synthetic truth state for cross-talk clues. 🐾
+
+    For estimated state j, ``self_truth_r`` is corr(xhat_j, xtrue_j). The strongest
+    off-diagonal absolute correlation asks whether xhat_j follows some other truth
+    coordinate more closely. The reported margin is:
+
+        |corr(xhat_j, xtrue_j)| - max(k != j) |corr(xhat_j, xtrue_k)|
+
+    A positive margin is encouraging synthetic separation evidence; it is not a formal
+    identifiability proof and can still depend strongly on the chosen scenario.
+    """
 
     matrix = np.empty((len(STATE_KEYS), len(STATE_KEYS)), dtype=float)
     for estimate_index in range(len(STATE_KEYS)):
@@ -221,6 +254,10 @@ def evaluate_observability(
     families: Iterable[str] | None = None,
 ) -> ObservabilityReport:
     """Run practical clue ablations against one known synthetic world. 🔍☕
+
+    The baseline uses every clue. Each ablation reruns the same estimator with one clue
+    family hidden; differences therefore measure how much that channel contributes to
+    practical recovery under this synthetic scenario and fixed random seed.
 
     This is a synthetic diagnostic for practical identifiability. It is not a formal
     nonlinear observability proof and it definitely is not permission to mind-read. XD
