@@ -19,8 +19,13 @@ ACTION_NAMES = (
     "b_closure",
 )
 
-# Rows follow ACTION_NAMES. Columns are P / M / V / C / E / F.
-# C stays zero here on purpose: Shared Context now has its own slow memory law. 🧠🌱
+# Linear controlled-state contribution:
+#
+#     delta_action = a @ ACTION_EFFECTS
+#
+# where ``a`` follows ACTION_NAMES and the six output columns are P / M / V / C / E / F.
+# Positive entries nudge a modeled state upward; negative entries nudge it downward.
+# C stays zero here on purpose: Shared Context has its own slow memory law in memory.py.
 # These are small structural prototype effects, not learned human coefficients. ☕🐾
 ACTION_EFFECTS = np.array(
     [
@@ -41,7 +46,12 @@ ACTION_EFFECTS = np.array(
 
 @dataclass(frozen=True)
 class RoutineActions:
-    """Observable routine actions that may gently move the next hidden state. ☕🎮"""
+    """Observable routine actions that may gently move the next hidden state. ☕🎮
+
+    Values are bounded intensities in [0, 1]. They are controls / observations supplied
+    to the model, not inferred private motives. Prefixes ``a_`` and ``b_`` only identify
+    the two sides of the shared routine protocol.
+    """
 
     a_invite: float = 0.0
     a_deliver: float = 0.0
@@ -80,6 +90,9 @@ class RoutineActions:
 def action_effect(actions: RoutineActions | Mapping[str, float] | None) -> np.ndarray:
     """Return the small controlled drift contributed by observable actions. 🎮🌱
 
+    The base term is linear in the supplied action vector. A few explicit pairwise
+    products then encode coordination effects that only exist when both actions occur.
+
     A pass is deliberately not encoded as a failure penalty. When it is an explicit
     voluntary choice, it can preserve V without silently reducing M. Shared Context
     is handled separately by ``coffee_brain.memory`` so daily drift cannot masquerade
@@ -90,14 +103,27 @@ def action_effect(actions: RoutineActions | Mapping[str, float] | None) -> np.nd
     vector = basket.as_array()
     effect = vector @ ACTION_EFFECTS
 
-    # A few coupled little moments matter more together than separately.
+    # Pairwise interaction terms use simple products, so the extra effect vanishes if
+    # either participating action is zero and grows smoothly as both intensities grow.
     effect = np.asarray(effect, dtype=float)
+
+    # Invitation + voluntary opt-in reinforces modeled mutuality beyond the sum of
+    # their separate linear contributions.
     effect[1] += 0.0030 * basket.a_invite * basket.b_opt_in
+
+    # Delivery + acknowledgment reinforces predictability and mutuality while reducing
+    # friction: a completed handoff matters differently from either action in isolation.
     effect[0] += 0.0020 * basket.a_deliver * basket.b_acknowledge
     effect[1] += 0.0020 * basket.a_deliver * basket.b_acknowledge
     effect[5] -= 0.0020 * basket.a_deliver * basket.b_acknowledge
+
+    # Boundary-preserving behavior + voluntary pass is modeled as evidence that choice
+    # remained available, so V rises and F falls instead of treating the pass as failure.
     effect[2] += 0.0030 * basket.a_boundary_preserving * basket.b_pass_choice
     effect[5] -= 0.0020 * basket.a_boundary_preserving * basket.b_pass_choice
+
+    # Notification + exception synchronization represents explicit coordination around
+    # a deviation from routine, increasing predictability and reducing modeled friction.
     effect[0] += 0.0020 * basket.a_notify * basket.b_exception_sync
     effect[5] -= 0.0020 * basket.a_notify * basket.b_exception_sync
 
