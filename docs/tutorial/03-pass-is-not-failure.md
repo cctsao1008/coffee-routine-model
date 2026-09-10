@@ -81,17 +81,11 @@ A stable history can make tomorrow's opt-in highly probable.
 
 That still does not make tomorrow's choice already decided.
 
-```math
-P(a_{t+1}=\text{opt-in}\mid H_t) \text{ can be high}
-```
-
-Here `H_t` means the observable history available through time `t`, and `a_{t+1}` is the next action.
-
-while:
-
 ```text
-a_{t+1} remains not-yet-decided
-until the next observable choice occurs
+the next opt-in can have high predicted probability
+while
+the next action remains not-yet-decided
+until the observable choice occurs
 ```
 
 This is an important distinction for a voluntary routine:
