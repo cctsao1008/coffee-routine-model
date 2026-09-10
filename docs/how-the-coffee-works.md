@@ -45,7 +45,7 @@ So the project asks a different question:
 
 > How might the **shared routine itself** be changing over time, given only observable clues and explicit known actions?
 
-That is the purpose of **CSRDM — Coupled Shared Routine Dynamics Model**.
+That is the purpose of the **Coupled Shared Routine Dynamics Model (CSRDM)**.
 
 ## 3. Six soft states describe the routine 🌱
 
@@ -61,8 +61,10 @@ F = Friction
 They are latent model variables, not labels attached to a person.
 
 ```text
-x(t) = [P, M, V, C, E, F]
+x_t = [P, M, V, C, E, F]
 ```
+
+Read `x_t` as the hidden routine-state vector at time `t`.
 
 A few important boundaries:
 
