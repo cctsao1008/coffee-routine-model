@@ -60,7 +60,7 @@ logit(p[t]) = fixed_offset[t] + b
 
 and only `b` is learned.
 
-The continuous sigmas use residual RMS, which is the Gaussian / log-normal scale MLE under the fixed mean model.
+The continuous sigmas use residual **root mean square (RMS)**. Under the fixed mean model, that is the Gaussian / log-normal scale **maximum-likelihood estimate (MLE)**.
 
 Hard bounds keep the knobs inside the declared experiment family:
 
@@ -92,9 +92,9 @@ Before and after learning, both splits report:
 ```text
 mean Bernoulli Brier score
 mean Bernoulli log loss
-mean ECE
-warmth RMSE / normalized residual std
-delay-log RMSE / normalized residual std
+mean expected calibration error (ECE)
+warmth root mean squared error (RMSE) / normalized residual standard deviation
+delay-log RMSE / normalized residual standard deviation
 ```
 
 Run:
