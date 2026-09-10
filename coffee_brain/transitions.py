@@ -9,6 +9,12 @@ from .actions import RoutineActions
 from .model import DEFAULT_MODE_TRANSITION
 
 
+# Feature order used by every row in ContextTransitionConfig.feature_effects.
+# The resulting feature vector f is multiplied by a [feature x next-mode] matrix W:
+#
+#     delta = f @ W
+#
+# and delta is added in log-probability space before normalization.
 CONTEXT_FEATURE_NAMES = (
     "friction",
     "unpredictability",
@@ -56,7 +62,13 @@ class TransitionContext:
 
 @dataclass(frozen=True)
 class ContextTransitionConfig:
-    """Inspectable context coefficients layered on top of the fixed transition table. ☕🎛️"""
+    """Inspectable context coefficients layered on top of the fixed transition table. ☕🎛️
+
+    ``base_transition[i, j]`` is P(z[t+1]=j | z[t]=i) before context.
+    ``feature_effects[k, j]`` is an additive log-probability nudge from feature k
+    toward next mode j. Positive values make that mode relatively more plausible;
+    negative values make it relatively less plausible before final normalization.
+    """
 
     base_transition: np.ndarray
     feature_effects: np.ndarray
@@ -83,6 +95,13 @@ class ContextTransitionConfig:
         object.__setattr__(self, "feature_effects", effects)
 
 
+# Columns follow next-mode order:
+#     NORMAL / BUSY / LEAVE / SPECIAL / RECOVERY
+#
+# Read each row as a relative log-probability preference, not as a probability.
+# For example, more friction pushes probability mass away from NORMAL and toward
+# BUSY / LEAVE / RECOVERY after the row is combined with the base transition table.
+# These values are inspectable structural assumptions, not learned human constants.
 DEFAULT_CONTEXT_TRANSITIONS = ContextTransitionConfig(
     base_transition=DEFAULT_MODE_TRANSITION,
     feature_effects=np.array(
@@ -115,7 +134,13 @@ def transition_features(
     actions: RoutineActions | Mapping[str, float] | None = None,
     context: TransitionContext | Mapping[str, object] | None = None,
 ) -> np.ndarray:
-    """Build small, inspectable transition features without reading minds. 🌦️🐣"""
+    """Build small, inspectable transition features without reading minds. 🌦️🐣
+
+    The returned matrix has one row per state and columns ordered by
+    CONTEXT_FEATURE_NAMES. State-derived features use only P, M, and F here;
+    coordination / recovery / special / disturbance evidence comes from explicit
+    actions or supplied context rather than being inferred from private intent.
+    """
 
     tiny_states = np.asarray(states, dtype=float)
     if tiny_states.ndim == 1:
@@ -176,9 +201,16 @@ def context_transition_probabilities(
 ) -> np.ndarray:
     """Return context-aware next-mode probabilities while keeping the dice stochastic. 🌦️🎲
 
-    Context only nudges log probabilities. It never deterministically chooses a mode,
-    and every total logit nudge is clipped so one tiny clue cannot fling the dice
-    across the room. XD
+    For each particle, the transition is approximately:
+
+        f = transition_features(state, actions, context)
+        delta = clip(f @ W + regime_logits)
+        score_j = log(base_transition[z_prev, j]) + delta_j
+        P(z_next=j) = softmax(score)_j
+
+    Working in log-probability space makes context act multiplicatively on the base
+    odds after exponentiation, while softmax restores a valid probability simplex.
+    The clip limits how much one step of context can distort the baseline transition.
     """
 
     previous = np.asarray(previous_modes, dtype=int)
@@ -194,15 +226,20 @@ def context_transition_probabilities(
     if np.any((previous < 0) | (previous > 4)):
         raise ValueError("🐾 Previous modes must live between 0 and 4.")
 
+    # 1. Convert observable/model context into feature-space nudges.
     features = transition_features(tiny_states, actions, context)
     delta = features @ np.asarray(config.feature_effects, dtype=float)
     weather = _context_basket(context)
     delta += np.asarray(weather.regime_logits, dtype=float)[None, :]
     delta = np.clip(delta, -config.max_logit_shift, config.max_logit_shift)
 
+    # 2. Add those nudges to log baseline probabilities. Subtracting the row maximum
+    # before exponentiation is the standard numerically stable softmax trick.
     base = np.asarray(config.base_transition, dtype=float)[previous]
     logits = np.log(np.clip(base, 1e-12, 1.0)) + delta
     logits -= np.max(logits, axis=1, keepdims=True)
+
+    # 3. Exponentiate and renormalize so every row again sums to one.
     probability = np.exp(logits)
     probability /= probability.sum(axis=1, keepdims=True)
     return probability[0] if scalar and len(tiny_states) == 1 else probability
