@@ -62,11 +62,11 @@ Transition temperature preserves every row as a valid probability distribution. 
 For every poke and each state `P / M / V / C / E / F`, the tool records:
 
 ```text
-RMSE
+RMSE = root mean squared error
 relative RMSE change
 Pearson correlation
-CI95 mean width
-CI95 coverage
+mean 95% interval width
+95% interval coverage
 mode accuracy
 ```
 
