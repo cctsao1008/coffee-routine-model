@@ -4,7 +4,7 @@ This folder has one job:
 
 > **Let readers choose how much mathematics they want right now.**
 
-There is still only **one CSRDM**.
+There is still only **one Coupled Shared Routine Dynamics Model (CSRDM)**.
 
 ```text
 Starter Math
