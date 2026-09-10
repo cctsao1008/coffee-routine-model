@@ -22,8 +22,8 @@ Other clues are evidence used to update uncertainty about the state we cannot ob
 So CSRDM separates:
 
 ```text
-a[t] = known action basket
-z[t] = observation clue basket
+a_t = known action basket at time t
+z_t = observation clue basket at time t
 ```
 
 Conceptually:
@@ -31,11 +31,11 @@ Conceptually:
 ```text
 previous hidden state
         +
-known actions a[t]
+known actions a_t
         ↓
 predicted current hidden state
         +
-observed clues z[t]
+observed clues z_t
         ↓
 updated posterior
 ```
@@ -90,15 +90,17 @@ unless such a claim is separately supported by explicit evidence — and even th
 
 `CoffeeParticleFilter.update(obs, actions=...)` treats the supplied action basket as the known controls associated with the transition from the **previous** posterior toward the current observation.
 
-That means:
+Using the same notation as the math docs:
 
 ```text
-x[t-1] -- a[t] --> predicted x[t]
-                        ↓
-                      z[t]
-                        ↓
-                   posterior x[t]
+x_{t-1} -- a_t --> predicted x_t
+                         ↓
+                        z_t
+                         ↓
+                   posterior x_t
 ```
+
+Here `x_t` is the hidden routine-state vector at time `t`.
 
 On the first update there is no previous transition yet, so there is no earlier state for those actions to move forward from.
 
