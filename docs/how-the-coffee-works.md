@@ -1,5 +1,7 @@
 # How the Coffee Works ☕✨
 
+> **Document role:** Gentle explanation · **Authority:** Explanatory · **Audience:** First-time readers
+
 This is the short, gentle explanation of the project.
 
 For the full step-by-step model-design story, start at [`tutorial/README.md`](tutorial/README.md).
@@ -152,6 +154,12 @@ It is a small teaching project about how a repeated observable routine can be tu
 ## 9. Where to go next 📚
 
 ```text
+Need terminology?
+→ glossary.md
+
+Common confusion?
+→ common-confusions.md
+
 Want the full learning path?
 → tutorial/README.md
 
