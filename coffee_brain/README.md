@@ -1,6 +1,6 @@
 # Coffee Brain Core 🧠☕🐣
 
-This folder contains the generic model implementation.
+This folder contains the generic implementation of the **Coupled Shared Routine Dynamics Model (CSRDM)**.
 
 If you are using the project as an application, start with the public door instead of opening every drawer:
 
