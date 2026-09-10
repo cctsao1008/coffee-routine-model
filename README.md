@@ -28,7 +28,7 @@ If you only have a few minutes, use this route:
 
 ```text
 1. What is CSRDM?                    → Read “CSRDM appears” below
-2. What are P / M / V / C / E / F? → docs/glossary.md
+2. What are P / M / V / C / E / F?   → docs/glossary.md
 3. How does inference work?          → docs/math/starter-math.md
 4. How do I run it?                  → docs/public-api.md
 5. What should I not conclude?       → docs/epistemic-status.md + docs/common-confusions.md
