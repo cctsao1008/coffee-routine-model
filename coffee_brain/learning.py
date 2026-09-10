@@ -63,10 +63,20 @@ def _channel_training_pairs(
     config: ObservationModelConfig,
 ) -> tuple[np.ndarray, np.ndarray]:
     recipe = getattr(config, channel)
+
+    # The structural part of the logistic model is frozen during this learner:
+    #
+    #     logit p_i = alpha + beta^T x_i + mode_offset[z_i]
+    #               = alpha + offset_i
+    #
+    # ``offset`` therefore contains every fixed contribution except the intercept
+    # alpha, which is the only Bernoulli parameter optimized below.
     offset = recipe.logits(states, modes) - float(recipe.intercept)
     y = np.array([obs.get(channel) for obs in observations], dtype=object)
     mask = np.array([value is not None for value in y], dtype=bool)
 
+    # opt_in/pass_event only have a meaningful Bernoulli trial when an invitation
+    # created a response opportunity. Non-invite rows are missing trials, not zeros.
     if channel in {"opt_in", "pass_event"}:
         invites = np.array([obs.get("invite") for obs in observations], dtype=object)
         mask &= np.array([value is not None and int(value) == 1 for value in invites], dtype=bool)
@@ -83,7 +93,18 @@ def _bounded_newton_intercept(
     upper: float = 6.0,
     iterations: int = 30,
 ) -> tuple[float, float]:
-    """Fit one logistic intercept while every structural slope stays frozen. 🐣🎚️"""
+    """Fit one logistic intercept while every structural slope stays frozen. 🐣🎚️
+
+    With p_i = sigmoid(offset_i + alpha), minimizing Bernoulli negative
+    log-likelihood gives:
+
+        gradient(alpha) = sum_i (p_i - y_i)
+        curvature(alpha) = sum_i p_i (1 - p_i)
+        alpha_new = alpha - gradient / curvature
+
+    The update is clipped to explicit bounds after every Newton step so this small
+    synthetic calibration bench cannot send the intercept to an extreme value.
+    """
 
     if len(y) == 0:
         return float(initial), float("nan")
@@ -99,6 +120,8 @@ def _bounded_newton_intercept(
             break
         value = candidate
 
+    # For an intercept-only logistic fit, observed Fisher information is the same
+    # sum p(1-p); its inverse square root supplies the local asymptotic SE estimate.
     p = _sigmoid(offset + value)
     information = float(np.sum(p * (1.0 - p)))
     standard_error = float(1.0 / np.sqrt(max(information, 1e-12)))
@@ -111,7 +134,15 @@ def _bounded_sigma(
     lower: float,
     upper: float,
 ) -> tuple[float, float]:
-    """Use residual RMS as the Gaussian/log-normal sigma MLE, then keep it sane. 📏🐾"""
+    """Use residual RMS as the Gaussian/log-normal sigma MLE, then keep it sane. 📏🐾
+
+    For zero-mean residuals with fixed conditional means, the Gaussian MLE is
+
+        sigma_hat = sqrt(mean(residual^2)).
+
+    The approximate standard error ``sigma / sqrt(2n)`` is only a local uncertainty
+    summary for this synthetic bench; it is not a validated population interval.
+    """
 
     residual = np.asarray(residual, dtype=float)
     residual = residual[np.isfinite(residual)]
@@ -138,6 +169,9 @@ def fit_observation_parameters(
     Only selected Bernoulli intercepts and optional continuous sigmas are learned.
     State slopes, mode offsets, transitions, process noise, memory constants, and all
     structural semantics stay frozen.
+
+    In other words, this learner can recalibrate baseline prevalence/noise scale, but
+    it cannot rewrite what P/M/V/C/E/F mean or learn a new ontology from the data.
     """
 
     states = np.asarray(states, dtype=float)
@@ -155,6 +189,8 @@ def fit_observation_parameters(
     learned = baseline_config
     estimates: list[ParameterEstimate] = []
 
+    # Fit each selected binary channel independently because only its intercept moves;
+    # the fixed state slopes and mode offsets remain exactly those of baseline_config.
     for name in selected:
         recipe = getattr(baseline_config, name)
         offset, y = _channel_training_pairs(states, modes, observations, name, baseline_config)
@@ -174,6 +210,7 @@ def fit_observation_parameters(
         )
 
     if learn_warmth_sigma:
+        # Warmth mean coefficients stay frozen; only residual dispersion is estimated.
         observed = _optional_float_array([obs.get("tone_warmth") for obs in observations])
         expected = predict_warmth_mean(states, modes, baseline_config)
         sigma, se = _bounded_sigma(observed - expected, lower=0.02, upper=0.50)
@@ -195,6 +232,8 @@ def fit_observation_parameters(
         )
 
     if learn_delay_sigma:
+        # Response delay is modeled in log space. The mean-delay recipe stays frozen;
+        # only sigma_log is fitted from finite log-residuals.
         delay_minutes = _optional_float_array([obs.get("response_delay_min") for obs in observations])
         observed = np.full_like(delay_minutes, np.nan, dtype=float)
         finite_delay = np.isfinite(delay_minutes)
@@ -241,6 +280,9 @@ def run_learning_experiment(
     if len(states) < 40:
         raise ValueError("🎚️🐣 Learning experiments need at least 40 synthetic days.")
 
+    # Deliberately preserve temporal order instead of shuffling. The first segment is
+    # fitted and the later segment acts as a simple forward-validation window, which
+    # is more informative for a time-evolving routine than random interleaving.
     split = int(round(len(states) * train_fraction))
     split = min(max(split, 20), len(states) - 20)
     train_obs = list(observations[:split])
