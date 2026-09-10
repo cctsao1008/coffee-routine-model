@@ -23,15 +23,17 @@ The routine does **not** have to return to one exact equilibrium point.
 Instead, recovery uses an acceptable region:
 
 ```text
-E = nominal routine set
+S_nominal = nominal routine set
 ```
+
+`S_nominal` is deliberately different from `E`, which already means **Everyday State Sharing** in CSRDM.
 
 Each soft state has a center and a tolerance. If the state lies comfortably inside that region, its normalized distance is zero.
 
 ```text
-dist(x, E) = 0  → inside the nominal region
+dist(x, S_nominal) = 0  → inside the nominal region
 
-dist(x, E) > 0  → outside the nominal region
+dist(x, S_nominal) > 0  → outside the nominal region
 ```
 
 This makes stability set-based rather than point-based.
@@ -57,7 +59,7 @@ That distinction prevents a coordinated three-day leave from automatically looki
 For a disturbance ending at `t_end`:
 
 ```text
-T_r = first k >= 0 such that x[t_end + k] is back inside E
+T_r = first k >= 0 such that x[t_end + k] is back inside S_nominal
 ```
 
 Therefore:
