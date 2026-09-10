@@ -32,7 +32,7 @@ mirror-high
 
 The shift preserves the existing particle offsets as much as clipping allows. No public API is added.
 
-CI recipe:
+Continuous-integration (CI) recipe:
 
 ```text
 synthetic days = 365
@@ -50,6 +50,13 @@ error_t = estimated_C_t - true_C_t
 bias    = mean(error_t)
 ```
 
+The error metrics use these short names:
+
+```text
+RMSE = root mean squared error
+MSE  = mean squared error
+```
+
 Total squared error is separated into:
 
 ```text
@@ -65,7 +72,7 @@ RMSE² = bias² + centered_RMSE²
 `☕ Tiny Coffee Checks` run #149 reports:
 
 ```text
-candidate              mean bias   RMSE    centered RMSE   Pearson r   CI95 coverage
+candidate              mean bias   RMSE    centered RMSE   Pearson r   95% coverage
 default                   -0.099    0.104      0.033          0.901        57.8%
 matched-truth-start       -0.045    0.063      0.044          0.890        92.6%
 mirror-high               -0.021    0.063      0.060          0.882       100.0%
@@ -82,10 +89,10 @@ initial prior offset       ≈ -0.1191
 For the default replay:
 
 ```text
-mean bias                 ≈ -0.0990
-offset MSE fraction       ≈ 0.8976
-quiet-law predicted bias  ≈ -0.0918
-observed - quiet prediction≈ -0.0072
+mean bias                  ≈ -0.0990
+offset MSE fraction        ≈ 0.8976
+quiet-law predicted bias   ≈ -0.0918
+observed - quiet prediction ≈ -0.0072
 ```
 
 So about 90% of the default MSE is the squared mean-offset term, and the no-input slow-memory law predicts most of the observed mean bias magnitude from the initial mismatch alone.
