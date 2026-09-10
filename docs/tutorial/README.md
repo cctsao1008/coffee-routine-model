@@ -1,5 +1,7 @@
 # Tiny Routine → Model 📖☕🧠
 
+> **Document role:** Guided tutorial · **Authority:** Explanatory · **Audience:** Readers learning why CSRDM has this shape
+
 This is the guided model-design tutorial for **Coffee Routine Model**.
 
 The goal is not to prove that a coffee routine needs complicated math. The goal is to show, step by step, how a small repeated interaction can raise modeling questions — and how those questions can gradually produce a stochastic state-space model.
@@ -95,6 +97,12 @@ This tutorial is the **learning path**.
 For other kinds of reading:
 
 ```text
+📚 Look up terminology
+   → docs/glossary.md
+
+❓ Correct a common misreading
+   → docs/common-confusions.md
+
 📖 Learn the design progressively
    → docs/tutorial/
 
