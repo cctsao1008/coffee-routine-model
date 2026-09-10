@@ -20,23 +20,16 @@ Disturbance != rupture
 
 The routine does **not** have to return to one exact equilibrium point.
 
-Instead, recovery uses an acceptable region:
+Instead, recovery uses an acceptable region called the `nominal_set`.
+
+Each soft state has a center and a tolerance. If the state lies comfortably inside that region, its normalized distance is zero; outside the region, the distance is positive.
 
 ```text
-S_nominal = nominal routine set
+inside nominal_set  → distance = 0
+outside nominal_set → distance > 0
 ```
 
-`S_nominal` is deliberately different from `E`, which already means **Everyday State Sharing** in CSRDM.
-
-Each soft state has a center and a tolerance. If the state lies comfortably inside that region, its normalized distance is zero.
-
-```text
-dist(x, S_nominal) = 0  → inside the nominal region
-
-dist(x, S_nominal) > 0  → outside the nominal region
-```
-
-This makes stability set-based rather than point-based.
+This makes stability set-based rather than point-based, without borrowing `E`, which already means **Everyday State Sharing** in CSRDM.
 
 ## Disturbance windows 🌧️
 
@@ -56,11 +49,7 @@ That distinction prevents a coordinated three-day leave from automatically looki
 
 ## Recovery time 🌱
 
-For a disturbance ending at `t_end`:
-
-```text
-T_r = first k >= 0 such that x[t_end + k] is back inside S_nominal
-```
+`recovery_time` is the number of post-disturbance steps until the first state returns inside the `nominal_set`.
 
 Therefore:
 
@@ -113,24 +102,18 @@ It does not assign hidden meaning to the return.
 
 ## Resilience score 🧠✨
 
-For recovered disturbances:
-
-```math
-R_{resilience}=\frac{1}{1+T_r+\lambda C_r}
-```
-
-where:
+For recovered disturbances, the implementation uses:
 
 ```text
-T_r = post-disturbance recovery time
-C_r = repair-cost proxy
-λ   = weight applied to the repair-cost proxy
+resilience = 1 / (1 + recovery_time + repair_lambda * repair_cost)
 ```
+
+`repair_lambda` is simply the weight applied to the repair-cost proxy. It is named explicitly here so it is not confused with the `lambda` used by the Shared Context memory law.
 
 If the routine never returns inside the nominal set during the available timeline:
 
 ```text
-R = 0
+resilience = 0
 ```
 
 No unobserved recovery is invented.
