@@ -19,8 +19,8 @@ C_{t+1}=C_t+\eta I_t(1-C_t)-\lambda C_t+w_t^C
 where:
 
 - `I_t` is bounded shared-context input from observable coordination actions;
-- `eta` is the accumulation rate;
-- `lambda` is the slow decay rate;
+- `η` (`eta`) is the accumulation rate;
+- `λ` (`lambda`) is the slow decay rate;
 - `(1 - C_t)` creates saturation instead of unbounded growth;
 - `w_t^C` is dedicated memory noise.
 
