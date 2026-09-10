@@ -1,7 +1,7 @@
 # Coffee Routine Model ☕🐾✨
 
 <p align="center">
-  <img src="docs/assets/coffee-routine-model-readme-banner.png" alt="coffee-routine-model — CSRDM mascot banner" width="100%">
+  <img src="docs/assets/coffee-routine-model-readme-banner.svg" alt="coffee-routine-model — CSRDM mascot banner" width="100%">
 </p>
 
 A tiny coffee routine with suspiciously serious math.
