@@ -85,10 +85,12 @@ That still does not make tomorrow's choice already decided.
 P(a_{t+1}=\text{opt-in}\mid H_t) \text{ can be high}
 ```
 
+Here `H_t` means the observable history available through time `t`, and `a_{t+1}` is the next action.
+
 while:
 
 ```text
-a[t+1] remains not-yet-decided
+a_{t+1} remains not-yet-decided
 until the next observable choice occurs
 ```
 
