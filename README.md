@@ -19,7 +19,7 @@ story
 → diagnostics
 ```
 
-There is only **one Coupled Shared Routine Dynamics Model (CSRDM)**. You choose how deep you want to read.
+There is only **one model here**. You choose how deep you want to read.
 
 ## Choose a path 🪜☕
 
@@ -40,6 +40,7 @@ Quick doors:
 - [`Common Confusions`](docs/common-confusions.md) — recurring category mistakes;
 - [`Tutorial`](docs/tutorial/README.md) — guided design story;
 - [`Starter Math`](docs/math/starter-math.md) — readable mathematical entry point;
+- [`Full Math`](docs/math/full-math.md) — complete stochastic model;
 - [`Public API`](docs/public-api.md) — safe calling rules;
 - [`Architecture`](docs/architecture.md) — software/config contract;
 - [`Documentation map`](docs/README.md) — everything else.
@@ -127,7 +128,7 @@ Can friction change over time?
 
 ## 4. CSRDM appears ☕🧠
 
-**CSRDM** means **Coupled Shared Routine Dynamics Model**.
+**Coupled Shared Routine Dynamics Model (CSRDM)** is the model that answers those questions probabilistically.
 
 ```text
 Coupled        → both sides can affect the routine
@@ -156,67 +157,19 @@ x_t = [P, M, V, C, E, F]
 Read `x_t` as the hidden routine-state vector at time `t`.
 These are model variables, not six meters attached to a person.
 
-Useful boundaries:
+Three boundaries matter immediately:
 
 ```text
 Mutuality != 50/50 symmetry
-Continuity != obligation
 Pass != failure
 Probability != fact
-High historical probability != future commitment
 ```
 
-## 5. Run the tiny brain ☕➡️🐣
+## 5. How are the hidden states estimated? 🐣🔍
 
-The stable public API stays small:
+Hidden states cannot be observed directly, so CSRDM uses a **Particle Filter** — a Sequential Monte Carlo estimator that keeps many weighted candidate hidden states and updates their plausibility when new observations arrive.
 
-```python
-from coffee_brain import CSRDM, CSRDMConfig
-
-brain = CSRDM(CSRDMConfig())
-result = brain.step(["+1?", "要", "☕", "👍"])
-
-print(result.mean_by_state)
-print(result.posterior.mode)
-```
-
-Raw arrays remain available under `result.posterior`; named views keep the ordinary path readable.
-For missing-data rules, action timing, smoothing, context-aware transitions, and input validation, see [`docs/public-api.md`](docs/public-api.md).
-
-Install the package from the repository root:
-
-```bash
-python -m pip install .
-```
-
-Current package: `0.3.1`  
-CSRDM architecture: `0.3`
-
-Release details live in [`docs/release-notes-0.3.1.md`](docs/release-notes-0.3.1.md).
-
-Run a synthetic world:
-
-```bash
-python -m tiny_tools.simulate --scenario slow-recovery --days 365
-```
-
-The committed observation-only reference lives in [`examples/365-cute-days/`](examples/365-cute-days/).
-The separate known-action reference can be generated with:
-
-```bash
-python -m tiny_tools.controlled_reference
-```
-
-Its result summary lives in [`docs/controlled-reference-result.md`](docs/controlled-reference-result.md).
-
-```text
-Synthetic reference != real-human validation
-Synthetic World != Estimator Assumptions
-```
-
-## 6. What happens behind the small API? 🧠
-
-At a high level:
+The resulting **posterior** is the model's current probability distribution over what remains plausible after seeing the available evidence.
 
 ```text
 observable events
@@ -240,19 +193,107 @@ For equations and implementation boundaries:
 - [`Full Math`](docs/math/full-math.md) — complete stochastic hybrid model;
 - [`Architecture`](docs/architecture.md) — software/config/public contract.
 
+## 6. Run the tiny brain ☕➡️🐣
+
+Install from the repository root:
+
+```bash
+python -m pip install .
+```
+
+Then run one observable coffee moment through the stable public API:
+
+```python
+from coffee_brain import CSRDM, CSRDMConfig
+
+brain = CSRDM(CSRDMConfig())
+result = brain.step(["+1?", "要", "☕", "👍"])
+
+print({name: round(value, 3) for name, value in result.mean_by_state.items()})
+print(result.posterior.mode)
+```
+
+With the current default seed, that prints:
+
+```text
+{'predictability': 0.692, 'mutuality': 0.602, 'voluntariness': 0.805, 'shared_context': 0.587, 'state_sharing': 0.284, 'friction': 0.212}
+Normal
+```
+
+One step, one posterior. Those numbers are **posterior means over the particle cloud**, not measurements of a person.
+
+Raw arrays remain available under `result.posterior`; named views keep the ordinary path readable. For missing-data rules, action timing, smoothing, context-aware transitions, and input validation, see [`docs/public-api.md`](docs/public-api.md).
+
+For longer reproducible runs:
+
+```bash
+python -m tiny_tools.simulate --scenario slow-recovery --days 365
+python -m tiny_tools.controlled_reference
+```
+
+The observation-only reference lives in [`examples/365-cute-days/`](examples/365-cute-days/); the known-action result summary lives in [`docs/controlled-reference-result.md`](docs/controlled-reference-result.md).
+
+```text
+Synthetic reference != real-human validation
+Synthetic World != Estimator Assumptions
+```
+
 ## 7. What did the diagnostics actually find? 🔬
 
 The repository does not only report successful runs. Some of the most useful diagnostics start from a mismatch and ask what caused it.
 
-| Diagnostic | Baseline symptom | Diagnostic comparator | What the test supports |
-|---|---|---|---|
-| **Voluntariness (`V`) compression** | V-only default prior recovered only `0.201` of the truth amplitude; 95% coverage was `47.2%` | A deliberately relaxed diagnostic prior recovered `0.900` of the amplitude; coverage rose to `95.6%` | In this synthetic stress test, the default V dynamics prior is the strongest identified limiter; cross-state aliasing is secondary |
-| **Shared Context (`C`) bias** | Default 95% coverage was `57.8%` | Matching only the diagnostic starting center raised coverage to `92.6%` | About `0.8976` of default MSE was explained by the squared mean offset; initialization + slow memory explain most, but not all, of the bias |
+Three metric names used below:
 
-The full receipts are in:
+```text
+95% coverage
+→ fraction of evaluated synthetic-truth points inside the reported 95% posterior interval
 
-- [`V Posterior Compression Result`](docs/v-compression-result.md);
-- [`Shared Context Bias Decomposition`](docs/shared-context-bias-result.md).
+amplitude ratio
+→ estimated-state standard deviation / synthetic-truth standard deviation
+→ 1.0 means equal variation amplitude
+
+MSE
+→ mean squared error
+```
+
+### Voluntariness (`V`) compression 🌿
+
+**Baseline — V-only with the default prior**
+
+```text
+amplitude ratio = 0.201
+95% coverage    = 47.2%
+```
+
+**Diagnostic comparator — deliberately relaxed V prior**
+
+```text
+amplitude ratio = 0.900
+95% coverage    = 95.6%
+```
+
+**What the test supports:** in this synthetic stress test, the default V dynamics prior is the strongest identified limiter; cross-state aliasing is secondary.
+
+See [`V Posterior Compression Result`](docs/v-compression-result.md) for the full receipt.
+
+### Shared Context (`C`) bias 🧠🌱
+
+**Baseline**
+
+```text
+95% coverage       = 57.8%
+offset MSE fraction = 0.8976
+```
+
+**Diagnostic comparator — matched starting center only**
+
+```text
+95% coverage = 92.6%
+```
+
+**What the test supports:** initialization mismatch plus slow memory explain most of the default offset, but not every later error.
+
+See [`Shared Context Bias Decomposition`](docs/shared-context-bias-result.md) for the full receipt.
 
 These results are deliberately narrower than a production recommendation.
 
@@ -276,6 +317,16 @@ Undefined
 Not-yet-decided
 ```
 
+Some wider boundaries belong here rather than inside the six-state introduction:
+
+```text
+Continuity != obligation
+High historical probability != future commitment
+Cute != sloppy
+Plain language != missing rigor
+Model != human
+```
+
 See [`docs/epistemic-status.md`](docs/epistemic-status.md).
 For compact definitions, use the [`Glossary`](docs/glossary.md).
 For recurring category mistakes, use [`Common Confusions`](docs/common-confusions.md).
@@ -283,12 +334,6 @@ For recurring category mistakes, use [`Common Confusions`](docs/common-confusion
 The public story contract lives in [`docs/objective-story-contract.md`](docs/objective-story-contract.md).
 The distilled design principles live in [`docs/design-principles.md`](docs/design-principles.md).
 The tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).
-
-```text
-Cute != sloppy
-Plain language != missing rigor
-Model != human
-```
 
 And yes: `XD` is still seasoning, not punctuation. ☕
 
