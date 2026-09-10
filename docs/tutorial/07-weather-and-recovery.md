@@ -33,9 +33,11 @@ So CSRDM adds a discrete routine mode:
 The continuous state and discrete mode answer different questions:
 
 ```text
-x[t]  → what soft routine properties are plausible?
-m[t]  → what kind of local operating condition is plausible?
+x_t → what soft routine properties are plausible at time t?
+m_t → what kind of local operating condition is plausible at time t?
 ```
+
+Here `x_t` is the hidden routine-state vector and `m_t` is the hidden routine mode.
 
 ## Disturbance != rupture
 
