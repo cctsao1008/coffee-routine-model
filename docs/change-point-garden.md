@@ -40,21 +40,21 @@ Missing values are temporarily imputed with the full-timeline feature mean durin
 
 ## Candidate boundary score ✂️
 
-For each candidate boundary `tau`, the detector compares:
+For each candidate boundary `tau` — the proposed split day — the detector compares:
 
 ```text
-H0: one mean regime for the whole timeline
-H1: one mean before tau + another mean after tau
+H0 (null hypothesis)       : one mean regime for the whole timeline
+H1 (one-change hypothesis) : one mean before tau + another mean after tau
 ```
 
-Each active clue receives a BIC-like gain:
+Each active clue receives a Bayesian Information Criterion (BIC)-like gain:
 
 ```text
 gain_j(tau)
     = 0.5 * [SSE_j(H0) - SSE_j(H1) - log(T)]
 ```
 
-where `j` is one observable clue and `T` is the number of days.
+Here `SSE` means **sum of squared errors**, `j` is one observable clue, and `T` is the number of days.
 
 Then:
 
