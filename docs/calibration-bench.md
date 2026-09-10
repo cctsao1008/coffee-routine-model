@@ -87,10 +87,10 @@ For `opt_in` and `pass_event`, only days with an invitation are scored. A closed
 The bench reports:
 
 ```text
-RMSE
+root mean squared error (RMSE)
 mean residual
 residual standard deviation
-expected sigma
+expected noise scale (sigma)
 normalized residual mean
 normalized residual standard deviation
 ```
