@@ -29,6 +29,10 @@ from .transitions import (
 
 
 def _bern_loglik(y: int, p: np.ndarray) -> np.ndarray:
+    """Bernoulli log-likelihood evaluated independently for every particle."""
+
+    # log P(y|p) = y log p + (1-y) log(1-p).
+    # Clipping avoids log(0) while remaining far below meaningful model resolution.
     p = np.clip(p, 1e-6, 1.0 - 1e-6)
     return y * np.log(p) + (1 - y) * np.log(1 - p)
 
@@ -76,7 +80,20 @@ class ParticleHistoryStep:
 
 
 class CoffeeParticleFilter:
-    """A small Sequential Monte Carlo estimator with many tiny guesses. 🐣"""
+    """A small Sequential Monte Carlo estimator with many tiny guesses. 🐣
+
+    Each particle carries a candidate continuous state ``x`` plus a discrete routine
+    mode ``z``. One online step follows the standard bootstrap-filter skeleton:
+
+        predict:      (x[t-1], z[t-1]) -> (x[t], z[t])
+        score:        likelihood_i = P(observation[t] | x_i[t], z_i[t])
+        reweight:     w_i <- w_i * likelihood_i
+        summarize:    posterior moments / intervals / mode probabilities
+        resample:     only when ESS says too few particles carry most of the mass
+
+    The particles are hypotheses about the model state, not literal people or private
+    psychological truths.
+    """
 
     # Kept as a class alias for existing diagnostics/tests, but the table itself has
     # one source of truth in model.DEFAULT_MODE_TRANSITION. 🎲
@@ -104,6 +121,9 @@ class CoffeeParticleFilter:
             raise ValueError("🐾 process_noise_scale must be positive.")
         self.rng = np.random.default_rng(seed)
         self.n = particle_count
+
+        # Initial prior cloud: center every particle near the same six-state prior,
+        # then spread them with independent Gaussian uncertainty before clipping.
         self.particles = np.tile(
             np.array([0.68, 0.58, 0.80, 0.58, 0.28, 0.22]),
             (self.n, 1),
@@ -132,8 +152,17 @@ class CoffeeParticleFilter:
         actions: RoutineActions | Mapping[str, float] | None = None,
         transition_context: TransitionContext | Mapping[str, object] | None = None,
     ) -> None:
-        """Move the hidden world one step, optionally letting context nudge the mode dice. 🎲🌦️"""
+        """Move the hidden world one step, optionally letting context nudge the mode dice. 🎲🌦️
 
+        Continuous-state proposal, excluding the special C memory coordinate, is:
+
+            x' = x + k(target - x) + mode_effect[z] + action_effect + process_noise
+
+        with k=0.035. Shared Context C is advanced separately by its own memory law.
+        """
+
+        # First sample the discrete regime z[t] from either the fixed Markov matrix
+        # or the context-aware transition model.
         if self.transition_config is None:
             # Reproducible original fixed-matrix baseline. 🧺🎲
             u = self.rng.random(self.n)
@@ -154,10 +183,16 @@ class CoffeeParticleFilter:
             )
 
         previous_c = self.particles[:, 3].copy()
+
+        # Weak mean reversion prevents unobserved coordinates from wandering forever.
+        # C is explicitly excluded because accumulated shared context has a separate
+        # saturating memory equation in memory.py.
         mean_reversion = 0.035 * (self.target - self.particles)
         mean_reversion[:, 3] = 0.0
         mode_effect = np.zeros_like(self.particles)
 
+        # Per-mode drift vectors follow state order P / M / V / C / E / F.
+        # They are structural prototype dynamics, not empirical human coefficients.
         mode_effect[self.modes == RoutineMode.BUSY] = [-0.005, -0.008, 0.000, 0.000, -0.002, 0.008]
         mode_effect[self.modes == RoutineMode.LEAVE] = [-0.008, -0.010, 0.000, 0.000, -0.005, 0.005]
         mode_effect[self.modes == RoutineMode.SPECIAL] = [0.010, 0.012, 0.005, 0.000, 0.020, -0.004]
@@ -222,6 +257,8 @@ class CoffeeParticleFilter:
         no previous transition exists, so actions/context wait politely outside. ☕🎮
         """
 
+        # Phase 1 — prediction. After the first observation, propagate each particle
+        # through the state dynamics before evaluating the new observation.
         if self.started:
             self._predict(actions, transition_context)
         self.started = True
@@ -238,12 +275,17 @@ class CoffeeParticleFilter:
         tone_warmth = _little_clue(obs, "tone_warmth")
         response_delay_min = _little_clue(obs, "response_delay_min")
 
+        # Phase 2 — observation model. Convert every particle hypothesis into the
+        # probability / mean of each observable clue under that hypothesis.
         probabilities = predict_binary_channels(
             self.particles,
             self.modes,
             self.observation_config,
         )
 
+        # Phase 3 — accumulate log-likelihood only for clues that were observed.
+        # Conditional independence is the simplifying observation-model assumption:
+        # log P(y_1,...,y_k | x,z) = sum_j log P(y_j | x,z).
         ll = np.zeros(self.n)
         response_opportunity = invite is None or int(invite) == 1
 
@@ -286,13 +328,22 @@ class CoffeeParticleFilter:
             sigma_delay = self.observation_config.response_delay.sigma_log
             ll += -0.5 * ((log_delay - mu_delay) / sigma_delay) ** 2
 
+        # Phase 4 — importance reweighting.
+        # Bayes in particle form: w_i[t] ∝ w_i[t-1] * P(y[t] | x_i[t], z_i[t]).
+        # Subtract max(log-likelihood) before exp() for numerical stability; the
+        # common offset cancels when weights are normalized.
         ll -= np.max(ll)
         w = np.exp(ll) * self.weights
         w /= np.sum(w)
 
+        # Phase 5 — summarize the weighted posterior before any resampling changes
+        # particle multiplicity. ESS = 1 / sum(w_i^2), ranging roughly from 1 to N;
+        # low ESS means posterior mass is concentrated on relatively few particles.
         ess = 1.0 / np.sum(w * w)
         mean = np.sum(w[:, None] * self.particles, axis=0)
 
+        # Marginal 95% credible intervals are weighted empirical quantiles for each
+        # state coordinate independently; they are not a joint six-dimensional box.
         low = np.zeros(6)
         high = np.zeros(6)
         for j in range(6):
@@ -301,10 +352,15 @@ class CoffeeParticleFilter:
             low[j] = self.particles[order[np.searchsorted(cdf, 0.025)], j]
             high[j] = self.particles[order[np.searchsorted(cdf, 0.975)], j]
 
+        # Discrete-mode posterior is the total particle weight assigned to each mode.
         mode_probs = np.array([np.sum(w[self.modes == mode]) for mode in range(5)])
 
         self._remember_filtered_cloud(w)
 
+        # Phase 6 — resampling. Trigger only when ESS < 55% of N. The systematic
+        # resampler replaces low-weight particles with copies of high-weight ones and
+        # resets weights uniformly; it changes representation, not the summarized
+        # posterior computed above.
         if ess < 0.55 * self.n:
             positions = (self.rng.random() + np.arange(self.n)) / self.n
             cdf = np.cumsum(w)
