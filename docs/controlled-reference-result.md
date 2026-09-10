@@ -101,6 +101,14 @@ Tests explicitly verify both sides of this timing rule:
 
 This is the strongest result from the reference.
 
+The scorecards below use these short names:
+
+```text
+std  = standard deviation
+RMSE = root mean squared error
+r    = Pearson correlation
+```
+
 Truth excitation:
 
 ```text
@@ -113,7 +121,7 @@ C truth span  = 0.1865
 Same truth + same observations, two filter views:
 
 ```text
-                    bias      RMSE      r        CI95
+                    bias      RMSE      r        95% coverage
 action-aware       -0.0373    0.0393   +0.9733   100.0%
 action-blind       -0.1104    0.1284   -0.4544    31.3%
 ```
