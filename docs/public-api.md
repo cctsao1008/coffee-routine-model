@@ -1,6 +1,6 @@
 # Public API — One Small Door ☕🚪🐣
 
-This page is for callers who want to **use CSRDM without learning the repository's internal drawer layout first**.
+This page is for callers who want to **use the Coupled Shared Routine Dynamics Model (CSRDM) without learning the repository's internal drawer layout first**.
 
 The public rule is simple:
 
@@ -52,6 +52,8 @@ result.actions
 result.step_index
 result.transition_applied
 ```
+
+The `ci95` part of `result.ci95_by_state` means the named **95% posterior interval** view for each state.
 
 These are posterior summaries, not measured human traits.
 
