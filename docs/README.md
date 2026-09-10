@@ -138,12 +138,12 @@ Synthetic metric != human validation
 
 ## 📦 Release / packaging snapshot
 
-Use [`release-notes-0.3.1.md`](release-notes-0.3.1.md) when the question is **what belongs in the current formal release candidate?**
+Use [`release-notes-0.3.1.md`](release-notes-0.3.1.md) when the question is **what belongs in the current formal release?**
 
 The earlier [`release-notes-0.3.0.md`](release-notes-0.3.0.md) records why the existing `v0.3.0` tag is kept as an immutable architecture-baseline marker instead of being moved forward.
 
 ```text
-Package 0.3.1 → current release candidate
+Package 0.3.1 → current formal release
 Architecture 0.3 → unchanged model baseline
 v0.3.0 → historical architecture tag
 ```
