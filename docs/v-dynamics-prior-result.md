@@ -2,6 +2,8 @@
 
 This result follows [`v-compression-result.md`](v-compression-result.md).
 
+Here `V` means **Voluntariness**.
+
 The previous diagnostic showed that the current V observation likelihood contains directional information, while the sequential posterior remains compressed. A relaxed V dynamics prior helped strongly in one focused stress path.
 
 The next question was therefore narrower:
@@ -45,6 +47,13 @@ To isolate the V prior itself, `P / M / C / E / F` and mode were supplied from s
 Diagnostic isolator != public CSRDM inference path
 ```
 
+The result tables use these short metric names:
+
+```text
+RMSE = root mean squared error
+r    = Pearson correlation
+```
+
 ## Candidate family 🌱
 
 | Candidate | Mean reversion | Process sigma | Role |
@@ -61,7 +70,7 @@ The extreme comparator exists to reveal sensitivity. It is not a proposed defaul
 
 ## Aggregate result 📏
 
-CI run #145 reported:
+Continuous-integration (CI) run #145 reported:
 
 | Candidate | Stress RMSE | Stress r | Amp ratio | Stress coverage | Baseline RMSE |
 |---|---:|---:|---:|---:|---:|
