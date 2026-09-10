@@ -58,6 +58,13 @@ examples/observability-garden/
 └── state-identifiability.csv
 ```
 
+The scorecards use these standard short names:
+
+```text
+RMSE = root mean squared error
+MAE  = mean absolute error
+```
+
 ### `scorecard.csv` ☕
 
 For the full baseline and every ablation, it records:
