@@ -91,8 +91,8 @@ CSRDM therefore measures recovery instead of hiding everything inside one generi
 
 A simple resilience summary uses recovery time and repair cost:
 
-```math
-R_{resilience}=\frac{1}{1+T_r+\lambda C_r}
+```text
+resilience = 1 / (1 + recovery_time + repair_lambda * repair_cost)
 ```
 
 The exact metric is secondary to the idea:
