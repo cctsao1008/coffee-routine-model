@@ -38,6 +38,7 @@ Quick doors:
 
 - [`Glossary`](docs/glossary.md) — project vocabulary;
 - [`Common Confusions`](docs/common-confusions.md) — recurring category mistakes;
+- [`Tutorial`](docs/tutorial/README.md) — guided design story;
 - [`Starter Math`](docs/math/starter-math.md) — readable mathematical entry point;
 - [`Public API`](docs/public-api.md) — safe calling rules;
 - [`Architecture`](docs/architecture.md) — software/config contract;
