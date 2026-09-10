@@ -16,18 +16,18 @@ story
 → diagnostics
 ```
 
-There is only **one CSRDM**. You can simply choose how deep you want to read.
+There is only **one Coupled Shared Routine Dynamics Model (CSRDM)**. You can simply choose how deep you want to read.
 
 ## Five-minute path 🪜☕
 
 If you only have a few minutes, use this route:
 
 ```text
-1. What is CSRDM?              → §4 below
+1. What is CSRDM?                    → Read “CSRDM appears” below
 2. What are P / M / V / C / E / F? → docs/glossary.md
-3. How does inference work?    → docs/math/starter-math.md
-4. How do I run it?            → docs/public-api.md
-5. What should I not conclude? → docs/epistemic-status.md + docs/common-confusions.md
+3. How does inference work?          → docs/math/starter-math.md
+4. How do I run it?                  → docs/public-api.md
+5. What should I not conclude?       → docs/epistemic-status.md + docs/common-confusions.md
 ```
 
 Or choose by intent:
