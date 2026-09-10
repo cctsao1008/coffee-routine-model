@@ -57,7 +57,16 @@ class SensitivityReport:
         return rows
 
     def matrix(self) -> tuple[tuple[str, ...], np.ndarray]:
-        """Return signed relative-RMSE sensitivity: rows=variants, cols=states. 🐣📏"""
+        """Return signed relative-RMSE sensitivity: rows=variants, cols=states. 🐣📏
+
+        Entry (v,j) is:
+
+            (RMSE_variant[v,j] - RMSE_baseline[j]) / RMSE_baseline[j]
+
+        Positive values mean the perturbation worsened point-estimate error for that
+        state; negative values mean lower RMSE under that variant. It is a local
+        robustness diagnostic, not an importance or causal-effect score.
+        """
 
         labels = tuple(variant.label for variant in self.variants)
         base = np.maximum(self.baseline.rmse, 1e-9)
@@ -105,6 +114,8 @@ def _run(
     truth = np.asarray(truth, dtype=float)
     true_modes = np.asarray(true_modes, dtype=int)
 
+    # Use the same diagnostic family as observability tests so sensitivity variants
+    # remain directly comparable with the baseline run.
     rmse = np.sqrt(np.mean((est - truth) ** 2, axis=0))
     correlation = np.array([_safe_r(est[:, i], truth[:, i]) for i in range(6)], dtype=float)
     width = np.mean(high - low, axis=0)
@@ -121,7 +132,16 @@ def _run(
 
 
 def transition_temperature(matrix: np.ndarray, temperature: float) -> np.ndarray:
-    """Warm or cool a transition table without changing its support. 🌡️🎲"""
+    """Warm or cool a transition table without changing its support. 🌡️🎲
+
+    Temperature rescales row log-probabilities before softmax:
+
+        p'_j ∝ exp(log(p_j) / T) = p_j^(1/T)
+
+    ``T < 1`` sharpens each row toward its larger probabilities; ``T > 1`` flattens
+    the row toward a more diffuse transition distribution. No entry is introduced or
+    removed because the original positive support is preserved.
+    """
 
     if temperature <= 0.0:
         raise ValueError("🐾 Transition temperature must be positive.")
@@ -142,6 +162,11 @@ def evaluate_sensitivity(
 ) -> SensitivityReport:
     """Poke clue channels and estimator assumptions one at a time. 🧪🐾
 
+    Every variant changes one clue family or one small estimator assumption while
+    reusing the same synthetic timeline and random seed. Differences from baseline
+    therefore expose local robustness to that perturbation while reducing Monte Carlo
+    noise between runs.
+
     This is local synthetic sensitivity, not causal attribution and definitely not a
     ranking of human importance. Every variant reuses the same synthetic timeline.
     """
@@ -160,6 +185,9 @@ def evaluate_sensitivity(
     )
 
     variants: list[SensitivityMetrics] = []
+
+    # Observation ablations ask how much each clue family contributes under the fixed
+    # synthetic world; they do not alter the hidden trajectory itself.
     for family, keys in CLUE_FAMILIES.items():
         variants.append(
             _run(
@@ -173,6 +201,7 @@ def evaluate_sensitivity(
             )
         )
 
+    # Observation-model variants perturb one hand-set likelihood assumption at a time.
     obs = DEFAULT_OBSERVATION_MODEL
     observation_variants = {
         "warmth-sigma-0.75x": replace(obs, tone_warmth=replace(obs.tone_warmth, sigma=obs.tone_warmth.sigma * 0.75)),
@@ -196,6 +225,7 @@ def evaluate_sensitivity(
             )
         )
 
+    # Memory perturbations test how inference reacts to a faster/slower C decay law.
     memory = DEFAULT_SHARED_CONTEXT_MEMORY
     for label, factor in (("memory-decay-0.5x", 0.5), ("memory-decay-2x", 2.0)):
         config = replace(memory, decay_rate=memory.decay_rate * factor)
@@ -212,6 +242,7 @@ def evaluate_sensitivity(
             )
         )
 
+    # Process-noise perturbations test confidence in the continuous state dynamics.
     for label, scale in (("process-noise-0.75x", 0.75), ("process-noise-1.25x", 1.25)):
         variants.append(
             _run(
@@ -226,6 +257,8 @@ def evaluate_sensitivity(
             )
         )
 
+    # Transition-temperature variants change only how concentrated the fixed Markov
+    # rows are, while preserving their ordering/support.
     for label, temperature in (("transition-temp-0.85", 0.85), ("transition-temp-1.15", 1.15)):
         variants.append(
             _run(
