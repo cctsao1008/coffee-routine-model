@@ -38,6 +38,16 @@ x_{t+1}\sim p(x_{t+1}\mid x_t,m_t,a_t,d_t)
 z_t\sim p(z_t\mid x_t,m_t)
 ```
 
+Read the symbols as:
+
+```text
+x_t → hidden routine-state vector at time t
+m_t → hidden routine mode
+a_t → known observable action input
+d_t → explicit known context / disturbance
+z_t → observation clue basket
+```
+
 The current implementation uses small structural prototype action effects inside the state transition.
 
 They are **not learned human coefficients**.
