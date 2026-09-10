@@ -105,6 +105,49 @@ Same example.
 Different depth.
 ```
 
+### 4.1. Explain once, shorten later 🏷️☕
+
+A reader should not have to decode an abbreviation or symbol before understanding the sentence around it.
+
+On first use, briefly introduce a project-specific abbreviation, statistical acronym, or mathematical symbol when the surrounding context does not already make it obvious.
+
+After that, use the shorter form when it improves readability.
+
+```text
+Coupled Shared Routine Dynamics Model (CSRDM)
+→ CSRDM
+
+Effective Sample Size (ESS)
+→ ESS
+
+x_t = hidden routine-state vector at time t
+→ x_t
+```
+
+Formal notation belongs where it carries real mathematical or engineering meaning. Decorative academic shorthand does not get a free pass merely because it looks technical.
+
+Prefer plain language in reader-facing prose when it is clearer:
+
+```text
+Read “CSRDM appears” below
+```
+
+rather than:
+
+```text
+see §4
+```
+
+The same restraint applies to abbreviations such as `cf.`, `w.r.t.`, `iff`, `i.e.`, or `e.g.` when a direct sentence would be easier to read.
+
+```text
+Explain once → shorten later
+Precision != unexplained notation
+Formal symbol != automatically clearer
+```
+
+Do not expand every familiar abbreviation mechanically. The purpose is orientation, not parenthetical clutter.
+
 ---
 
 ## 5. Persona at the edge, generic math in the center 🎭🧠
@@ -294,5 +337,6 @@ choose correctness first, then make it cute.
 🧠 Math still works.  
 🌱 Plain words get the first sip.  
 📖 Hard math still tells a little story.  
+🏷️ Explain once, shorten later.  
 ⚖️ Story remains objective.  
 🌱 Humans may still surprise the model.
