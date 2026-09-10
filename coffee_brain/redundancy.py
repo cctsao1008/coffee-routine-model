@@ -38,6 +38,16 @@ def _run_full_filter(
 
 
 def _ridge_fit(x: np.ndarray, y: np.ndarray, alpha: float = 1e-3) -> np.ndarray:
+    """Fit a tiny ridge regression with an unpenalized intercept.
+
+    With design matrix X including a leading column of ones:
+
+        beta = (X^T X + alpha * D)^(-1) X^T y
+
+    where D leaves the intercept unpenalized. Ridge stabilization matters here because
+    the five retained latent coordinates can be strongly correlated in synthetic runs.
+    """
+
     design = np.column_stack([np.ones(len(x)), x])
     penalty = np.eye(design.shape[1]) * alpha
     penalty[0, 0] = 0.0
@@ -53,7 +63,12 @@ def _binary_scores(
     modes: np.ndarray,
     observations: Sequence[Mapping[str, object]],
 ) -> tuple[float, float]:
-    """Return mode-conditioned binary NLL and Brier for one state representation. 🎯🐣"""
+    """Return mode-conditioned binary NLL and Brier for one state representation. 🎯🐣
+
+    These scores ask whether a reduced/reconstructed state representation still
+    reproduces the observation model's probabilistic clues. NLL penalizes confident
+    wrong probabilities strongly; Brier measures mean squared probability error.
+    """
 
     probabilities = predict_binary_channels(states, modes, DEFAULT_OBSERVATION_MODEL)
     nll_losses: list[float] = []
@@ -78,7 +93,11 @@ def _continuous_errors(
     modes: np.ndarray,
     observations: Sequence[Mapping[str, object]],
 ) -> tuple[float, float]:
-    """Score only continuous clues that were actually observed. Missing stays missing. 🌱📏"""
+    """Score only continuous clues that were actually observed. Missing stays missing. 🌱📏
+
+    Warmth is scored on its native linear scale. Reply delay is scored in log-minutes,
+    matching the log-normal observation model rather than raw clock-time error.
+    """
 
     warmth = np.array(
         [np.nan if obs.get("tone_warmth") is None else float(obs["tone_warmth"]) for obs in observations],
@@ -121,6 +140,13 @@ def _score_variant(
     modes: np.ndarray,
     observations: Sequence[Mapping[str, object]],
 ) -> dict[str, object]:
+    """Score one candidate state representation against synthetic truth and clues.
+
+    A representation can look acceptable on average state RMSE yet still damage the
+    derived R summary, recovery behavior, or observation likelihoods. Keeping several
+    diagnostics prevents one convenient aggregate from deciding redundancy alone.
+    """
+
     state_rmse = np.sqrt(np.mean((states - truth) ** 2, axis=0))
     state_r = relationship_index(states)
     truth_r = relationship_index(truth)
@@ -158,6 +184,12 @@ def evaluate_state_redundancy(
 ) -> RedundancyReport:
     """Compare direct six-state estimates with simple five-dimensional projections. 🪑🧭
 
+    The diagnostic asks a limited question: can one estimated state be reconstructed
+    from the other five with little held-out information loss? For target state j,
+    ridge regression is fit on the first timeline segment and evaluated on the later
+    segment. A small reconstruction penalty suggests redundancy under this synthetic
+    scenario; it does not prove the state is ontologically unnecessary.
+
     Reduced variants here are reconstruction/projection diagnostics, not fully retrained
     lower-dimensional particle filters. They answer whether one state can be removed or
     merged *without much measurable information loss* under the current synthetic model.
@@ -176,8 +208,13 @@ def evaluate_state_redundancy(
         raise ValueError("🐾 Truth, modes, and observations need the same tiny length.")
 
     estimates = _run_full_filter(observations, particle_count=particle_count, seed=seed)
+
+    # Posterior-state correlation is descriptive only: high correlation is a reason to
+    # investigate redundancy, not sufficient evidence that two latent coordinates are equivalent.
     posterior_correlation = np.corrcoef(estimates, rowvar=False)
 
+    # Keep temporal order: reconstruction is fit on earlier synthetic days and tested
+    # on later days instead of benefiting from random train/validation interleaving.
     split = int(round(len(truth) * train_fraction))
     split = min(max(split, 8), len(truth) - 8)
     train_est, val_est = estimates[:split], estimates[split:]
@@ -211,12 +248,16 @@ def evaluate_state_redundancy(
     variants: list[dict[str, object]] = []
     variants.append(_score_variant("full-6", 6, val_est, val_truth, val_modes, val_obs))
 
+    # merge-C-E is an intentionally simple projection: both coordinates are replaced by
+    # their arithmetic mean. It tests information loss, not a proposed new CSRDM ontology.
     merge_ce = val_est.copy()
     shared = 0.5 * (merge_ce[:, 3] + merge_ce[:, 4])
     merge_ce[:, 3] = shared
     merge_ce[:, 4] = shared
     variants.append(_score_variant("merge-C-E", 5, merge_ce, val_truth, val_modes, val_obs))
 
+    # For selected states, replace the direct estimate with its five-state ridge
+    # reconstruction and then rescore the whole representation.
     for state in ("C", "E", "F"):
         index = STATE_KEYS.index(state)
         reduced = val_est.copy()
