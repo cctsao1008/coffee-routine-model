@@ -16,6 +16,13 @@ Fewer states != simpler truth
 Redundancy != permission to erase semantics
 ```
 
+The scorecards below use these short metric names after introducing them once:
+
+```text
+RMSE = root mean squared error
+NLL  = negative log likelihood
+```
+
 ## Three little diagnostics 🧭
 
 ### 1. Posterior estimate correlation
@@ -76,7 +83,7 @@ That distinction is part of the experiment contract.
 
 ## Across tiny weather worlds 🌦️
 
-By default the CLI repeats the chair audition across every public synthetic scenario:
+By default the command-line interface repeats the chair audition across every public synthetic scenario:
 
 ```bash
 python -m tiny_tools.inspect_redundancy \
