@@ -104,7 +104,18 @@ def calibrate_binary_channel(
     *,
     bins: int = 10,
 ) -> tuple[BinaryCalibrationSummary, tuple[ReliabilityBin, ...]]:
-    """Measure whether tiny predicted probabilities keep their promises. ☕🎛️"""
+    """Measure whether tiny predicted probabilities keep their promises. ☕🎛️
+
+    Four complementary views are kept instead of collapsing calibration into one score:
+
+        Brier   = mean((p - y)^2)
+        LogLoss = -mean(y log p + (1-y) log(1-p))
+        Gap     = mean(y) - mean(p)
+        ECE     = sum_b (n_b / n) * |observed_rate_b - mean_predicted_b|
+
+    Brier/log-loss score individual probabilistic predictions; gap/ECE ask whether
+    stated probabilities line up with empirical frequencies in the synthetic bench.
+    """
 
     if bins < 2:
         raise ValueError("🐣 Reliability needs at least two tiny bins.")
@@ -114,12 +125,16 @@ def calibrate_binary_channel(
         empty = BinaryCalibrationSummary(channel, 0, *(float("nan"),) * 6)
         return empty, ()
 
+    # Probability clipping is only for log-loss numerical safety. Brier and reported
+    # mean probabilities use the original model predictions.
     clipped = np.clip(p, 1e-9, 1.0 - 1e-9)
     brier = float(np.mean((p - y) ** 2))
     log_loss = float(-np.mean(y * np.log(clipped) + (1.0 - y) * np.log(1.0 - clipped)))
     mean_pred = float(np.mean(p))
     observed_rate = float(np.mean(y))
 
+    # Reliability diagram bins partition predicted probability into equal-width
+    # intervals. ECE below weights each absolute bin gap by the number of samples in it.
     edges = np.linspace(0.0, 1.0, bins + 1)
     bin_ids = np.minimum((p * bins).astype(int), bins - 1)
     reliability: list[ReliabilityBin] = []
@@ -166,6 +181,16 @@ def _continuous_summary(
     expected: np.ndarray,
     sigma: float,
 ) -> ContinuousCalibrationSummary:
+    """Summarize residual scale in native and model-noise units.
+
+    residual = observed - expected
+    normalized_residual = residual / sigma
+
+    If the conditional mean and shared sigma are well matched in the synthetic bench,
+    normalized residuals should be centered near zero with standard deviation near one.
+    This is a diagnostic expectation, not a guarantee for real-human data.
+    """
+
     obs = np.asarray(observed, dtype=float).reshape(-1)
     exp = np.asarray(expected, dtype=float).reshape(-1)
     if len(obs) != len(exp):
@@ -197,7 +222,12 @@ def calibrate_dataset(
     config: ObservationModelConfig = DEFAULT_OBSERVATION_MODEL,
     bins: int = 10,
 ) -> CalibrationResult:
-    """Run a synthetic calibration bench without pretending hidden truth is observable in real life. 🐣🧠"""
+    """Run a synthetic calibration bench without pretending hidden truth is observable in real life. 🐣🧠
+
+    The hidden states/modes supplied here come from a synthetic world where ground truth
+    is available by construction. This function therefore evaluates the observation
+    recipes; it does not imply that latent CSRDM states are directly measurable in people.
+    """
 
     tiny_states = np.asarray(states, dtype=float)
     tiny_modes = np.asarray(modes, dtype=int)
@@ -214,6 +244,8 @@ def calibrate_dataset(
         observed = np.array([obs.get(channel) for obs in observations], dtype=object)
 
         # opt-in and pass are only meaningful when an invitation opened that little door. 🚪☕
+        # A row without an observed invitation is removed from that channel's calibration
+        # rather than counted as a negative outcome.
         if channel in {"opt_in", "pass_event"}:
             observed = observed.copy()
             for i, invite in enumerate(invites):
@@ -229,6 +261,7 @@ def calibrate_dataset(
         binary_rows.append(summary)
         reliability_rows.extend(bins_rows)
 
+    # Warmth residuals live in the channel's native linear scale.
     warmth_obs = _optional_float_array([obs.get("tone_warmth") for obs in observations])
     warmth_expected = predict_warmth_mean(tiny_states, tiny_modes, config)
     warmth = _continuous_summary(
@@ -238,6 +271,8 @@ def calibrate_dataset(
         config.tone_warmth.sigma,
     )
 
+    # Delay is modeled as log-normal, so calibration compares log(delay) with the
+    # predicted log mean and uses sigma_log as its expected residual scale.
     delay_minutes = _optional_float_array([obs.get("response_delay_min") for obs in observations])
     delay_obs = np.full_like(delay_minutes, np.nan, dtype=float)
     finite_delay = np.isfinite(delay_minutes)
