@@ -4,6 +4,35 @@ Different documents answer different questions on purpose.
 
 > **Story welcomes. Glossary aligns. Tutorial teaches. Starter Math bridges. Full Math formalizes. Public API guides. Architecture defines. Labs challenge. Results record.**
 
+## 🏷️ Role / authority at a glance
+
+Use this before treating two documents as if they have the same job.
+
+| Surface | Role | Authority for its scope |
+|---|---|---|
+| [`glossary.md`](glossary.md) | terminology index | **Index only** — specialist sources win |
+| [`how-the-coffee-works.md`](how-the-coffee-works.md) | gentle explanation | **Explanatory** |
+| [`tutorial/README.md`](tutorial/README.md) | guided learning path | **Explanatory** |
+| [`math/starter-math.md`](math/starter-math.md) | first mathematical projection | **Explanatory** — same CSRDM, fewer symbols |
+| [`math/full-math.md`](math/full-math.md) | complete mathematical view | **Canonical mathematical reference** for architecture `0.3` |
+| [`public-api.md`](public-api.md) | caller contract | **Canonical public-calling reference** |
+| [`architecture.md`](architecture.md) | software / architecture contract | **Canonical architecture reference** |
+| [`epistemic-status.md`](epistemic-status.md) | claim-status contract | **Canonical epistemic reference** |
+| lab documents | focused experiment | **Experiment**, not architecture contract |
+| `*-result.md` documents | reproducible result snapshot | **Snapshot**, not design contract |
+| `release-notes-*` | release record | **Release / historical context** |
+
+```text
+Canonical    → owns a contract for its declared scope
+Explanatory  → teaches or interprets that contract
+Index        → helps you find shared wording
+Experiment   → challenges one assumption
+Snapshot     → records one reproducible result
+Historical   → preserves past release / design context
+```
+
+This table is navigation metadata, not another specification.
+
 ## 📚 Terminology / glossary
 
 Use [`glossary.md`](glossary.md) when the question is **what does this recurring term mean in this project?**
@@ -15,6 +44,13 @@ Glossary
 = shared wording + pointers
 != new ontology
 != second source of truth
+```
+
+If the question is instead **“does this term imply X?”**, use [`common-confusions.md`](common-confusions.md).
+
+```text
+Glossary          → meaning
+Common Confusions → recurring misreading
 ```
 
 ## ☕ Story / gentle explanation
@@ -174,6 +210,7 @@ Diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
 - [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided
 - [`observation-provenance.md`](observation-provenance.md) — provenance map for clue→state / mode relationships
+- [`common-confusions.md`](common-confusions.md) — compact corrections to recurring category mistakes
 - [`objective-story-contract.md`](objective-story-contract.md) — objective story-writing contract
 - [`design-principles.md`](design-principles.md) — distilled principle map and public boundary around private design inspiration
 - [`../CUTE_RULES.md`](../CUTE_RULES.md) — tone and engineering rules
@@ -196,6 +233,7 @@ Design inspiration != public dataset
 ```text
 First visit          → README.md
 Need terminology     → docs/glossary.md
+Common confusion?    → docs/common-confusions.md
 Want the story       → docs/how-the-coffee-works.md
 Want to learn        → docs/tutorial/
 Want Starter Math    → docs/math/starter-math.md
