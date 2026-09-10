@@ -81,6 +81,8 @@ Better validation likelihood != better ontology
 
 ## One score would hide the interesting part
 
+One common state-error metric is **root mean squared error (RMSE)**.
+
 A model can have:
 
 ```text
