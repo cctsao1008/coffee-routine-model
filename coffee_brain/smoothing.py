@@ -33,6 +33,13 @@ def _normalized_weights(weights: np.ndarray) -> np.ndarray:
 
 
 def _weighted_quantile(values: np.ndarray, weights: np.ndarray, q: float) -> float:
+    """Empirical weighted quantile used for marginal smoothed intervals.
+
+    After sorting values, the smallest value whose cumulative normalized weight reaches
+    ``q`` is returned. This matches the particle representation directly rather than
+    assuming a Gaussian posterior shape.
+    """
+
     order = np.argsort(values)
     ordered_values = np.asarray(values, dtype=float)[order]
     ordered_weights = _normalized_weights(np.asarray(weights, dtype=float)[order])
@@ -46,7 +53,12 @@ def _trace_ancestors(
     start: int,
     endpoint: int,
 ) -> np.ndarray:
-    """Trace endpoint particles backward to one earlier filtered support. 🐾🔭"""
+    """Trace endpoint particles backward to one earlier filtered support. 🐾🔭
+
+    ``parents[t][i]`` records which particle at ``t-1`` produced particle ``i`` at t.
+    Repeated indexing therefore reconstructs the ancestor at ``start`` for every
+    particle surviving at ``endpoint``.
+    """
 
     particle_count = len(history[endpoint].weights)
     indices = np.arange(particle_count, dtype=np.int32)
@@ -67,9 +79,16 @@ def smooth_history(
     """Run a genealogical fixed-lag particle smoother over recorded PF history. 🔭☕
 
     For each day ``t``, descendants are followed up to ``t + lag`` and their later
-    filtered weights are projected backward through the recorded ancestry. This is a
-    practical SMC smoother, not a magic time machine; very long horizons can suffer
-    particle path degeneracy, which is why fixed-lag smoothing is the default. 🐣
+    filtered weights are projected backward through the recorded ancestry. In particle
+    notation, if endpoint particle j descends from ancestor a_j(t), then the smoothed
+    expectation is approximated by:
+
+        E[x_t | y_1:end] ≈ sum_j w_j(end) * x_{a_j(t)}(t)
+
+    The same descendant weights are used for marginal weighted quantiles and mode
+    probabilities at t. This is a practical SMC smoother, not a magic time machine;
+    very long horizons can suffer particle path degeneracy, which is why fixed-lag
+    smoothing is the default. 🐣
     """
 
     if lag < 0:
@@ -88,10 +107,15 @@ def smooth_history(
     result: list[SmoothedPosterior] = []
 
     for start in range(total_steps):
+        # Fixed-lag smoothing only allows observations up to start+lag to revise time
+        # ``start``. full_history=True instead uses every recorded future observation.
         endpoint = total_steps - 1 if full_history else min(total_steps - 1, start + lag)
         descendant_weights = _normalized_weights(history[endpoint].weights)
         ancestors = _trace_ancestors(history, start, endpoint)
 
+        # Project endpoint weights onto the corresponding ancestor states/modes at the
+        # earlier time. Multiple descendants may point to the same ancestor after
+        # resampling; their weights naturally accumulate through the repeated rows.
         states = np.asarray(history[start].particles[ancestors], dtype=float)
         modes = np.asarray(history[start].modes[ancestors], dtype=int)
         mean = np.sum(descendant_weights[:, None] * states, axis=0)
@@ -102,6 +126,8 @@ def smooth_history(
             low[state_index] = _weighted_quantile(states[:, state_index], descendant_weights, 0.025)
             high[state_index] = _weighted_quantile(states[:, state_index], descendant_weights, 0.975)
 
+        # Smoothed discrete-mode probability is descendant posterior mass whose traced
+        # ancestor occupied each mode at the earlier time.
         mode_probabilities = np.array(
             [np.sum(descendant_weights[modes == mode]) for mode in range(5)],
             dtype=float,
