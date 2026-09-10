@@ -18,6 +18,36 @@ story
 
 There is only **one CSRDM**. You can simply choose how deep you want to read.
 
+## Five-minute path 🪜☕
+
+If you only have a few minutes, use this route:
+
+```text
+1. What is CSRDM?              → §4 below
+2. What are P / M / V / C / E / F? → docs/glossary.md
+3. How does inference work?    → docs/math/starter-math.md
+4. How do I run it?            → docs/public-api.md
+5. What should I not conclude? → docs/epistemic-status.md + docs/common-confusions.md
+```
+
+Or choose by intent:
+
+```text
+I just want the idea
+→ README → Glossary → Starter Math
+
+I want to use it
+→ README → Public API → examples/
+
+I want to inspect the model
+→ Architecture → Full Math → diagnostics
+```
+
+```text
+Five-minute path != simplified model
+Fewer reading decisions != fewer model boundaries
+```
+
 ## 1. Start with one tiny routine 📖☕
 
 Meet **Cheng** and **Linda** — synthetic teaching personas used only to make the examples easier to follow.
@@ -147,6 +177,9 @@ You do not need to read the whole repo at one mathematical level.
 ```text
 📚 I just need the project vocabulary
 → docs/glossary.md
+
+❓ I keep wondering “does this mean...?”
+→ docs/common-confusions.md
 
 ☕ Just tell me the story
 → docs/how-the-coffee-works.md
@@ -300,6 +333,7 @@ Not-yet-decided
 
 See [`docs/epistemic-status.md`](docs/epistemic-status.md).
 For compact definitions of recurring project terms, use [`docs/glossary.md`](docs/glossary.md).
+For the most common category mistakes, use [`docs/common-confusions.md`](docs/common-confusions.md).
 
 The public story contract lives in [`docs/objective-story-contract.md`](docs/objective-story-contract.md).
 The distilled design principles live in [`docs/design-principles.md`](docs/design-principles.md).
