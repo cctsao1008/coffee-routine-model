@@ -180,3 +180,12 @@ Different state combinations can tell different model stories, so CSRDM keeps th
 ## The next question
 
 We now have a hidden state vector.
+
+But events play two different roles:
+
+- some observable events can **move** the routine forward;
+- other observable clues provide **evidence** about the hidden state.
+
+Treating both as the same thing creates a structural mistake.
+
+Continue to [`05-actions-vs-observations.md`](05-actions-vs-observations.md).
