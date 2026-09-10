@@ -56,8 +56,8 @@ def observations_to_matrix(observations: Sequence[dict]) -> np.ndarray:
     """Turn observable coffee clues into a numeric change-point basket. 🧺👀
 
     Missing clues remain missing until the detector standardizes the full timeline.
-    Reply delay is transformed into log-minutes so one very sleepy reply does not
-    dominate the whole little garden. XD
+    Reply delay is transformed into log-minutes so multiplicative timing differences
+    become additive and one very sleepy reply does not dominate the little garden. XD
     """
 
     rows: list[list[float]] = []
@@ -86,6 +86,13 @@ def _maybe_float(value) -> float:
 
 
 def _prepare_features(matrix: np.ndarray) -> np.ndarray:
+    """Mean-impute missing values, drop constant columns, then z-score each feature.
+
+    Standardization puts binary, warmth, and log-delay clues onto comparable variance
+    scales before the SSE-based split score is computed. Mean imputation is deliberately
+    simple here: missingness is not treated as evidence of change.
+    """
+
     tiny = np.asarray(matrix, dtype=float).copy()
     if tiny.ndim != 2 or tiny.shape[0] < 2 or tiny.shape[1] < 1:
         raise ValueError("🐾 Change-point features need shape (days, clues).")
@@ -113,6 +120,13 @@ def _segment_sse_by_feature(
     start: int,
     stop: int,
 ) -> np.ndarray:
+    """Return per-feature SSE using prefix sums instead of rescanning the segment.
+
+    For segment length n, sum x = S, and sum x^2 = Q:
+
+        SSE = sum_i (x_i - xbar)^2 = Q - S^2 / n
+    """
+
     count = stop - start
     total = prefix[stop] - prefix[start]
     total_sq = prefix_sq[stop] - prefix_sq[start]
@@ -129,13 +143,18 @@ def detect_feature_change_point(
 ) -> ChangePointResult:
     """Detect one persistent mean-regime change with an inspectable sparse split. ✂️☕
 
-    Each active clue earns its own BIC-like gain for a candidate boundary and pays its
-    own complexity penalty. Positive clue gains may combine; unchanged clues do not
-    make one truly shifted channel pay for the entire observation basket.
+    For candidate boundary b and feature j:
 
-    Candidate weights are then combined with an explicit prior over ``no change`` vs
-    ``one change``. The default prior is deliberately skeptical: a structural change
-    should earn its little scissors instead of receiving them for free. XD
+        improvement_j(b) = SSE_no_split_j - SSE_split_j(b)
+        gain_j(b) = 0.5 * (improvement_j(b) - penalty_scale * log(n))
+
+    Only positive feature gains are summed, allowing a sparse regime shift where a
+    subset of clues changes. If none are positive, the least-bad gain is retained so
+    the no-change hypothesis still has an evidence advantage.
+
+    Candidate scores are combined with an explicit prior over ``no change`` vs
+    ``one change``. The one-change prior mass is spread uniformly over all admissible
+    boundaries, so scanning more candidate days does not create free posterior mass.
     """
 
     if min_segment < 2:
@@ -154,6 +173,8 @@ def detect_feature_change_point(
             f"🐾 {n} tiny days cannot fit two segments of {min_segment}. Give the scissors more room."
         )
 
+    # Prefix sums make every candidate split O(d) instead of repeatedly recomputing
+    # segment means/SSE from raw rows.
     prefix = np.vstack([np.zeros(d), np.cumsum(z, axis=0)])
     prefix_sq = np.vstack([np.zeros(d), np.cumsum(z * z, axis=0)])
     base_sse = _segment_sse_by_feature(prefix, prefix_sq, 0, n)
@@ -180,6 +201,9 @@ def detect_feature_change_point(
     # naturally discourages boundary fishing across a very long timeline. 🎣✂️
     log_no_change = math.log(1.0 - change_prior)
     log_boundary_prior = math.log(change_prior) - math.log(len(boundaries))
+
+    # Treat exp(score) as relative boundary evidence and combine it with the prior in
+    # log space. Subtracting the maximum is the usual stable softmax normalization.
     log_weights = np.concatenate([[log_no_change], log_boundary_prior + scores])
     log_weights -= np.max(log_weights)
     posterior = np.exp(log_weights)
@@ -189,6 +213,8 @@ def detect_feature_change_point(
     boundary_probabilities = posterior[1:]
     change_probability = float(1.0 - no_change_probability)
 
+    # ``conditional`` answers a different question from posterior_probability:
+    # P(boundary=b | one change) instead of P(boundary=b) in the full model space.
     if change_probability > 0.0:
         conditional = boundary_probabilities / change_probability
     else:  # pragma: no cover - floating-point guard for an impossible exact zero
@@ -197,6 +223,7 @@ def detect_feature_change_point(
     best_i = int(np.argmax(conditional))
     best_boundary = int(boundaries[best_i])
 
+    # Equal-tail 90% interval over boundary location conditional on one change.
     cdf = np.cumsum(conditional)
     low_i = int(np.searchsorted(cdf, 0.05, side="left"))
     high_i = int(np.searchsorted(cdf, 0.95, side="left"))
