@@ -1,6 +1,6 @@
 # V Posterior Compression Result 🌿🔬
 
-This result follows the deliberate Voluntariness excitation bench in [`voluntariness-excitation.md`](voluntariness-excitation.md).
+This result follows the deliberate **Voluntariness (`V`)** excitation bench in [`voluntariness-excitation.md`](voluntariness-excitation.md).
 
 The focused question was:
 
@@ -37,6 +37,15 @@ observation information
 state-dynamics prior
 cross-state aliasing
 mode uncertainty
+```
+
+The scorecards below use these short names:
+
+```text
+PF   = Particle Filter
+std  = standard deviation
+r    = Pearson correlation
+RMSE = root mean squared error
 ```
 
 ## 1. The likelihood itself can distinguish low and high V 🎛️
