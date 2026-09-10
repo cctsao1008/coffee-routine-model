@@ -35,6 +35,8 @@ That keeps comparison code from quietly giving one model a different exam.
 
 ## Current arena roster 🐣🏁
 
+The roster uses `PF` as shorthand for **Particle Filter**:
+
 ```text
 CSRDM-6 hand-set PF
 CSRDM-6 learned observation
@@ -56,6 +58,14 @@ Important caveats:
 
 The first 60% of the synthetic timeline may be used by competitors that explicitly learn something.
 
+The scorecard uses these common metric names once, then their short forms below:
+
+```text
+RMSE = root mean squared error
+MAE  = mean absolute error
+NLL  = negative log likelihood
+```
+
 Reported model-quality metrics use the held-out final 40%:
 
 ```text
@@ -63,13 +73,13 @@ mean state RMSE / MAE
 relationship-index RMSE
 95% coverage where intervals exist
 mode accuracy where modes exist
-binary observation NLL / Brier
+binary observation NLL / Brier score
 Recovery-mode relationship-index RMSE
 runtime
 memory footprint proxy
 ```
 
-Observation NLL and Brier are evaluated with the **synthetic true mode fixed**. That intentionally isolates state-representation quality for this experiment.
+Observation NLL and Brier score are evaluated with the **synthetic true mode fixed**. That intentionally isolates state-representation quality for this experiment.
 
 ```text
 Synthetic scoring convenience != deployable real-world information
@@ -79,10 +89,10 @@ The answer key is explicit rather than hidden.
 
 ## Change-point metrics ✂️
 
-The default arena uses one stationary synthetic weather world, so change-point metrics are marked:
+The default arena uses one stationary synthetic weather world, so change-point metrics are marked **not applicable (`N/A`)**:
 
 ```text
-n/a for one stationary arena basket
+N/A for one stationary arena basket
 ```
 
 `N/A` is better than manufacturing a number that answers the wrong question.
