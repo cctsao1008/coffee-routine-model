@@ -39,6 +39,10 @@ def _basket(actions: RoutineActions | Mapping[str, float] | None) -> RoutineActi
 def shared_context_input(actions: RoutineActions | Mapping[str, float] | None) -> float:
     """Turn observable coordination actions into bounded memory-building input. 🧠☕
 
+    The scalar input I[t] is a weighted mixture of explicit coordination actions plus
+    two pairwise completion terms. Products such as invite*opt_in only contribute when
+    both sides of that observable exchange are present.
+
     The weights are structural prototype assumptions, not learned human constants.
     A quiet day simply contributes zero input; it does not erase existing history.
     """
@@ -64,7 +68,20 @@ def shared_context_step(
 ) -> np.ndarray:
     """Advance the Shared Context reservoir with accumulation, decay, and saturation. 🌱
 
-    C[t+1] = C[t] + eta * I[t] * (1 - C[t]) - lambda * C[t] + noise
+    The update is:
+
+        C[t+1] = C[t] + eta * I[t] * (1 - C[t]) - lambda * C[t] + epsilon[t]
+
+    where ``eta`` is accumulation_rate, ``lambda`` is decay_rate, and ``I[t]`` is the
+    bounded coordination input. The ``(1-C)`` factor creates saturation: equal positive
+    input adds less when C is already high. The decay term is proportional to existing
+    memory, so no-input days produce slow fading rather than an immediate reset.
+
+    Ignoring noise and clipping, a constant input I has fixed point:
+
+        C* = eta * I / (eta * I + lambda)
+
+    which makes the long-run balance between accumulation and decay explicit.
     """
 
     c = np.asarray(current, dtype=float)
