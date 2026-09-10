@@ -2,7 +2,20 @@
 
 Different documents answer different questions on purpose.
 
-> **Story welcomes. Tutorial teaches. Starter Math bridges. Full Math formalizes. Public API guides. Architecture defines. Labs challenge. Results record.**
+> **Story welcomes. Glossary aligns. Tutorial teaches. Starter Math bridges. Full Math formalizes. Public API guides. Architecture defines. Labs challenge. Results record.**
+
+## 📚 Terminology / glossary
+
+Use [`glossary.md`](glossary.md) when the question is **what does this recurring term mean in this project?**
+
+The glossary keeps definitions short and points back to specialist sources instead of becoming a second specification.
+
+```text
+Glossary
+= shared wording + pointers
+!= new ontology
+!= second source of truth
+```
 
 ## ☕ Story / gentle explanation
 
@@ -182,6 +195,7 @@ Design inspiration != public dataset
 
 ```text
 First visit          → README.md
+Need terminology     → docs/glossary.md
 Want the story       → docs/how-the-coffee-works.md
 Want to learn        → docs/tutorial/
 Want Starter Math    → docs/math/starter-math.md

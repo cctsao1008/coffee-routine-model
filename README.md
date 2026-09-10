@@ -145,6 +145,9 @@ High historical probability != future commitment
 You do not need to read the whole repo at one mathematical level.
 
 ```text
+📚 I just need the project vocabulary
+→ docs/glossary.md
+
 ☕ Just tell me the story
 → docs/how-the-coffee-works.md
 
@@ -178,6 +181,7 @@ The key idea is:
 > **Same model. Same example. Different depth.**
 
 `Starter Math` is a readable projection of the full model. It is not a separate Lite model.
+The [`Glossary`](docs/glossary.md) is a lookup map, not a second specification.
 
 ## 6. Run the tiny brain ☕➡️🐣
 
@@ -295,6 +299,7 @@ Not-yet-decided
 ```
 
 See [`docs/epistemic-status.md`](docs/epistemic-status.md).
+For compact definitions of recurring project terms, use [`docs/glossary.md`](docs/glossary.md).
 
 The public story contract lives in [`docs/objective-story-contract.md`](docs/objective-story-contract.md).
 The distilled design principles live in [`docs/design-principles.md`](docs/design-principles.md).
