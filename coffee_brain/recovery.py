@@ -11,6 +11,8 @@ from .model import RoutineMode
 
 STATE_KEYS = ("P", "M", "V", "C", "E", "F")
 
+# Weighted proxy for explicit repair effort. These weights are synthetic structural
+# assumptions used only by the recovery diagnostic; they are not costs measured from people.
 REPAIR_ACTION_WEIGHTS = {
     "a_notify": 0.25,
     "a_callback": 0.50,
@@ -59,7 +61,17 @@ class NominalRoutineSet:
         return np.clip(self.center + self.tolerance, 0.0, 1.0)
 
     def distance(self, state: Sequence[float]) -> float:
-        """Normalized distance outside the nominal box; zero means comfortably inside. 🌱"""
+        """Normalized distance outside the nominal box; zero means comfortably inside. 🌱
+
+        Only coordinates outside their allowed interval contribute. For coordinate j:
+
+            excess_j = max(lower_j - x_j, 0) + max(x_j - upper_j, 0)
+            scaled_j = excess_j / tolerance_j
+
+        The final distance is ``||scaled||_2 / sqrt(6)``. Dividing by each tolerance
+        makes state dimensions comparable; dividing by sqrt(6) keeps the scale from
+        growing just because the vector has six coordinates.
+        """
 
         x = np.asarray(state, dtype=float)
         if x.shape != (6,):
@@ -137,7 +149,12 @@ def _repair_cost(
     actions: Sequence[RoutineActions | Mapping[str, float]] | None,
     observations: Sequence[Mapping[str, object]] | None,
 ) -> float:
-    """Count explicit repair effort after a disturbance, without billing ordinary coffee. 🩹☕"""
+    """Count explicit repair effort after a disturbance, without billing ordinary coffee. 🩹☕
+
+    Cost is an additive weighted sum over the post-disturbance window. If explicit
+    actions are available they are preferred; otherwise selected observable repair
+    clues provide a weaker proxy. Ordinary routine activity is intentionally excluded.
+    """
 
     if stop <= start:
         return 0.0
@@ -158,7 +175,18 @@ def detect_recovery_events(
     epsilon: float = 0.0,
     repair_lambda: float = 1.0,
 ) -> list[RecoveryEvent]:
-    """Find Busy/Leave disturbance windows and measure how gently they come home. 🌧️➡️🌱"""
+    """Find Busy/Leave disturbance windows and measure how gently they come home. 🌧️➡️🌱
+
+    A disturbance is a contiguous BUSY/LEAVE mode interval. Recovery occurs at the
+    first later non-disturbance state whose normalized distance to ``nominal_set`` is
+    at most epsilon. For a recovered event:
+
+        resilience = 1 / (1 + recovery_time + repair_lambda * repair_cost)
+
+    Shorter recovery and lower explicit repair cost therefore produce larger values.
+    Unrecovered events receive resilience 0. This is a compact synthetic diagnostic,
+    not a universal definition of human resilience.
+    """
 
     states = np.asarray(states, dtype=float)
     modes = np.asarray(modes, dtype=int)
@@ -189,6 +217,8 @@ def detect_recovery_events(
 
         recovered_index: int | None = None
         for candidate in range(disturbance_end, len(states)):
+            # A new disturbance starts a new event rather than extending the search
+            # for recovery from the previous one across another disturbed interval.
             if disturbance[candidate]:
                 break
             if nominal_set.contains(states[candidate], epsilon=epsilon):
