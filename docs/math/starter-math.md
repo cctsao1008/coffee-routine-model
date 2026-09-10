@@ -1,6 +1,6 @@
 # Starter Math 🌱🧮☕
 
-**CSRDM, one sip at a time.**
+**Coupled Shared Routine Dynamics Model (CSRDM), one sip at a time.**
 
 This page is the first mathematical view of the model.
 
@@ -198,10 +198,10 @@ Read it one piece at a time:
 C_t
 → what the routine already remembers
 
-+ η I_t (1 - C_t)
++ η (eta) I_t (1 - C_t)
 → new context can accumulate, but there is less room near the top
 
-- λ C_t
+- λ (lambda) C_t
 → old context can fade slowly
 
 + w_t^C
