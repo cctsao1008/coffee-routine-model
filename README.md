@@ -34,6 +34,31 @@ story
 → diagnostics
 ```
 
+## System map 🗺️☕
+
+<p align="center">
+  <a href="docs/diagrams/README.md">
+    <img src="docs/assets/csrdm-from-routine-to-posterior.svg" alt="CSRDM — From Tiny Routine to Posterior system map" width="100%">
+  </a>
+</p>
+
+**CSRDM — From Tiny Routine to Posterior** shows the whole path at a glance:
+
+```text
+synthetic story
+→ observable events
+→ protocol adapter
+→ actions + observation clues
+→ CSRDM dynamics
+→ particle filter
+→ posterior
+→ diagnostics / public API
+```
+
+The README snapshot is derived from the validated Archify export, whose checked-in JSON IR remains the reproducible source. The visual does not create model semantics; the math docs, architecture docs, code, and tests remain authoritative for what the system actually means and does.
+
+[`Diagram source`](docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json) · [`Reproduce / validate`](docs/diagrams/README.md) · [`Architecture`](docs/architecture.md)
+
 There is only **one model here**. You choose how deep you want to read.
 
 ### What this project refuses to do 🌿
@@ -82,6 +107,7 @@ I want to inspect the model
 
 Quick doors:
 
+- [`System map`](docs/diagrams/README.md) — reproducible visual path from story to posterior;
 - [`Glossary`](docs/glossary.md) — project vocabulary;
 - [`Common Confusions`](docs/common-confusions.md) — recurring category mistakes;
 - [`Tutorial`](docs/tutorial/README.md) — guided design story;
