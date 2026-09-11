@@ -14,19 +14,33 @@ Code       → proves the current state
 
 ## CSRDM — From Tiny Routine to Posterior
 
-Source:
+Reproducible source:
 
 ```text
 csrdm-from-routine-to-posterior.dataflow.json
 ```
 
-README visual entry:
+README visual preview:
 
 ```text
 ../assets/csrdm-from-routine-to-posterior.svg
 ```
 
-The SVG is a README-friendly static snapshot derived from the validated Archify export. The checked-in JSON IR remains the reproducible diagram source.
+Full interactive map:
+
+```text
+https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html
+```
+
+The three artifacts have deliberately different roles:
+
+```text
+JSON IR → reproducible source of the authored topology
+SVG     → compact README preview
+HTML    → full-size interactive reading target
+```
+
+The SVG is a README-friendly static snapshot derived from the validated Archify export. The checked-in JSON IR remains the reproducible diagram source. The interactive HTML is generated and published by GitHub Actions after the same source passes Archify validation and delivery checks.
 
 The README snapshot intentionally uses compact node copy and one-step-larger display text so the important labels remain legible at GitHub README scale instead of turning the diagram into a dense poster. The topology, stage placement, and route semantics stay aligned with the validated Archify source.
 
@@ -60,7 +74,7 @@ Model the routine, not the person
 
 ## Reproduce with Archify
 
-The initial experiment is pinned to **Archify v2.16.0** rather than a moving `main` branch.
+The experiment is pinned to **Archify v2.16.0** rather than a moving `main` branch.
 
 Release asset integrity used for this experiment:
 
@@ -90,7 +104,7 @@ node <archify>/bin/archify.mjs deliver \
   --quality showcase
 ```
 
-The generated HTML should only be promoted into README/docs after it passes Archify's validation and is visually clearer than the existing text diagram.
+The Pages publication workflow repeats this validated delivery before publishing the interactive target. The published HTML is therefore a delivery artifact, not a separate hand-maintained source.
 
 ## Scope boundary
 
@@ -103,4 +117,4 @@ Diagram != architecture authority
 Generated artifact != new model claim
 ```
 
-The experiment and its conclusions are tracked in GitHub Issue #66.
+The initial experiment and README promotion are tracked in GitHub Issue #66. Interactive publication is tracked in GitHub Issue #70.
