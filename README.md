@@ -169,7 +169,7 @@ Probability != fact
 
 Hidden states cannot be observed directly, so CSRDM uses a **Particle Filter** — a Sequential Monte Carlo estimator that keeps many weighted candidate hidden states and updates their plausibility when new observations arrive.
 
-The resulting **posterior** is the model's current probability distribution over what remains plausible after seeing the available evidence.
+The resulting **posterior** is the model's probability distribution over what remains plausible after seeing the available evidence.
 
 ```text
 observable events
@@ -213,7 +213,7 @@ print({name: round(value, 3) for name, value in result.mean_by_state.items()})
 print(result.posterior.mode)
 ```
 
-With the current default seed, that prints:
+With the default seed used by this example, that prints:
 
 ```text
 {'predictability': 0.692, 'mutuality': 0.602, 'voluntariness': 0.805, 'shared_context': 0.587, 'state_sharing': 0.284, 'friction': 0.212}
@@ -337,7 +337,13 @@ The tiny constitution lives in [`CUTE_RULES.md`](CUTE_RULES.md).
 
 And yes: `XD` is still seasoning, not punctuation. ☕
 
-## 9. Test nest and license 🐣✅📜
+## 9. Documentation principle 📝
+
+> **README explains the system. Issues explain the journey. Code proves the current state.**
+
+README and durable documentation explain the model, assumptions, mathematics, public contracts, interpretation boundaries, and reproducible evidence. GitHub Issues preserve experiments, evolving hypotheses, temporary limitations, implementation work, and closure conclusions. Code, configuration, tests, and generated evidence remain the authoritative proof of executable behavior.
+
+## 10. Test nest and license 🐣✅📜
 
 ```bash
 python -m pip install -r requirements-dev.txt
