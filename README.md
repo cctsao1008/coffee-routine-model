@@ -46,7 +46,7 @@ story
 
 > **Story → observation → protocol adaptation → CSRDM dynamics → particle-filter inference → posterior → diagnostics / public API.**
 
-_Open the full interactive system map → [launch the Archify view](https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html)_
+→ **[Open the full interactive system map](https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html)**
 
 The README snapshot is derived from the validated Archify export, whose checked-in JSON IR remains the reproducible source. The visual does not create model semantics; the math docs, architecture docs, code, and tests remain authoritative for what the system actually means and does.
 
