@@ -5,7 +5,7 @@
     "title": "CSRDM — From Tiny Routine to Posterior",
     "subtitle": "A human-facing story becomes generic model evidence and leaves as uncertainty — not human truth.",
     "output": "docs/diagrams/csrdm-from-routine-to-posterior.html",
-    "viewBox": [1120, 680],
+    "viewBox": [1080, 680],
     "animation": "trace",
     "visual_preset": "signal-flow",
     "quality_profile": "showcase",
@@ -48,246 +48,32 @@
     { "label": "Explain" }
   ],
   "nodes": [
-    {
-      "id": "story",
-      "type": "external",
-      "label": "Cheng & Linda",
-      "sublabel": "synthetic teaching story",
-      "stage": 0,
-      "row": 2,
-      "width": 148,
-      "tag": "persona layer"
-    },
-    {
-      "id": "events",
-      "type": "frontend",
-      "label": "Observable Events",
-      "sublabel": "+1? · 要 · pass · ☕ · 👍",
-      "stage": 1,
-      "row": 1,
-      "width": 148,
-      "tag": "observable only"
-    },
-    {
-      "id": "adapter",
-      "type": "backend",
-      "label": "Protocol Adapter",
-      "sublabel": "tokens → generic fields",
-      "stage": 1,
-      "row": 3,
-      "width": 148,
-      "tag": "persona ends here"
-    },
-    {
-      "id": "actions",
-      "type": "backend",
-      "label": "Observable Actions",
-      "sublabel": "a_t · controlled input",
-      "stage": 2,
-      "row": 1,
-      "width": 148,
-      "tag": "transition input"
-    },
-    {
-      "id": "core",
-      "type": "backend",
-      "label": "CSRDM Dynamics",
-      "sublabel": "x_t=[P M V C E F] · m_t",
-      "stage": 2,
-      "row": 2,
-      "width": 148,
-      "tag": "routine state"
-    },
-    {
-      "id": "observations",
-      "type": "backend",
-      "label": "Observation Clues",
-      "sublabel": "z_t · observed clues",
-      "stage": 2,
-      "row": 3,
-      "width": 148,
-      "tag": "not intention"
-    },
-    {
-      "id": "filter",
-      "type": "backend",
-      "label": "Particle Filter",
-      "sublabel": "p(x_t, m_t | z_1:t)",
-      "stage": 3,
-      "row": 2,
-      "width": 148,
-      "tag": "SMC inference"
-    },
-    {
-      "id": "posterior",
-      "type": "database",
-      "label": "Posterior",
-      "sublabel": "means · intervals · mode probs",
-      "stage": 3,
-      "row": 3,
-      "width": 148,
-      "tag": "estimate != fact"
-    },
-    {
-      "id": "diagnostics",
-      "type": "backend",
-      "label": "Diagnostics",
-      "sublabel": "calibration · sensitivity · recovery",
-      "stage": 4,
-      "row": 1,
-      "width": 148,
-      "tag": "challenge model"
-    },
-    {
-      "id": "public_api",
-      "type": "frontend",
-      "label": "Public API",
-      "sublabel": "CSRDMResult · named views",
-      "stage": 4,
-      "row": 3,
-      "width": 148,
-      "tag": "stable door"
-    }
+    { "id": "story", "type": "external", "label": "Cheng & Linda", "sublabel": "synthetic teaching story", "stage": 0, "row": 2, "width": 148, "tag": "persona layer" },
+    { "id": "events", "type": "frontend", "label": "Observable Events", "sublabel": "+1? · 要 · pass · ☕ · 👍", "stage": 1, "row": 1, "width": 148, "tag": "observable only" },
+    { "id": "adapter", "type": "backend", "label": "Protocol Adapter", "sublabel": "tokens → generic fields", "stage": 1, "row": 3, "width": 148, "tag": "persona ends here" },
+    { "id": "actions", "type": "backend", "label": "Observable Actions", "sublabel": "a_t · controlled input", "stage": 2, "row": 1, "width": 148, "tag": "transition input" },
+    { "id": "core", "type": "backend", "label": "CSRDM Dynamics", "sublabel": "x_t=[P M V C E F] · m_t", "stage": 2, "row": 2, "width": 148, "tag": "routine state" },
+    { "id": "observations", "type": "backend", "label": "Observation Clues", "sublabel": "z_t · observed clues", "stage": 2, "row": 3, "width": 148, "tag": "not intention" },
+    { "id": "filter", "type": "backend", "label": "Particle Filter", "sublabel": "p(x_t, m_t | z_1:t)", "stage": 3, "row": 2, "width": 148, "tag": "SMC inference" },
+    { "id": "posterior", "type": "database", "label": "Posterior", "sublabel": "means · intervals · mode probs", "stage": 3, "row": 3, "width": 148, "tag": "estimate != fact" },
+    { "id": "diagnostics", "type": "backend", "label": "Diagnostics", "sublabel": "calibration · recovery", "stage": 4, "row": 1, "width": 148, "tag": "challenge model" },
+    { "id": "public_api", "type": "frontend", "label": "Public API", "sublabel": "CSRDMResult · named views", "stage": 4, "row": 3, "width": 148, "tag": "stable door" }
   ],
   "flows": [
-    {
-      "id": "story-events",
-      "from": "story",
-      "to": "events",
-      "label": "story",
-      "variant": "security",
-      "fromSide": "right",
-      "toSide": "left",
-      "via": [[208, 385], [208, 271]],
-      "labelAt": [208, 325]
-    },
-    {
-      "id": "events-adapter",
-      "from": "events",
-      "to": "adapter",
-      "label": "tokens",
-      "variant": "emphasis",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "route": "straight",
-      "labelAt": [355, 385]
-    },
-    {
-      "id": "adapter-actions",
-      "from": "adapter",
-      "to": "actions",
-      "label": "a_t",
-      "variant": "emphasis",
-      "fromSide": "right",
-      "toSide": "left",
-      "via": [[420, 499], [420, 271]],
-      "labelAt": [445, 350]
-    },
-    {
-      "id": "adapter-observations",
-      "from": "adapter",
-      "to": "observations",
-      "label": "z_t",
-      "variant": "emphasis",
-      "fromSide": "bottom",
-      "toSide": "left",
-      "via": [[315, 550], [430, 550], [430, 499]],
-      "labelAt": [385, 575]
-    },
-    {
-      "id": "actions-core",
-      "from": "actions",
-      "to": "core",
-      "label": "drift",
-      "variant": "default",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "route": "straight",
-      "labelAt": [575, 328]
-    },
-    {
-      "id": "core-filter",
-      "from": "core",
-      "to": "filter",
-      "label": "prior",
-      "variant": "emphasis",
-      "fromSide": "right",
-      "toSide": "left",
-      "route": "straight",
-      "labelAt": [638, 335]
-    },
-    {
-      "id": "observations-filter",
-      "from": "observations",
-      "to": "filter",
-      "label": "likelihood",
-      "variant": "emphasis",
-      "fromSide": "right",
-      "toSide": "bottom",
-      "via": [[640, 499], [640, 445], [745, 445]],
-      "labelAt": [635, 425]
-    },
-    {
-      "id": "filter-posterior",
-      "from": "filter",
-      "to": "posterior",
-      "label": "posterior",
-      "variant": "emphasis",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "route": "straight",
-      "labelAt": [805, 442]
-    },
-    {
-      "id": "posterior-diagnostics",
-      "from": "posterior",
-      "to": "diagnostics",
-      "label": "history",
-      "variant": "dashed",
-      "fromSide": "right",
-      "toSide": "left",
-      "via": [[850, 499], [850, 271]],
-      "labelAt": [850, 370]
-    },
-    {
-      "id": "posterior-api",
-      "from": "posterior",
-      "to": "public_api",
-      "label": "result",
-      "variant": "emphasis",
-      "fromSide": "bottom",
-      "toSide": "bottom",
-      "via": [[745, 555], [960, 555]],
-      "labelAt": [850, 580]
-    }
+    { "id": "story-events", "from": "story", "to": "events", "label": "story", "variant": "security", "fromSide": "right", "toSide": "left", "via": [[208, 385], [208, 271]], "labelAt": [208, 325] },
+    { "id": "events-adapter", "from": "events", "to": "adapter", "label": "tokens", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [355, 385] },
+    { "id": "adapter-actions", "from": "adapter", "to": "actions", "label": "a_t", "variant": "emphasis", "fromSide": "right", "toSide": "left", "via": [[420, 499], [420, 271]], "labelAt": [445, 350] },
+    { "id": "adapter-observations", "from": "adapter", "to": "observations", "label": "z_t", "variant": "emphasis", "fromSide": "bottom", "toSide": "left", "via": [[315, 550], [430, 550], [430, 499]], "labelAt": [385, 575] },
+    { "id": "actions-core", "from": "actions", "to": "core", "label": "drift", "variant": "default", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [575, 328] },
+    { "id": "core-filter", "from": "core", "to": "filter", "label": "prior", "variant": "emphasis", "fromSide": "right", "toSide": "left", "route": "straight", "labelAt": [638, 335] },
+    { "id": "observations-filter", "from": "observations", "to": "filter", "label": "likelihood", "variant": "emphasis", "fromSide": "right", "toSide": "bottom", "via": [[640, 499], [640, 445], [745, 445]], "labelAt": [635, 425] },
+    { "id": "filter-posterior", "from": "filter", "to": "posterior", "label": "posterior", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [805, 442] },
+    { "id": "posterior-diagnostics", "from": "posterior", "to": "diagnostics", "label": "history", "variant": "dashed", "fromSide": "right", "toSide": "left", "via": [[850, 499], [850, 271]], "labelAt": [850, 370] },
+    { "id": "posterior-api", "from": "posterior", "to": "public_api", "label": "result", "variant": "emphasis", "fromSide": "bottom", "toSide": "bottom", "via": [[745, 555], [960, 555]], "labelAt": [850, 580] }
   ],
   "cards": [
-    {
-      "dot": "orange",
-      "title": "Human boundary",
-      "items": [
-        "Cheng and Linda exist only in the synthetic teaching layer.",
-        "Persona names disappear before architecture-defining CSRDM semantics begin.",
-        "The public story is illustrative, not a private transcript."
-      ]
-    },
-    {
-      "dot": "violet",
-      "title": "Inference boundary",
-      "items": [
-        "Observation != intention.",
-        "Posterior != human truth.",
-        "Model the routine, not the person."
-      ]
-    },
-    {
-      "dot": "emerald",
-      "title": "Authority boundary",
-      "items": [
-        "README explains the system; this map shows the system.",
-        "Math docs define the model; code and tests prove executable behavior.",
-        "The diagram introduces no new topology or model claim."
-      ]
-    }
+    { "dot": "orange", "title": "Human boundary", "items": ["Cheng and Linda exist only in the synthetic teaching layer.", "Persona names disappear before architecture-defining CSRDM semantics begin.", "The public story is illustrative, not a private transcript."] },
+    { "dot": "violet", "title": "Inference boundary", "items": ["Observation != intention.", "Posterior != human truth.", "Model the routine, not the person."] },
+    { "dot": "emerald", "title": "Authority boundary", "items": ["README explains the system; this map shows the system.", "Math docs define the model; code and tests prove executable behavior.", "The diagram introduces no new topology or model claim."] }
   ]
 }
