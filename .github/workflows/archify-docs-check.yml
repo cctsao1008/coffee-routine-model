@@ -1,0 +1,70 @@
+name: 🗺️☕ Archify Map Check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "docs/diagrams/*.dataflow.json"
+      - "docs/diagrams/README.md"
+      - ".github/workflows/archify-docs-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-render:
+    name: 🐣 Check the tiny system map
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧺 Pick up the little repo basket
+        uses: actions/checkout@v4
+
+      - name: ☕ Warm up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 🗺️ Fetch pinned Archify
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --silent --show-error \
+            -o "$RUNNER_TEMP/archify.zip" \
+            https://github.com/tt-a1i/archify/releases/download/v2.16.0/archify.zip
+          echo "4c59fa6557a2385beaaef8c7219cc414573acc9f0c30a932d5053b0b20689a46  $RUNNER_TEMP/archify.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/archify-skill"
+          unzip -q "$RUNNER_TEMP/archify.zip" -d "$RUNNER_TEMP/archify-skill"
+          test -f "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs"
+
+      - name: 🔍 Validate the authored map
+        shell: bash
+        run: |
+          set -euo pipefail
+          node "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs" validate \
+            dataflow \
+            docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json \
+            --json \
+            --quality showcase
+
+      - name: ✨ Render one verified map
+        shell: bash
+        run: |
+          set -euo pipefail
+          node "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs" deliver \
+            dataflow \
+            docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json \
+            "$RUNNER_TEMP/csrdm-from-routine-to-posterior.html" \
+            --json \
+            --quality showcase
+          node "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs" check \
+            "$RUNNER_TEMP/csrdm-from-routine-to-posterior.html"
+
+      - name: 🎁 Keep the verified preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: csrdm-archify-preview
+          path: |
+            docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json
+            ${{ runner.temp }}/csrdm-from-routine-to-posterior.html
+          if-no-files-found: error
