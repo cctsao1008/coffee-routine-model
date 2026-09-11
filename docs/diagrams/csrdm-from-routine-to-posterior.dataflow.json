@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "CSRDM — From Tiny Routine to Posterior",
+    "subtitle": "A human-facing story enters as observable events, becomes generic model evidence, and leaves as uncertainty — not human truth.",
+    "output": "docs/diagrams/csrdm-from-routine-to-posterior.html",
+    "viewBox": [1320, 680],
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "story-to-core",
+        "label": "Story to core",
+        "focus": ["story", "events", "adapter", "actions", "observations", "core"],
+        "note": "Follow the synthetic Cheng/Linda teaching layer until persona names disappear into generic model semantics."
+      },
+      {
+        "id": "inference-path",
+        "label": "Inference path",
+        "focus": ["core", "observations", "filter", "posterior"],
+        "note": "See how dynamics and observation clues meet inside Sequential Monte Carlo inference."
+      },
+      {
+        "id": "epistemic-boundaries",
+        "label": "Epistemic boundaries",
+        "focus": ["story", "observations", "posterior", "public_api"],
+        "note": "The map preserves observation != intention, posterior != human truth, and model the routine, not the person."
+      }
+    ],
+    "legend": {
+      "mode": "all",
+      "entries": {
+        "default": { "label": "ordinary data / control flow", "visible": true },
+        "emphasis": { "label": "primary model path", "visible": true },
+        "security": { "label": "epistemic boundary", "visible": true },
+        "dashed": { "label": "optional / diagnostic path", "visible": true },
+        "database": { "label": "stored or summarized state", "visible": false }
+      }
+    }
+  },
+  "stages": [
+    { "label": "Story" },
+    { "label": "Observe" },
+    { "label": "Model" },
+    { "label": "Infer" },
+    { "label": "Explain" }
+  ],
+  "nodes": [
+    {
+      "id": "story",
+      "type": "external",
+      "label": "Cheng & Linda",
+      "sublabel": "synthetic teaching story",
+      "stage": 0,
+      "row": 1,
+      "tag": "persona layer"
+    },
+    {
+      "id": "events",
+      "type": "frontend",
+      "label": "Observable Events",
+      "sublabel": "+1? · 要 · pass · ☕ · 👍 · busy · resume",
+      "stage": 1,
+      "row": 1,
+      "tag": "observable only"
+    },
+    {
+      "id": "adapter",
+      "type": "backend",
+      "label": "Protocol Adapter",
+      "sublabel": "story tokens → generic model fields",
+      "stage": 1,
+      "row": 3,
+      "tag": "persona ends here"
+    },
+    {
+      "id": "actions",
+      "type": "backend",
+      "label": "Observable Actions",
+      "sublabel": "a_t · invite / deliver / notify / callback / …",
+      "stage": 2,
+      "row": 0,
+      "tag": "controlled input"
+    },
+    {
+      "id": "observations",
+      "type": "backend",
+      "label": "Observation Clues",
+      "sublabel": "z_t · opt-in / pass / reaction / warmth / delay / …",
+      "stage": 2,
+      "row": 3,
+      "tag": "evidence, not intention"
+    },
+    {
+      "id": "core",
+      "type": "backend",
+      "label": "CSRDM Dynamics",
+      "sublabel": "x_t = [P M V C E F] · hybrid mode m_t",
+      "stage": 2,
+      "row": 1,
+      "tag": "routine state"
+    },
+    {
+      "id": "filter",
+      "type": "backend",
+      "label": "Particle Filter",
+      "sublabel": "p(x_t, m_t | z_1:t)",
+      "stage": 3,
+      "row": 1,
+      "tag": "SMC inference"
+    },
+    {
+      "id": "posterior",
+      "type": "database",
+      "label": "Posterior + Uncertainty",
+      "sublabel": "weighted state cloud · means · intervals · mode probabilities",
+      "stage": 3,
+      "row": 3,
+      "tag": "estimate ≠ fact"
+    },
+    {
+      "id": "diagnostics",
+      "type": "backend",
+      "label": "Diagnostics & Smoothing",
+      "sublabel": "calibration · observability · sensitivity · recovery · smoothing",
+      "stage": 4,
+      "row": 0,
+      "tag": "challenge the model"
+    },
+    {
+      "id": "public_api",
+      "type": "frontend",
+      "label": "Public API",
+      "sublabel": "CSRDMResult · named state views · explicit uncertainty",
+      "stage": 4,
+      "row": 3,
+      "tag": "stable public door"
+    }
+  ],
+  "flows": [
+    {
+      "id": "story-events",
+      "from": "story",
+      "to": "events",
+      "label": "illustrative routine beats",
+      "classification": "synthetic story",
+      "variant": "security",
+      "route": "straight"
+    },
+    {
+      "id": "events-adapter",
+      "from": "events",
+      "to": "adapter",
+      "label": "human-readable tokens",
+      "classification": "observable vocabulary",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "adapter-actions",
+      "from": "adapter",
+      "to": "actions",
+      "label": "action basket a_t",
+      "classification": "generic model input",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "adapter-observations",
+      "from": "adapter",
+      "to": "observations",
+      "label": "observation basket z_t",
+      "classification": "generic model evidence",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "actions-core",
+      "from": "actions",
+      "to": "core",
+      "label": "controlled drift + memory input",
+      "classification": "state transition input",
+      "variant": "default",
+      "route": "straight"
+    },
+    {
+      "id": "core-filter",
+      "from": "core",
+      "to": "filter",
+      "label": "state / mode transition prior",
+      "classification": "latent dynamics",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "observations-filter",
+      "from": "observations",
+      "to": "filter",
+      "label": "observation likelihood",
+      "classification": "evidence update",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "filter-posterior",
+      "from": "filter",
+      "to": "posterior",
+      "label": "normalized importance weights",
+      "classification": "posterior estimate",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "posterior-diagnostics",
+      "from": "posterior",
+      "to": "diagnostics",
+      "label": "history + uncertainty summaries",
+      "classification": "specialist evaluation",
+      "variant": "dashed",
+      "route": "straight"
+    },
+    {
+      "id": "posterior-api",
+      "from": "posterior",
+      "to": "public_api",
+      "label": "named posterior result",
+      "classification": "public result",
+      "variant": "emphasis",
+      "route": "straight"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "orange",
+      "title": "Human boundary",
+      "items": [
+        "Cheng and Linda exist only in the synthetic teaching layer.",
+        "Persona names disappear before architecture-defining CSRDM semantics begin.",
+        "The public story is illustrative, not a private transcript."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Inference boundary",
+      "items": [
+        "Observation != intention.",
+        "Posterior != human truth.",
+        "Model the routine, not the person."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Authority boundary",
+      "items": [
+        "README explains the system; this map shows the system.",
+        "Math docs define the model; code and tests prove executable behavior.",
+        "The diagram introduces no new topology or model claim."
+      ]
+    }
+  ]
+}
