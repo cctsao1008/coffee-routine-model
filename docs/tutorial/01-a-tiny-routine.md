@@ -23,11 +23,21 @@ Friday
 resume
 ```
 
+Nothing here needs to be dramatic.
+
+One person asks. Another says yes, says pass, gets busy, or comes back later. A tiny routine can become familiar precisely because most of its moments are ordinary.
+
+That ordinariness is worth preserving. If we explain every small action as hidden meaning, the model stops describing a routine and starts inventing a story about the people inside it.
+
 These are synthetic teaching beats. At this stage, do not explain them psychologically. Just list what happened.
 
 That is the first modeling discipline:
 
 > **Begin with observables before inventing hidden meaning.**
+
+And the first human-facing discipline is just as important:
+
+> **Ordinary does not mean meaningless. It means we do not have to manufacture meaning.**
 
 ## What can the model actually see?
 
@@ -78,6 +88,8 @@ That would not be inference. It would be our assumption coming back wearing a ti
 
 So the project keeps behavior-level events separate from latent state.
 
+That separation does not make the story less human. It does the opposite: it leaves room for people to remain more complicated than the variables used to describe one small routine.
+
 ## The first code boundary
 
 The companion protocol speaks small human-readable tokens. The adapter translates them into generic fields:
@@ -117,6 +129,8 @@ That is easy to count, but it already throws away too much information.
 A voluntary `pass`, a busy day, leave, a delayed reply, and a broken routine would all collapse into the same bucket: **no coffee**.
 
 They are not the same observable situation.
+
+That distinction is small, but it carries much of the project's philosophy: choice should stay choice, interruption should stay interruption, and uncertainty should stay uncertainty.
 
 So the next question is unavoidable:
 
