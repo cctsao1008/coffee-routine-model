@@ -20,6 +20,14 @@ Source:
 csrdm-from-routine-to-posterior.dataflow.json
 ```
 
+README visual entry:
+
+```text
+../assets/csrdm-from-routine-to-posterior.svg
+```
+
+The SVG is a README-friendly static snapshot derived from the validated Archify export. The checked-in JSON IR remains the reproducible diagram source.
+
 The source uses Archify's typed `dataflow` JSON IR. Its job is to visualize the already-documented architecture path:
 
 ```text
@@ -80,7 +88,18 @@ node <archify>/bin/archify.mjs deliver \
   --quality showcase
 ```
 
-The generated HTML should only be promoted into README/docs after it passes Archify's validation and is visually clearer than the existing text diagram.
+The generated artifact must pass Archify validation before it is eligible for durable documentation use.
+
+## README promotion
+
+Human visual review approved the map for README promotion on **2026-09-11** after the showcase validator and verified render both passed.
+
+The promoted SVG is intentionally static and lightweight for GitHub README rendering. It preserves the validated topology and the same epistemic boundaries while removing viewer-only interaction/runtime state.
+
+```text
+Validated topology → durable README snapshot
+Viewer interaction → stays outside the README asset
+```
 
 ## Scope boundary
 
