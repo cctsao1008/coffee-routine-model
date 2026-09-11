@@ -36,7 +36,7 @@ story
 
 ## System map 🗺️☕
 
-**CSRDM — From Tiny Routine to Posterior** is available as a full interactive map rather than a reduced README preview, so node labels and flow annotations remain readable.
+The full **CSRDM — From Tiny Routine to Posterior** map lives in an interactive view so node labels and flow annotations remain readable.
 
 ```text
 Story
@@ -50,7 +50,7 @@ Story
 
 The interactive map expands those five stages into protocol adaptation, CSRDM dynamics, particle-filter inference, posterior flow, diagnostics, and the public API.
 
-Its checked-in JSON IR remains the reproducible authored topology. The map is explanatory: the math docs, architecture docs, code, and tests remain authoritative for semantics and implemented behavior.
+Its checked-in JSON IR remains the reproducible source for the map topology. The map is explanatory: the math docs, architecture docs, code, and tests remain authoritative for semantics and implemented behavior.
 
 [`Diagram source`](docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json) · [`Reproduce / validate`](docs/diagrams/README.md) · [`Architecture`](docs/architecture.md)
 
