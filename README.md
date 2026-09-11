@@ -36,25 +36,27 @@ story
 
 ## System map 🗺️☕
 
-<p align="center">
-  <a href="https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html">
-    <img src="docs/assets/csrdm-from-routine-to-posterior.svg" alt="CSRDM — From Tiny Routine to Posterior system map" width="100%">
-  </a>
-</p>
+**CSRDM — From Tiny Routine to Posterior** is available as a full interactive map rather than a reduced README preview, so node labels and flow annotations remain readable.
 
-**CSRDM — From Tiny Routine to Posterior** shows how a tiny routine becomes a modeling path:
-
-> **Story → observation → protocol adaptation → CSRDM dynamics → particle-filter inference → posterior → diagnostics / public API.**
+```text
+Story
+→ Observe
+→ Model
+→ Infer
+→ Explain
+```
 
 → **[Open the full interactive system map](https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html)**
 
-The README snapshot is derived from the validated Archify export, whose checked-in JSON IR remains the reproducible source. The visual does not create model semantics; the math docs, architecture docs, code, and tests remain authoritative for what the system actually means and does.
+The interactive map expands those five stages into protocol adaptation, CSRDM dynamics, particle-filter inference, posterior flow, diagnostics, and the public API.
+
+Its checked-in JSON IR remains the reproducible authored topology. The map is explanatory: the math docs, architecture docs, code, and tests remain authoritative for semantics and implemented behavior.
 
 [`Diagram source`](docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json) · [`Reproduce / validate`](docs/diagrams/README.md) · [`Architecture`](docs/architecture.md)
 
 There is only **one model here**. You choose how deep you want to read.
 
-### What this project refuses to do 🌿
+## What this project refuses to do 🌿
 
 ```text
 ✗ read minds
@@ -88,6 +90,9 @@ Posterior estimate != human truth
 ## Choose a path 🪜☕
 
 ```text
+I want a friendly tour
+→ Wiki → Start Here → System map
+
 I just want the idea
 → README → Glossary → Starter Math
 
@@ -100,6 +105,7 @@ I want to inspect the model
 
 Quick doors:
 
+- [`Wiki`](https://github.com/cctsao1008/coffee-routine-model/wiki) — friendly navigation layer;
 - [`System map`](https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html) — interactive visual path from story to posterior;
 - [`Glossary`](docs/glossary.md) — project vocabulary;
 - [`Common Confusions`](docs/common-confusions.md) — recurring category mistakes;
@@ -197,7 +203,7 @@ Can friction change over time?
 
 ## 4. CSRDM appears ☕🧠
 
-**Coupled Shared Routine Dynamics Model (CSRDM)** is the model that answers those questions probabilistically.
+**Coupled Shared Routine Dynamics Model (CSRDM)** is the model used to represent those questions probabilistically.
 
 ```text
 Coupled        → both sides can affect the routine
@@ -206,7 +212,7 @@ Dynamics       → it can change over time
 Model          → it remains an uncertain abstraction
 ```
 
-The six soft hidden states are:
+The six latent routine-state variables are:
 
 ```text
 P = Predictability
@@ -238,7 +244,7 @@ Probability != fact
 
 Hidden states cannot be observed directly, so CSRDM uses a **Particle Filter** — a Sequential Monte Carlo estimator that keeps many weighted candidate hidden states and updates their plausibility when new observations arrive.
 
-The resulting **posterior** is the model's probability distribution over what remains plausible after seeing the available evidence.
+The resulting **posterior** is the model's probability distribution over latent routine states and modes after conditioning on the available observations under the current model assumptions.
 
 ```text
 observable events
@@ -410,7 +416,7 @@ And yes: `XD` is still seasoning, not punctuation. ☕
 
 > **README explains the system. Issues explain the journey. Code proves the current state.**
 
-README and durable documentation explain the model, assumptions, mathematics, public contracts, interpretation boundaries, and reproducible evidence. GitHub Issues preserve experiments, evolving hypotheses, temporary limitations, implementation work, and closure conclusions. Code, configuration, tests, and generated evidence remain the authoritative proof of executable behavior.
+README and durable documentation explain the model, assumptions, mathematics, public contracts, interpretation boundaries, and reproducible evidence. The Wiki is a friendly navigation layer, not a second specification. GitHub Issues preserve experiments, evolving hypotheses, temporary limitations, implementation work, and closure conclusions. Code, configuration, tests, and generated evidence remain the authoritative proof of executable behavior.
 
 ## 10. Test nest and license 🐣✅📜
 
