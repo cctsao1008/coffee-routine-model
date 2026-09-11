@@ -21,6 +21,24 @@ story
 
 There is only **one model here**. You choose how deep you want to read.
 
+## What is this useful for? ☕🧭
+
+CSRDM is a small research and engineering sandbox for recurring voluntary routines where observations are incomplete, context accumulates, interruptions happen, and uncertainty should remain visible.
+
+Coffee is the reference domain because it keeps the model concrete and easy to inspect. The same modeling pattern could also be explored for:
+
+- **recurring team check-ins**;
+- **shared household routines**;
+- **study / practice rituals**.
+
+These are adaptation directions, not validated generalization claims.
+
+```text
+Possible adaptation != validated generalization
+Modeling a routine != modeling a person
+Posterior estimate != human truth
+```
+
 ## Choose a path 🪜☕
 
 ```text
