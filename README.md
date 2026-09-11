@@ -37,7 +37,7 @@ story
 ## System map 🗺️☕
 
 <p align="center">
-  <a href="docs/diagrams/README.md">
+  <a href="https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html">
     <img src="docs/assets/csrdm-from-routine-to-posterior.svg" alt="CSRDM — From Tiny Routine to Posterior system map" width="100%">
   </a>
 </p>
@@ -46,7 +46,7 @@ story
 
 > **Story → observation → protocol adaptation → CSRDM dynamics → particle-filter inference → posterior → diagnostics / public API.**
 
-_Open the full system map → [docs/diagrams/README.md](docs/diagrams/README.md)_
+_Open the full interactive system map → [launch the Archify view](https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html)_
 
 The README snapshot is derived from the validated Archify export, whose checked-in JSON IR remains the reproducible source. The visual does not create model semantics; the math docs, architecture docs, code, and tests remain authoritative for what the system actually means and does.
 
@@ -100,7 +100,7 @@ I want to inspect the model
 
 Quick doors:
 
-- [`System map`](docs/diagrams/README.md) — visual path from story to posterior;
+- [`System map`](https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html) — interactive visual path from story to posterior;
 - [`Glossary`](docs/glossary.md) — project vocabulary;
 - [`Common Confusions`](docs/common-confusions.md) — recurring category mistakes;
 - [`Tutorial`](docs/tutorial/README.md) — guided design story;
