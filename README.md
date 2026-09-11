@@ -42,18 +42,11 @@ story
   </a>
 </p>
 
-**CSRDM — From Tiny Routine to Posterior** shows the whole path at a glance:
+**CSRDM — From Tiny Routine to Posterior** shows how a tiny routine becomes a modeling path:
 
-```text
-synthetic story
-→ observable events
-→ protocol adapter
-→ actions + observation clues
-→ CSRDM dynamics
-→ particle filter
-→ posterior
-→ diagnostics / public API
-```
+> **Story → observation → protocol adaptation → CSRDM dynamics → particle-filter inference → posterior → diagnostics / public API.**
+
+_Open the full system map → [docs/diagrams/README.md](docs/diagrams/README.md)_
 
 The README snapshot is derived from the validated Archify export, whose checked-in JSON IR remains the reproducible source. The visual does not create model semantics; the math docs, architecture docs, code, and tests remain authoritative for what the system actually means and does.
 
@@ -107,7 +100,7 @@ I want to inspect the model
 
 Quick doors:
 
-- [`System map`](docs/diagrams/README.md) — reproducible visual path from story to posterior;
+- [`System map`](docs/diagrams/README.md) — visual path from story to posterior;
 - [`Glossary`](docs/glossary.md) — project vocabulary;
 - [`Common Confusions`](docs/common-confusions.md) — recurring category mistakes;
 - [`Tutorial`](docs/tutorial/README.md) — guided design story;
