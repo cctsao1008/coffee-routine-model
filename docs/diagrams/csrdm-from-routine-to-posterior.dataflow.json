@@ -3,9 +3,9 @@
   "diagram_type": "dataflow",
   "meta": {
     "title": "CSRDM — From Tiny Routine to Posterior",
-    "subtitle": "A human-facing story enters as observable events, becomes generic model evidence, and leaves as uncertainty — not human truth.",
+    "subtitle": "A human-facing story becomes generic model evidence and leaves as uncertainty — not human truth.",
     "output": "docs/diagrams/csrdm-from-routine-to-posterior.html",
-    "viewBox": [1320, 680],
+    "viewBox": [1120, 680],
     "animation": "trace",
     "visual_preset": "signal-flow",
     "quality_profile": "showcase",
@@ -26,17 +26,17 @@
         "id": "epistemic-boundaries",
         "label": "Epistemic boundaries",
         "focus": ["story", "observations", "posterior", "public_api"],
-        "note": "The map preserves observation != intention, posterior != human truth, and model the routine, not the person."
+        "note": "Observation != intention; posterior != human truth; model the routine, not the person."
       }
     ],
     "legend": {
       "mode": "all",
       "entries": {
-        "default": { "label": "ordinary data / control flow", "visible": true },
-        "emphasis": { "label": "primary model path", "visible": true },
-        "security": { "label": "epistemic boundary", "visible": true },
-        "dashed": { "label": "optional / diagnostic path", "visible": true },
-        "database": { "label": "stored or summarized state", "visible": false }
+        "default": { "label": "ordinary model flow", "visible": true },
+        "emphasis": { "label": "primary inference path", "visible": true },
+        "security": { "label": "story / epistemic boundary", "visible": true },
+        "dashed": { "label": "diagnostic path", "visible": true },
+        "database": { "label": "posterior state", "visible": false }
       }
     }
   },
@@ -54,53 +54,59 @@
       "label": "Cheng & Linda",
       "sublabel": "synthetic teaching story",
       "stage": 0,
-      "row": 1,
+      "row": 2,
+      "width": 148,
       "tag": "persona layer"
     },
     {
       "id": "events",
       "type": "frontend",
       "label": "Observable Events",
-      "sublabel": "+1? · 要 · pass · ☕ · 👍 · busy · resume",
+      "sublabel": "+1? · 要 · pass · ☕ · 👍",
       "stage": 1,
       "row": 1,
+      "width": 148,
       "tag": "observable only"
     },
     {
       "id": "adapter",
       "type": "backend",
       "label": "Protocol Adapter",
-      "sublabel": "story tokens → generic model fields",
+      "sublabel": "tokens → generic fields",
       "stage": 1,
       "row": 3,
+      "width": 148,
       "tag": "persona ends here"
     },
     {
       "id": "actions",
       "type": "backend",
       "label": "Observable Actions",
-      "sublabel": "a_t · invite / deliver / notify / callback / …",
+      "sublabel": "a_t · controlled input",
       "stage": 2,
-      "row": 0,
-      "tag": "controlled input"
-    },
-    {
-      "id": "observations",
-      "type": "backend",
-      "label": "Observation Clues",
-      "sublabel": "z_t · opt-in / pass / reaction / warmth / delay / …",
-      "stage": 2,
-      "row": 3,
-      "tag": "evidence, not intention"
+      "row": 1,
+      "width": 148,
+      "tag": "transition input"
     },
     {
       "id": "core",
       "type": "backend",
       "label": "CSRDM Dynamics",
-      "sublabel": "x_t = [P M V C E F] · hybrid mode m_t",
+      "sublabel": "x_t=[P M V C E F] · m_t",
       "stage": 2,
-      "row": 1,
+      "row": 2,
+      "width": 148,
       "tag": "routine state"
+    },
+    {
+      "id": "observations",
+      "type": "backend",
+      "label": "Observation Clues",
+      "sublabel": "z_t · observed clues",
+      "stage": 2,
+      "row": 3,
+      "width": 148,
+      "tag": "not intention"
     },
     {
       "id": "filter",
@@ -108,35 +114,39 @@
       "label": "Particle Filter",
       "sublabel": "p(x_t, m_t | z_1:t)",
       "stage": 3,
-      "row": 1,
+      "row": 2,
+      "width": 148,
       "tag": "SMC inference"
     },
     {
       "id": "posterior",
       "type": "database",
-      "label": "Posterior + Uncertainty",
-      "sublabel": "weighted state cloud · means · intervals · mode probabilities",
+      "label": "Posterior",
+      "sublabel": "means · intervals · mode probs",
       "stage": 3,
       "row": 3,
-      "tag": "estimate ≠ fact"
+      "width": 148,
+      "tag": "estimate != fact"
     },
     {
       "id": "diagnostics",
       "type": "backend",
-      "label": "Diagnostics & Smoothing",
-      "sublabel": "calibration · observability · sensitivity · recovery · smoothing",
+      "label": "Diagnostics",
+      "sublabel": "calibration · sensitivity · recovery",
       "stage": 4,
-      "row": 0,
-      "tag": "challenge the model"
+      "row": 1,
+      "width": 148,
+      "tag": "challenge model"
     },
     {
       "id": "public_api",
       "type": "frontend",
       "label": "Public API",
-      "sublabel": "CSRDMResult · named state views · explicit uncertainty",
+      "sublabel": "CSRDMResult · named views",
       "stage": 4,
       "row": 3,
-      "tag": "stable public door"
+      "width": 148,
+      "tag": "stable door"
     }
   ],
   "flows": [
@@ -144,91 +154,111 @@
       "id": "story-events",
       "from": "story",
       "to": "events",
-      "label": "illustrative routine beats",
-      "classification": "synthetic story",
+      "label": "story",
       "variant": "security",
-      "route": "straight"
+      "fromSide": "right",
+      "toSide": "left",
+      "via": [[208, 385], [208, 271]],
+      "labelAt": [208, 325]
     },
     {
       "id": "events-adapter",
       "from": "events",
       "to": "adapter",
-      "label": "human-readable tokens",
-      "classification": "observable vocabulary",
+      "label": "tokens",
       "variant": "emphasis",
-      "route": "straight"
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight",
+      "labelAt": [355, 385]
     },
     {
       "id": "adapter-actions",
       "from": "adapter",
       "to": "actions",
-      "label": "action basket a_t",
-      "classification": "generic model input",
+      "label": "a_t",
       "variant": "emphasis",
-      "route": "straight"
+      "fromSide": "right",
+      "toSide": "left",
+      "via": [[420, 499], [420, 271]],
+      "labelAt": [445, 350]
     },
     {
       "id": "adapter-observations",
       "from": "adapter",
       "to": "observations",
-      "label": "observation basket z_t",
-      "classification": "generic model evidence",
+      "label": "z_t",
       "variant": "emphasis",
-      "route": "straight"
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [[315, 550], [430, 550], [430, 499]],
+      "labelAt": [385, 575]
     },
     {
       "id": "actions-core",
       "from": "actions",
       "to": "core",
-      "label": "controlled drift + memory input",
-      "classification": "state transition input",
+      "label": "drift",
       "variant": "default",
-      "route": "straight"
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight",
+      "labelAt": [575, 328]
     },
     {
       "id": "core-filter",
       "from": "core",
       "to": "filter",
-      "label": "state / mode transition prior",
-      "classification": "latent dynamics",
+      "label": "prior",
       "variant": "emphasis",
-      "route": "straight"
+      "fromSide": "right",
+      "toSide": "left",
+      "route": "straight",
+      "labelAt": [638, 335]
     },
     {
       "id": "observations-filter",
       "from": "observations",
       "to": "filter",
-      "label": "observation likelihood",
-      "classification": "evidence update",
+      "label": "likelihood",
       "variant": "emphasis",
-      "route": "straight"
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [[640, 499], [640, 445], [745, 445]],
+      "labelAt": [635, 425]
     },
     {
       "id": "filter-posterior",
       "from": "filter",
       "to": "posterior",
-      "label": "normalized importance weights",
-      "classification": "posterior estimate",
+      "label": "posterior",
       "variant": "emphasis",
-      "route": "straight"
+      "fromSide": "bottom",
+      "toSide": "top",
+      "route": "straight",
+      "labelAt": [805, 442]
     },
     {
       "id": "posterior-diagnostics",
       "from": "posterior",
       "to": "diagnostics",
-      "label": "history + uncertainty summaries",
-      "classification": "specialist evaluation",
+      "label": "history",
       "variant": "dashed",
-      "route": "straight"
+      "fromSide": "right",
+      "toSide": "left",
+      "via": [[850, 499], [850, 271]],
+      "labelAt": [850, 370]
     },
     {
       "id": "posterior-api",
       "from": "posterior",
       "to": "public_api",
-      "label": "named posterior result",
-      "classification": "public result",
+      "label": "result",
       "variant": "emphasis",
-      "route": "straight"
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "via": [[745, 555], [960, 555]],
+      "labelAt": [850, 580]
     }
   ],
   "cards": [
