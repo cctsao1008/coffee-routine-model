@@ -5,7 +5,7 @@
     "title": "CSRDM — From Tiny Routine to Posterior",
     "subtitle": "A human-facing story becomes generic model evidence and leaves as uncertainty — not human truth.",
     "output": "docs/diagrams/csrdm-from-routine-to-posterior.html",
-    "viewBox": [1080, 680],
+    "viewBox": [1000, 650],
     "animation": "trace",
     "visual_preset": "signal-flow",
     "quality_profile": "showcase",
@@ -48,16 +48,16 @@
     { "label": "Explain" }
   ],
   "nodes": [
-    { "id": "story", "type": "external", "label": "Cheng & Linda", "sublabel": "synthetic teaching story", "stage": 0, "row": 2, "width": 148, "tag": "persona layer" },
-    { "id": "events", "type": "frontend", "label": "Observable Events", "sublabel": "+1? · 要 · pass · ☕ · 👍", "stage": 1, "row": 1, "width": 148, "tag": "observable only" },
-    { "id": "adapter", "type": "backend", "label": "Protocol Adapter", "sublabel": "tokens → generic fields", "stage": 1, "row": 3, "width": 148, "tag": "persona ends here" },
-    { "id": "actions", "type": "backend", "label": "Observable Actions", "sublabel": "a_t · controlled input", "stage": 2, "row": 1, "width": 148, "tag": "transition input" },
+    { "id": "story", "type": "external", "label": "Cheng & Linda", "sublabel": "synthetic story", "stage": 0, "row": 2, "width": 148, "tag": "persona layer" },
+    { "id": "events", "type": "frontend", "label": "Observable Events", "sublabel": "+1? · 要 · pass · ☕ · 👍", "stage": 1, "row": 1, "width": 148, "tag": "observed only" },
+    { "id": "adapter", "type": "backend", "label": "Protocol Adapter", "sublabel": "generic fields", "stage": 1, "row": 3, "width": 148, "tag": "persona ends here" },
+    { "id": "actions", "type": "backend", "label": "Observable Actions", "sublabel": "a_t", "stage": 2, "row": 1, "width": 148, "tag": "transition input" },
     { "id": "core", "type": "backend", "label": "CSRDM Dynamics", "sublabel": "x_t=[P M V C E F] · m_t", "stage": 2, "row": 2, "width": 148, "tag": "routine state" },
-    { "id": "observations", "type": "backend", "label": "Observation Clues", "sublabel": "z_t · observed clues", "stage": 2, "row": 3, "width": 148, "tag": "not intention" },
+    { "id": "observations", "type": "backend", "label": "Observation Clues", "sublabel": "z_t", "stage": 2, "row": 3, "width": 148, "tag": "observed clues" },
     { "id": "filter", "type": "backend", "label": "Particle Filter", "sublabel": "p(x_t, m_t | z_1:t)", "stage": 3, "row": 2, "width": 148, "tag": "SMC inference" },
-    { "id": "posterior", "type": "database", "label": "Posterior", "sublabel": "means · intervals · mode probs", "stage": 3, "row": 3, "width": 148, "tag": "estimate != fact" },
+    { "id": "posterior", "type": "database", "label": "Posterior", "sublabel": "means · intervals · modes", "stage": 3, "row": 3, "width": 148, "tag": "estimate != fact" },
     { "id": "diagnostics", "type": "backend", "label": "Diagnostics", "sublabel": "calibration · recovery", "stage": 4, "row": 1, "width": 148, "tag": "challenge model" },
-    { "id": "public_api", "type": "frontend", "label": "Public API", "sublabel": "CSRDMResult · named views", "stage": 4, "row": 3, "width": 148, "tag": "stable door" }
+    { "id": "public_api", "type": "frontend", "label": "Public API", "sublabel": "named views", "stage": 4, "row": 3, "width": 148, "tag": "stable API" }
   ],
   "flows": [
     { "id": "story-events", "from": "story", "to": "events", "label": "story", "variant": "security", "fromSide": "right", "toSide": "left", "via": [[208, 385], [208, 271]], "labelAt": [208, 325] },
