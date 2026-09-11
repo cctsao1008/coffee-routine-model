@@ -6,9 +6,13 @@ This is the guided model-design tutorial for **Coffee Routine Model**.
 
 The goal is not to prove that a coffee routine needs complicated math. The goal is to show, step by step, how a small repeated interaction can raise modeling questions — and how those questions can gradually produce a stochastic state-space model.
 
+Before it becomes a model, though, a routine is something people simply live through. Someone asks. Someone says yes, says pass, gets busy, comes back, or does nothing remarkable at all. The interesting engineering problem begins only after we accept that ordinary human texture without pretending we can see the private meaning behind it.
+
 > **Observation first. Question second. Abstraction third. Math when it earns its place.**
 
 The story layer uses **Cheng** and **Linda** as clearly synthetic teaching personas. The names make the examples easier to follow; the model itself remains generic.
+
+They are there to keep the examples human-readable, not to turn either persona into the object of the model.
 
 ```text
 Synthetic story
@@ -32,6 +36,13 @@ Persona != core ontology
 Observation != latent state
 Action != intention
 Model != human
+```
+
+A useful reading rule for the whole tutorial is:
+
+```text
+keep the human texture
+without inventing hidden certainty
 ```
 
 For the compact public-safe map of the recurring design lessons behind these chapters, see [`../design-principles.md`](../design-principles.md).
