@@ -275,7 +275,7 @@ Then run one observable coffee moment through the stable public API:
 ```python
 from coffee_brain import CSRDM, CSRDMConfig
 
-brain = CSRDM(CSRMConfig())
+brain = CSRDM(CSRDMConfig())
 result = brain.step(["+1?", "要", "☕", "👍"])
 
 print({name: round(value, 3) for name, value in result.mean_by_state.items()})
