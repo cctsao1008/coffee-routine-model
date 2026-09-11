@@ -20,7 +20,7 @@ Reproducible source:
 csrdm-from-routine-to-posterior.dataflow.json
 ```
 
-README visual preview:
+Static SVG export:
 
 ```text
 ../assets/csrdm-from-routine-to-posterior.svg
@@ -36,13 +36,13 @@ The three artifacts have deliberately different roles:
 
 ```text
 JSON IR → reproducible source of the authored topology
-SVG     → compact README preview
+SVG     → compact static export
 HTML    → full-size interactive reading target
 ```
 
-The SVG is a README-friendly static snapshot derived from the validated Archify export. The checked-in JSON IR remains the reproducible diagram source. The interactive HTML is generated and published by GitHub Actions after the same source passes Archify validation and delivery checks.
+The SVG remains a compact static snapshot derived from the validated Archify export. The checked-in JSON IR remains the reproducible diagram source. The interactive HTML is generated and published by GitHub Actions after the same source passes Archify validation and delivery checks.
 
-The README snapshot intentionally uses compact node copy and one-step-larger display text so the important labels remain legible at GitHub README scale instead of turning the diagram into a dense poster. The topology, stage placement, and route semantics stay aligned with the validated Archify source.
+The README now links directly to the interactive map instead of embedding the static SVG, because the full node labels, route annotations, and legend are more legible at interactive scale. The SVG is retained as a companion export, not as a second source of truth.
 
 The source uses Archify's typed `dataflow` JSON IR. Its job is to visualize the already-documented architecture path:
 
