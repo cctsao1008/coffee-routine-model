@@ -28,7 +28,7 @@ README visual entry:
 
 The SVG is a README-friendly static snapshot derived from the validated Archify export. The checked-in JSON IR remains the reproducible diagram source.
 
-The README snapshot intentionally uses compact node copy so the important labels remain legible at GitHub README scale instead of turning the diagram into a dense poster.
+The README snapshot intentionally uses compact node copy and one-step-larger display text so the important labels remain legible at GitHub README scale instead of turning the diagram into a dense poster. The topology, stage placement, and route semantics stay aligned with the validated Archify source.
 
 The source uses Archify's typed `dataflow` JSON IR. Its job is to visualize the already-documented architecture path:
 
