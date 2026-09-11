@@ -1,0 +1,103 @@
+name: 🗺️☕ Publish System Map
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json"
+      - ".github/workflows/publish-system-map-pages.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-system-map"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: 🐾 Give the full map some room
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 🧺 Pick up the little repo basket
+        uses: actions/checkout@v4
+
+      - name: ☕ Warm up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 🗺️ Fetch pinned Archify
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --silent --show-error \
+            -o "$RUNNER_TEMP/archify.zip" \
+            https://github.com/tt-a1i/archify/releases/download/v2.16.0/archify.zip
+          echo "4c59fa6557a2385beaaef8c7219cc414573acc9f0c30a932d5053b0b20689a46  $RUNNER_TEMP/archify.zip" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/archify-skill"
+          unzip -q "$RUNNER_TEMP/archify.zip" -d "$RUNNER_TEMP/archify-skill"
+          test -f "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs"
+
+      - name: 🔍 Validate the authored map
+        shell: bash
+        run: |
+          set -euo pipefail
+          node "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs" validate \
+            dataflow \
+            docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json \
+            --json \
+            --quality showcase
+
+      - name: ✨ Render the interactive map
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/pages-site"
+          node "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs" deliver \
+            dataflow \
+            docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json \
+            "$RUNNER_TEMP/pages-site/csrdm-from-routine-to-posterior.html" \
+            --json \
+            --quality showcase
+          node "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs" check \
+            "$RUNNER_TEMP/pages-site/csrdm-from-routine-to-posterior.html"
+          touch "$RUNNER_TEMP/pages-site/.nojekyll"
+
+      - name: 🏠 Add a tiny landing redirect
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/pages-site/index.html" <<'EOF'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta http-equiv="refresh" content="0; url=csrdm-from-routine-to-posterior.html">
+            <title>CSRDM System Map</title>
+          </head>
+          <body>
+            <p><a href="csrdm-from-routine-to-posterior.html">Open the CSRDM interactive system map</a></p>
+          </body>
+          </html>
+          EOF
+
+      - name: ⚙️ Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 🎁 Upload the Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/pages-site
+
+      - name: 🚀 Publish the full interactive map
+        id: deployment
+        uses: actions/deploy-pages@v4
