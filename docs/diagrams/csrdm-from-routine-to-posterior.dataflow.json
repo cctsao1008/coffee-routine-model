@@ -5,7 +5,7 @@
     "title": "CSRDM — From Tiny Routine to Posterior",
     "subtitle": "A human-facing story becomes generic model evidence and leaves as uncertainty — not human truth.",
     "output": "docs/diagrams/csrdm-from-routine-to-posterior.html",
-    "viewBox": [1000, 650],
+    "viewBox": [1068, 650],
     "animation": "trace",
     "visual_preset": "signal-flow",
     "quality_profile": "showcase",
