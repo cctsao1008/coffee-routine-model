@@ -1,4 +1,4 @@
-name: 🗺️☕ Publish System Map
+name: 🗺️☕ Publish Interactive Pages
 
 on:
   workflow_dispatch:
@@ -7,6 +7,10 @@ on:
       - main
     paths:
       - "docs/diagrams/csrdm-from-routine-to-posterior.dataflow.json"
+      - "tiny_tools/explore_posterior.py"
+      - "examples/365-cute-days/input.csv"
+      - "examples/365-cute-days/output.csv"
+      - "pyproject.toml"
       - ".github/workflows/publish-system-map-pages.yml"
 
 permissions:
@@ -15,12 +19,12 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages-system-map"
+  group: "pages-interactive"
   cancel-in-progress: true
 
 jobs:
   build-and-deploy:
-    name: 🐾 Give the full map some room
+    name: 🐾 Give the interactive views some room
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -34,6 +38,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+
+      - name: 🐍 Warm up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 📈 Gather the optional visualization spoon
+        run: python -m pip install ".[viz]"
 
       - name: 🗺️ Fetch pinned Archify
         shell: bash
@@ -57,7 +70,7 @@ jobs:
             --json \
             --quality showcase
 
-      - name: ✨ Render the interactive map
+      - name: ✨ Render the interactive system map
         shell: bash
         run: |
           set -euo pipefail
@@ -70,9 +83,20 @@ jobs:
             --quality showcase
           node "$RUNNER_TEMP/archify-skill/archify/bin/archify.mjs" check \
             "$RUNNER_TEMP/pages-site/csrdm-from-routine-to-posterior.html"
+
+      - name: 📈 Render the interactive posterior explorer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m tiny_tools.explore_posterior \
+            examples/365-cute-days/output.csv \
+            --events examples/365-cute-days/input.csv \
+            --out "$RUNNER_TEMP/pages-site/posterior-explorer.html"
+          test -s "$RUNNER_TEMP/pages-site/posterior-explorer.html"
+          grep -q "CSRDM Posterior Explorer" "$RUNNER_TEMP/pages-site/posterior-explorer.html"
           touch "$RUNNER_TEMP/pages-site/.nojekyll"
 
-      - name: 🏠 Add a tiny landing redirect
+      - name: 🏠 Add a tiny landing page
         shell: bash
         run: |
           cat > "$RUNNER_TEMP/pages-site/index.html" <<'EOF'
@@ -81,11 +105,15 @@ jobs:
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta http-equiv="refresh" content="0; url=csrdm-from-routine-to-posterior.html">
-            <title>CSRDM System Map</title>
+            <title>CSRDM Interactive Views</title>
           </head>
           <body>
-            <p><a href="csrdm-from-routine-to-posterior.html">Open the CSRDM interactive system map</a></p>
+            <main>
+              <h1>CSRDM Interactive Views ☕🐾</h1>
+              <p><a href="csrdm-from-routine-to-posterior.html">Open the CSRDM interactive system map</a></p>
+              <p><a href="posterior-explorer.html">Open the CSRDM posterior explorer</a></p>
+              <p>Model the routine, not the person.</p>
+            </main>
           </body>
           </html>
           EOF
@@ -98,6 +126,6 @@ jobs:
         with:
           path: ${{ runner.temp }}/pages-site
 
-      - name: 🚀 Publish the full interactive map
+      - name: 🚀 Publish the interactive views
         id: deployment
         uses: actions/deploy-pages@v4
