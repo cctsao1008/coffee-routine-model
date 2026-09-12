@@ -107,6 +107,7 @@ Quick doors:
 
 - [`Wiki`](https://github.com/cctsao1008/coffee-routine-model/wiki) — friendly navigation layer;
 - [`System map`](https://cctsao1008.github.io/coffee-routine-model/csrdm-from-routine-to-posterior.html) — interactive visual path from story to posterior;
+- [`Posterior explorer`](https://cctsao1008.github.io/coffee-routine-model/posterior-explorer.html) — interactive P / M / V / C / E / F uncertainty across the synthetic coffee year;
 - [`Glossary`](docs/glossary.md) — project vocabulary;
 - [`Common Confusions`](docs/common-confusions.md) — recurring category mistakes;
 - [`Tutorial`](docs/tutorial/README.md) — guided design story;
@@ -307,6 +308,15 @@ python -m tiny_tools.controlled_reference
 ```
 
 The observation-only reference lives in [`examples/365-cute-days/`](examples/365-cute-days/); the known-action result summary lives in [`docs/controlled-reference-result.md`](docs/controlled-reference-result.md).
+
+To inspect the checked-in synthetic year interactively without changing the model:
+
+```bash
+python -m pip install ".[viz]"
+python -m tiny_tools.explore_posterior examples/365-cute-days/output.csv
+```
+
+The generated HTML keeps posterior intervals, routine modes, ESS, and selected observable clues together in one browser view. The published reference view is the [`Posterior explorer`](https://cctsao1008.github.io/coffee-routine-model/posterior-explorer.html).
 
 ```text
 Synthetic reference != real-human validation
