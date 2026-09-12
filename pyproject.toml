@@ -15,6 +15,11 @@ dependencies = [
     "matplotlib>=3.10",
 ]
 
+[project.optional-dependencies]
+viz = [
+    "plotly>=6.0",
+]
+
 [tool.setuptools.packages.find]
 include = ["coffee_brain*", "tiny_tools*"]
 exclude = ["tests*", "examples*", "docs*"]
