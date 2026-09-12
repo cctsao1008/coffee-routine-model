@@ -34,6 +34,26 @@ python -m tiny_tools.visualize examples/365-cute-days/output.csv
 
 `visualize.py` turns the CSV output into state, mode, **effective sample size (ESS)**, and synthetic summary plots.
 
+### Explore one posterior interactively
+
+Install the optional visualization extra, then turn the checked-in 365-day basket into one self-contained HTML view:
+
+```bash
+python -m pip install ".[viz]"
+python -m tiny_tools.explore_posterior \
+  examples/365-cute-days/output.csv \
+  --events examples/365-cute-days/input.csv \
+  --out posterior-explorer.html
+```
+
+`explore_posterior.py` keeps the existing model fixed and makes its P / M / V / C / E / F posterior summaries, 95% intervals, routine modes, ESS, and selected observable clues easier to inspect. Hover any day for the full six-state summary.
+
+```text
+Interactive picture != new ontology
+Observed clue != inferred intention
+Posterior != human truth
+```
+
 ## Pick the modeling doubt you want to test 🧪
 
 | Question | Helper | Deeper note |
