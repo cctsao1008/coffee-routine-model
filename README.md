@@ -121,7 +121,7 @@ Quick doors:
 
 ## 1. Start with one tiny routine 📖☕
 
-Meet **Cheng** and **Linda** — synthetic teaching personas used only to make the examples easier to follow.
+Meet **Cheng** and **Linda** — synthetic teaching personas used only to make the examples easier to follow. They are illustrative characters, not public profiles or ground-truth representations of real individuals.
 
 There is no dramatic event hiding in this example. That is part of the point. A shared routine can become familiar, useful, and worth modeling without every ordinary moment needing a secret explanation.
 
