@@ -2,7 +2,7 @@
 
 Different documents answer different questions on purpose.
 
-> **Story welcomes. Glossary aligns. Tutorial teaches. Starter Math bridges. Full Math formalizes. Public API guides. Architecture defines. Labs challenge. Results record.**
+> **Story welcomes. Glossary aligns. Tutorial teaches. Starter Math bridges. Full Math formalizes. References ground the machinery. Public API guides. Architecture defines. Labs challenge. Results record.**
 
 ## 🏷️ Role / authority at a glance
 
@@ -15,6 +15,7 @@ Use this before treating two documents as if they have the same job.
 | [`tutorial/README.md`](tutorial/README.md) | guided learning path | **Explanatory** |
 | [`math/starter-math.md`](math/starter-math.md) | first mathematical projection | **Explanatory** — same CSRDM, fewer symbols |
 | [`math/full-math.md`](math/full-math.md) | complete mathematical view | **Canonical mathematical reference** for architecture `0.3` |
+| [`references.md`](references.md) | literature / provenance map | **Explanatory provenance index** — project contracts still define CSRDM |
 | [`public-api.md`](public-api.md) | caller contract | **Canonical public-calling reference** |
 | [`architecture.md`](architecture.md) | software / architecture contract | **Canonical architecture reference** |
 | [`epistemic-status.md`](epistemic-status.md) | claim-status contract | **Canonical epistemic reference** |
@@ -95,6 +96,20 @@ Starter Math != Lite model
 Full Math != separate model
 Same model. Different depth.
 ```
+
+## 📚 References / literature path
+
+Use [`references.md`](references.md) when the question is **which inference ideas come from established literature, and which parts are CSRDM modeling choices?**
+
+It gives the current five-source Particle Filter / Sequential Monte Carlo reading shelf, a beginner-to-advanced reading ladder, and a compact provenance map.
+
+```text
+Literature-backed inference
+!=
+literature-proved routine ontology
+```
+
+The page is explanatory. Full Math, Architecture, code, tests, and specialist provenance documents remain authoritative for their own scopes.
 
 ## 🛠️ Public API path
 
@@ -208,6 +223,7 @@ Diagnostic helpers live in [`../tiny_tools/`](../tiny_tools/).
 
 ## ⚖️ Writing / source / epistemic boundaries
 
+- [`references.md`](references.md) — literature grounding + inference-vs-CSRDM provenance map
 - [`epistemic-status.md`](epistemic-status.md) — Observed / Probable / Assumed / Undefined / Not-yet-decided
 - [`observation-provenance.md`](observation-provenance.md) — provenance map for clue→state / mode relationships
 - [`common-confusions.md`](common-confusions.md) — compact corrections to recurring category mistakes
@@ -238,6 +254,7 @@ Want the story       → docs/how-the-coffee-works.md
 Want to learn        → docs/tutorial/
 Want Starter Math    → docs/math/starter-math.md
 Want Full Math       → docs/math/full-math.md
+Want literature map → docs/references.md
 Want to call the API → docs/public-api.md
 Want the spec        → docs/architecture.md
 Want claim status    → docs/epistemic-status.md
